@@ -12,7 +12,12 @@ The user can then intereact in two ways with the demo:
 - Browse the GraphQL schema and make queries / mutations to the data
 
 ## Setup instructions
-The following commands are used to setup this project:
-* 
+
+Prerequisites: docker and docker-compose installed.
+
+The following command is used to run this project:
+- `docker-compose up -d`
+
+To reset the database and populate it with some sample data run `docker exec ct_server npm run test-db-reset` from the command line after the container is running.
 
 
