@@ -22,13 +22,11 @@ services:
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web
-    tty: true
-    stdin_open: true
+    image: cherrytwist/client-web:nginx
     networks:
       - ct
     ports:
-      - 3000:3000
+       - 80:80
     restart: always
 
 
