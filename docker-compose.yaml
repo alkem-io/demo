@@ -22,7 +22,7 @@ services:
 
   client:
     container_name: ct_client
-    image: cherrytwist/client
+    image: cherrytwist/client-web
     tty: true
     stdin_open: true
     networks:
