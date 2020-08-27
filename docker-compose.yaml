@@ -1,0 +1,45 @@
+version: '2.1'
+
+volumes:
+  portainer:
+  server:
+
+
+networks:
+  ct:
+
+services:
+  server:
+    container_name: ct_server
+    image: cherrytwist/server
+    networks:
+      - ct
+    ports:
+      - 4000:4000
+    volumes:
+      - server:/usr/src/app/config
+    restart: always
+
+  client:
+    container_name: ct_client
+    image: cherrytwist/client
+    tty: true
+    stdin_open: true
+    networks:
+      - ct
+    ports:
+      - 3000:3000
+    restart: always
+
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    networks:
+      - ct
+    ports:
+      - 9000:9000
+    volumes:
+      - portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
