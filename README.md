@@ -14,7 +14,7 @@ The user can then intereact in two ways with the demo:
 ## Setup instructions
 
 Prerequisites: 
-- Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Rasperberry)
+- Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
 - ports 80, 4000 and 9000 free on localhost
 
 The following commands are used to run this project:
