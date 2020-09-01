@@ -13,11 +13,25 @@ The user can then intereact in two ways with the demo:
 
 ## Setup instructions
 
-Prerequisites: docker and docker-compose installed.
+Prerequisites: 
+- Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Rasperberry)
+- ports 80, 4000 and 9000 free on localhost
 
-The following command is used to run this project:
-- `docker-compose up -d`
+The following commands are used to run this project:
+- `docker-compose up -d` (to pull the images and start the containers in detached mode)
+- `docker exec ct_server npm run test-db-reset` (to populate the database with some sample data)
 
-To reset the database and populate it with some sample data run `docker exec ct_server npm run test-db-reset` from the command line after the container is running.
+Now both client and server are exposed locally and can be accessed, e.g. through a browser:
+- server: http://localhost:4000/graphql
+- client: http://localhost
+
+>> Note: the demo does not use tls
+
+Bonus: the docker-compose scripts also installs Portainer, which can be accessed from http://localhost:9000 to check the status of the demo.
+- first install: 
+  - choose password
+  - choose local endpoint
+
+
 
 
