@@ -12,6 +12,8 @@ services:
   server:
     container_name: ct_server
     image: cherrytwist/server
+    env_file:
+      - .env
     networks:
       - ct
     ports:
@@ -22,7 +24,9 @@ services:
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:nginx
+    image: cherrytwist/client-web:latest
+    env_file:
+      - .env
     networks:
       - ct
     ports:
@@ -33,6 +37,8 @@ services:
   portainer:
     container_name: portainer
     image: portainer/portainer
+    env_file:
+      - .env
     networks:
       - ct
     ports:
