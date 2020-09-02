@@ -36,7 +36,7 @@ services:
 
   portainer:
     container_name: portainer
-    image: portainer/portainer
+    image: portainer/portainer-ce
     env_file:
       - .env
     networks:
