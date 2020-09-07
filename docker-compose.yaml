@@ -11,7 +11,7 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server
+    image: cherrytwist/server:0.1.0
     env_file:
       - .env
     networks:
@@ -24,7 +24,7 @@ services:
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:latest
+    image: cherrytwist/client-web:0.1.0
     env_file:
       - .env
     networks:
