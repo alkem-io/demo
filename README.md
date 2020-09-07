@@ -11,6 +11,8 @@ The user can then intereact in two ways with the demo:
 - Directly to the web interface
 - Browse the GraphQL schema and make queries / mutations to the data
 
+![ComponentDiagram](./design/ComponentDiagram.png)
+
 ## Setup instructions
 
 Prerequisites: 
@@ -18,7 +20,7 @@ Prerequisites:
 - ports 80, 4000 and 9000 free on localhost
 
 The following commands are used to run this project:
-- `docker-compose up -d` (to pull the images and start the containers in detached mode)
+- `docker-compose --env-file .env.default up -d --build` (to pull the images and start the containers in detached mode)
 - `docker exec ct_server npm run test-db-reset` (to populate the database with some sample data)
 
 Now both client and server are exposed locally and can be accessed, e.g. through a browser:
