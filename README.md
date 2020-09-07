@@ -11,6 +11,8 @@ The user can then intereact in two ways with the demo:
 - Directly to the web interface
 - Browse the GraphQL schema and make queries / mutations to the data
 
+![ComponentDiagram](./design/ComponentDiagram.png)
+
 ## Setup instructions
 
 Prerequisites: 
