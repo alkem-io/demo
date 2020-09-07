@@ -1,4 +1,4 @@
-version: '2.2'
+version: '2.3'
 
 volumes:
   portainer:
@@ -12,9 +12,6 @@ services:
   server:
     container_name: ct_server
     image: cherrytwist/server
-    env_file:
-      - .env
-      - .env.default.env
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
@@ -34,8 +31,6 @@ services:
   client:
     container_name: ct_client
     image: cherrytwist/client-web:latest
-    env_file:
-      - .env
     networks:
       - ct
     ports:
@@ -44,25 +39,19 @@ services:
 
   db:
     image: mysql:8.0.11
+    container_name: ct_server_db
     environment:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
-    env_file:
-      - .env
-      - .env.default.env
     networks:
       - ct
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    ports:
-      - 3306:3306
       
 
   portainer:
     container_name: portainer
     image: portainer/portainer-ce
-    env_file:
-      - .env
     networks:
       - ct
     ports:
