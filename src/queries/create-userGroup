@@ -1,0 +1,10 @@
+mutation CreateUserGroup($userGroupData: UserGroupInput!) {
+  createUserGroup(userGroupData: $userGroupData) {
+    name,
+    members
+    {
+     id
+    }
+
+  }
+}

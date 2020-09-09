@@ -1,0 +1,15 @@
+mutation CreateChallenge($challengeData: ChallengeInput!) {
+  createChallenge(challengeData: $challengeData) {
+    name,
+    id,
+    tags{
+      id,
+      name
+    },
+    groups
+    {
+      id,
+      name
+    }
+  }
+}

@@ -1,0 +1,14 @@
+mutation CreateOrganisation($organisationData: OrganisationInput!) {
+  createOrganisation(organisationData: $organisationData) {
+    name,
+    members
+    {
+     	name
+    },
+    tags
+    {
+      id,
+      name
+    }
+  }
+}
