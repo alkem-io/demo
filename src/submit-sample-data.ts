@@ -1,9 +1,3 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  NormalizedCacheObject
-} from '@apollo/client';
 import  fs  from 'fs';
 import { request, GraphQLClient, gql } from 'graphql-request'
 
@@ -27,10 +21,11 @@ const main = async () => {
         name
     }
   `
+  const data = await client.request(query);
+  console.log(JSON.stringify(data, undefined, 2));
   // Todo: verify result is ok; otherwise terminate with an error
  
-  const data = await client.request(query)
-  console.log(JSON.stringify(data, undefined, 2))
+  
 
   const mutation = gql`${mutationCreateUser}`
   const newUserData = await client.request(mutation, mutationCreateUserVariable)
