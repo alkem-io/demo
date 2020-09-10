@@ -11,7 +11,9 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server:0.1.0
+    image: cherrytwist/server:0.1.2
+    networks:
+      - ct
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
@@ -20,17 +22,19 @@ services:
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
       - WAIT_HOST_CONNECT_TIMEOUT
-    networks:
-      - ct
+    depends_on:
+      - db
+    restart: always
     ports:
       - 4000:4000
+    command: sh -c "/wait && npm start"
     volumes:
       - server:/usr/src/app/config
-    restart: always
+    
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:0.1.0
+    image: cherrytwist/client-web:0.1.1
     networks:
       - ct
     ports:
@@ -38,8 +42,8 @@ services:
     restart: always
 
   db:
-    image: mysql:8.0.11
     container_name: ct_server_db
+    image: mysql:8.0.11
     environment:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
@@ -47,7 +51,6 @@ services:
       - ct
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-      
 
   portainer:
     container_name: portainer

@@ -21,7 +21,8 @@ Prerequisites:
 
 The following commands are used to run this project:
 - `docker-compose --env-file .env.default up -d --build` (to pull the images and start the containers in detached mode)
-- `npm run sample-data` (to populate the server with some sample data)
+- verify that the server is available at http://localhost:4000/graphql (using a browser). This can take a minute as everything fires up. 
+- `npm run sample-data` (to populate the server with additional sample data)
 
 Now both client and server are exposed locally and can be accessed, e.g. through a browser:
 - server: http://localhost:4000/graphql
@@ -34,9 +35,10 @@ Bonus: the docker-compose scripts also installs Portainer, which can be accessed
   - choose password
   - choose local endpoint
 
-  ## Sample data directly on the server
-  It is also possible to directly load data on the server using:
-  - `docker exec ct_server npm run test-db-reset` (to populate the database with some sample data)
+  ## Alternative loading of sample data
+  - `docker exec ct_server npm run test-db-reset` (to populate the database directly on the server with some sample data)
+
+
 
 
 
