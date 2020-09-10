@@ -1,0 +1,49 @@
+
+{
+  "organisationData": 
+  {
+    "name": "Cherrytwist",
+    "members": 
+    [
+      {
+        "name" : "Valentin"
+      },
+    	{
+      	"name": "Rene"
+      },
+      {
+        "name" : "Neil"
+      },
+    	{
+      	"name": "Rutger"
+      },
+      {
+        "name": "Angel"
+      }
+    ],
+    "tags": 
+    [
+      {
+        "name" : "Society"
+      },
+    	{
+      	"name": "Multi-stakeholder engagement"
+      },
+      {
+        "name" : "Change"
+      },
+    	{
+      	"name": "Organisation"
+      },
+      {
+        "name": "Government"
+      },
+      {
+        "name": "PPP"
+      },
+      {
+        "name": "Enterprise"
+      }
+    ]
+  }
+}
