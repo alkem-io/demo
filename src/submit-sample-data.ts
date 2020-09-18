@@ -1,3 +1,4 @@
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 import  fs  from 'fs';
 import { request, GraphQLClient, gql } from 'graphql-request';
 import { exit } from 'process';
@@ -57,6 +58,7 @@ const loadDataType = async (client: GraphQLClient, mutationFile: string, variabl
   const mutation = fs.readFileSync(mutationFile).toString();
   const variables: string[] = fs.readdirSync(variablesDir);
   let i = 0;
+  let success = SSL_OP_SSLEAY_080_CLIENT_DH_BUG;
   for (let variable of variables) {
     i++;
     console.log(`........${type}(${i}) submitted from: ${variable}`);
@@ -75,15 +77,18 @@ const loadDataType = async (client: GraphQLClient, mutationFile: string, variabl
       const newData = await client.request(mutation, variableStr);
       const newID = jp.query(newData, '$.*.id')
       const newName = jp.query(newData, '$.*.name')
-      console.log(`........${type}(${i}) accepted: ${newName}, with id: ${newID}`);
+      console.log(`......................accepted: ${newName}, with id: ${newID}`);
+      success++;
     } catch (e) {
       console.log(`Submission to the server from ${variable} rejected: ${e}`);
-      continue;
+      break;
     }
-    // Completed successfully
-    console.log(`Loading of ${i} ${type}(s) complete`);
+    
     
   }
+
+  // Completed successfully
+  console.log(`Loading of ${success} ${type}(s) completed (out of ${i})`);
   
 }
  
