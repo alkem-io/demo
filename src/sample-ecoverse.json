@@ -1,0 +1,25 @@
+{
+    "mutations": 
+    [
+        {
+            "type": "user",
+            "mutationFile": "./src/queries/create-user",
+            "variablesDir": "./src/queries/user-variables"
+        }, 
+        {
+            "type": "group",
+            "mutationFile": "./src/queries/create-userGroup",
+            "variablesDir": "./src/queries/group-variables"
+        }, 
+        {
+            "type": "challenge",
+            "mutationFile": "./src/queries/create-challenge",
+            "variablesDir": "./src/queries/challenge-variables"
+        }, 
+        {
+            "type": "organisation",
+            "mutationFile": "./src/queries/create-organisation",
+            "variablesDir": "./src/queries/organisation-variables"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+  "ecoverseData":
+{
+  	"name": "Cherrytwist Dogfood",
+    "context": {
+        "tagline": "Powering multi-stakeholder collaboration!",
+        "background": "Something",
+        "vision": "And something else",
+        "impact": "ditto",
+        "who": "everyone",
+        "references": [
+            {
+                "name": "visual",
+                "uri": "https://www.odyssey.org/wp-content/uploads/2020/08/1.-Fossil-Fuel-Free-Future-Vattenfall1-72-scaled.jpg",
+                "description": "Visual for the challenge"
+            }
+        ]
+    },
+    "tags": [
+        {
+            "name": "Collaboration"
+        },
+        {
+            "name": "Cherrytwist"
+        }
+
+    ],
+    "groups": [
+        {
+            "name": "members"
+        }
+    ]
+}
+
+}
