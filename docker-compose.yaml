@@ -11,7 +11,7 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server:0.1.2
+    image: cherrytwist/server:0.1.5
     networks:
       - ct
     environment:
@@ -27,14 +27,14 @@ services:
     restart: always
     ports:
       - 4000:4000
-    command: sh -c "/wait && npm start"
+    command: sh -c "/wait && npm run data-load-samples && npm start"
     volumes:
       - server:/usr/src/app/config
-    
+
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:0.1.1
+    image: cherrytwist/client-web:0.1.3
     networks:
       - ct
     ports:
