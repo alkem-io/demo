@@ -27,7 +27,7 @@ services:
     restart: always
     ports:
       - 4000:4000
-    command: sh -c "/wait && npm run data-load-samples && npm start"
+    command: sh -c "/wait && npm start"
     volumes:
       - server:/usr/src/app/config
 
