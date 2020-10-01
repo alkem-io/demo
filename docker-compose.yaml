@@ -11,7 +11,7 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server:0.1.5
+    image: cherrytwist/server:v0.1.6
     networks:
       - ct
     environment:
