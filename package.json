@@ -1,6 +1,6 @@
 {
   "name": "cherrytwist-demo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Demo of setting up and populating a Cherrytwist Ecoverse",
   "main": "src/submit-sample-data.js",
   "scripts": {

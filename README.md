@@ -30,13 +30,18 @@ Now both client and server are exposed locally and can be accessed, e.g. through
 
 >> Note: the demo does not use tls
 
+It is also possible to revert the server back to a default empty ecoverse using `
+
 Bonus: the docker-compose scripts also installs Portainer, which can be accessed from http://localhost:9000 to check the status of the demo.
 - first install: 
   - choose password
   - choose local endpoint
 
   ## Alternative loading of sample data
-  - `docker exec ct_server npm run test-db-reset` (to populate the database directly on the server with some sample data)
+  - `docker exec ct_server npm run data-load-samples` (to populate the database directly on the server with some sample data)
+
+After working with the server for a while it might also be useful to reset the state of the server, which can be achieved with:
+  - `docker exec ct_server npm run data-reset-ecoverse` 
 
 
 
