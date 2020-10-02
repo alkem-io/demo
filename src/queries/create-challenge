@@ -2,9 +2,9 @@ mutation CreateChallenge($challengeData: ChallengeInput!) {
   createChallenge(challengeData: $challengeData) {
     name,
     id,
-    tags{
+    tagset {
       id,
-      name
+      tags
     },
     groups
     {

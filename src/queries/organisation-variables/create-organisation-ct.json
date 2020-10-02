@@ -3,6 +3,9 @@
   "organisationData": 
   {
     "name": "Cherrytwist",
+    "tagset": {
+      "tags": ["Society", "Multi-stakeholder engagement", "Change", "Organisation", "Government", "PPP", "Enterprise" ]
+    },
     "members": 
     [
       {
@@ -20,30 +23,7 @@
       {
         "name": "Angel"
       }
-    ],
-    "tags": 
-    [
-      {
-        "name" : "Society"
-      },
-    	{
-      	"name": "Multi-stakeholder engagement"
-      },
-      {
-        "name" : "Change"
-      },
-    	{
-      	"name": "Organisation"
-      },
-      {
-        "name": "Government"
-      },
-      {
-        "name": "PPP"
-      },
-      {
-        "name": "Enterprise"
-      }
     ]
+    
   }
 }

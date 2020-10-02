@@ -2,14 +2,14 @@
   "userData": 
   {
     "name": "SuperNinja4",
-    "tags": 
-    [
-      {
-        "name": "Super Awesome"
-      },
-    	{
-      	"name": "Ninja4"
-  		}
-    ]
+    "profile": {
+      "tagsets": [
+        {
+          "name": "default",
+          "tags": 
+          ["Super Awesome2","Ninja2"]
+        }
+      ]
+    }
   }
 }
