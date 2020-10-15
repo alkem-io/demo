@@ -1,5 +1,5 @@
-# Demo.Simple
-A simple demo to create a running instance of Cherrytwist and populate it with some data. 
+# Demo 
+A simple demo to create a running instance of Cherrytwist server, populate it with some data and connect to it from a web client. 
 
 The core pieces of the demo are:
 - **Server**: The core Cherrytwist server that maintains the Ecoverse, and that exposes a GraphQL based api
@@ -38,11 +38,8 @@ Bonus: the docker-compose scripts also installs Portainer, which can be accessed
   - choose local endpoint
 
   ## Alternative loading of sample data
-  - `docker exec ct_server npm run data-load-samples` (to populate the database directly on the server with some sample data)
-
-After working with the server for a while it might also be useful to reset the state of the server, which can be achieved with:
-  - `docker exec ct_server npm run data-reset-ecoverse` 
-
+  It is also possible to use the [Data Management page](http://localhost:4000/data-management) of the server to both load sample data and to reset the ecoverse to an empty state - please see the [Server readme](http://github.com/cherrytwist/Server) for more details on this.
+  
 
 
 
