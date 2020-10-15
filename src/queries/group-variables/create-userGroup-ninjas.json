@@ -1,21 +1,3 @@
 {
-  "userGroupData": 
-  {
-    "name": "Teenage Mutant Ninja Turtles",
-    "members": 
-    [
-      {
-        "name" : "Michelangelo"
-      },
-    	{
-      	"name": "Rafaelo"
-      },
-      {
-        "name" : "Leonardo"
-      },
-    	{
-      	"name": "Donatello"
-  		}
-    ]
-  }
+  "groupName": "Teenage Mutant Ninja Turtles"
 }

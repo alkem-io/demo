@@ -2,14 +2,6 @@
   "userData": 
   {
     "name": "SuperNinja3",
-    "profile": {
-      "tagsets": [
-        {
-          "name": "default",
-          "tags":  
-          ["Super Awesome","Ninja"]
-        }
-      ]
-    }
+    "email": "3@ninjas.nl"
   }
 }
