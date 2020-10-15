@@ -8,18 +8,13 @@
         }, 
         {
             "type": "group",
-            "mutationFile": "./src/queries/create-userGroup",
+            "mutationFile": "./src/queries/create-group-on-ecoverse",
             "variablesDir": "./src/queries/group-variables"
         }, 
         {
             "type": "challenge",
             "mutationFile": "./src/queries/create-challenge",
             "variablesDir": "./src/queries/challenge-variables"
-        }, 
-        {
-            "type": "organisation",
-            "mutationFile": "./src/queries/create-organisation",
-            "variablesDir": "./src/queries/organisation-variables"
         }
     ]
 }

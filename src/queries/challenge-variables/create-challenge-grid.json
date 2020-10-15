@@ -1,6 +1,6 @@
 {
   "challengeData": 
-{
+    {
     "name": "Balance the grid",
     "context": {
         "tagline": "How might we incentivize consumers to communicate energy demand and production to allow all stakeholders to balance the grid?",
@@ -26,15 +26,6 @@
                 "description": "Official site"
             }
         ]
-    },
-    "tagset": {
-        "tags":["Java2","Industry2","Energy"]
-    }  ,
-    "groups": [
-        {
-            "name": "firstGroup"
         }
-    ]
-}
-
+    }
 }
