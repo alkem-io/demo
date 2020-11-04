@@ -39,7 +39,7 @@ export class EcoversePopulator {
   updateOrganisationMutationFile = "./src/queries/update-organisation";
   userQueryFile = "./src/queries/user";
   updateProfileFile = "./src/queries/update-profile";
-  
+
   // Load in + store some of the mutations / queries
   createChallengeMutationStr: string;
   createUserMutationStr: string;
@@ -135,11 +135,9 @@ export class EcoversePopulator {
 
     this.userQueryStr = fs.readFileSync(this.userQueryFile).toString();
 
-    this.updateProfileStr = fs
-      .readFileSync(this.updateProfileFile)
-      .toString();
+    this.updateProfileStr = fs.readFileSync(this.updateProfileFile).toString();
 
-      this.createChallengeMutationStr = fs
+    this.createChallengeMutationStr = fs
       .readFileSync(this.createChallengeMutationFile)
       .toString();
   }
@@ -196,8 +194,8 @@ export class EcoversePopulator {
     avatarURI: string
   ): Promise<Boolean> {
     const userVariable = gql`{"ID": "${userEmail}"}`;
-    let profileID = '';
-    let profileDesc = '';
+    let profileID = "";
+    let profileDesc = "";
     try {
       const getUserResponse = await this.client.request(
         this.userQueryStr,
@@ -230,13 +228,13 @@ export class EcoversePopulator {
         this.updateProfileStr,
         updateProfileVariable
       );
-      this.logger.info(
-        `...........updated avatar to be "${avatarURI}"`
-      );
-      
+      this.logger.info(`...........updated avatar to be "${avatarURI}"`);
+
       return true;
     } catch (e) {
-      this.logger.warn(`Unable to update profile for user: ${userEmail} - ${e}`);
+      this.logger.warn(
+        `Unable to update profile for user: ${userEmail} - ${e}`
+      );
       return false;
     }
   }
@@ -362,12 +360,16 @@ export class EcoversePopulator {
   }
 
   // Set the ecoverse context
-  async updateEcoverseContext(variable: string): Promise<Boolean> {
+  async updateEcoverseContext(variableFile: string): Promise<Boolean> {
+    const updateEcoverseMutationStr = fs
+      .readFileSync(this.updateEcoverseMutationFile)
+      .toString();
+    const variable = fs.readFileSync(variableFile).toString();
+
     try {
-      const result = await this.ctClient.submitSingleMutations(
-        this.updateEcoverseMutationFile,
-        variable,
-        "ecoverse"
+      const result = await this.client.request(
+        updateEcoverseMutationStr,
+        variable
       );
       if (result) {
         this.logger.info(`==> Update of ecoverse data completed successfully!`);
@@ -379,7 +381,6 @@ export class EcoversePopulator {
     return true;
   }
 
-  
   // Create a gouup at the ecoverse level with the given name
   async addTagToTagset(tagsetID: string, tagName: string): Promise<Boolean> {
     // create the variable for the group mutation
@@ -451,12 +452,15 @@ export class EcoversePopulator {
   }
 
   // Load in mutations file
-  async updateHostOrganisation(variable: string): Promise<Boolean> {
+  async updateHostOrganisation(variableFile: string): Promise<Boolean> {
+    const variable = fs.readFileSync(variableFile).toString();
+    const updateOrganisationMutationStr = fs
+      .readFileSync(this.updateOrganisationMutationFile)
+      .toString();
     try {
-      const result = await this.ctClient.submitSingleMutations(
-        this.updateOrganisationMutationFile,
-        variable,
-        "host organisation"
+      const result = await this.client.request(
+        updateOrganisationMutationStr,
+        variable
       );
       if (result) {
         this.logger.info(`==> Updated host organisation successfully!`);

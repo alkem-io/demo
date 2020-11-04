@@ -13,9 +13,9 @@ const main = async () => {
   populator.logger.info(`Cherrytwist server: ${endPoint}`);
 
   // Update the context and set the host
-  const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse";
+  const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse.json";
   await populator.updateEcoverseContext(ecoverseContextVariable);
-  const hostOrgVariable = "./src/data/cherrytwist-host";
+  const hostOrgVariable = "./src/data/cherrytwist-host.json";
   await populator.updateHostOrganisation(hostOrgVariable);
   await createGroups(populator);
 
