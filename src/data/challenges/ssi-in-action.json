@@ -1,0 +1,26 @@
+{
+  "challengeData": {
+    "name": "Self-sovereign identity in action",
+    "textID": "ssi-in-action",
+    "state": "Defined",
+    "context": {
+      "tagline": "How might we enable all Odyssey Momentum tracks and teams to benefit from an operational SSI framework and infrastructure in order to demonstrate the value of SSI in business and societal contexts?",
+      "background": "If it was just down to technology, a successful cross-border Self-Sovereign Identity (SSI) would already exist; a truly digital native identity, common, widely adopted and backed by government, industry and society. \\n To serve the future social and economical needs of humanity, the principles of this Self-Sovereign Identity ecosystem must be rooted in 21st-century dynamics. \\n Though previously impossible, this Odyssey Momentum track strives to explore the full complexity of an SSI system in an operational setting. Through collaboration with other tracks and key-stakeholders, we aim to make viable the main elements of an SSI environment. \\n A Self-Sovereign Identity aims to facilitate transactions, while allowing full control by the end user whose identifying attributes are being shared. People and companies must be able to share and revoke use of personal data by one or all reliant parties.",
+      "vision": "The challenge for the teams and everyone helping them: Contribute to an open Self-Sovereign Identity ecosystem, consisting of a transparent trust framework and associated common infrastructure, empowering people and organizations to drive societal change. Enable all other Odyssey tracks to benefit from and contribute to this Self-Sovereign Identity ecosystem.",
+      "impact": "A Self- Sovereign Identity can unlock the full potential of the digital global economy. The identity of people, organizations and things is relevant to any transaction, while protecting Personal Identifiable Information (PII) is of increasing importance. \\n SSI enables the necessary exchange of verified data before committing to (proposed) transactions, which for high-value/high-risk transactions includes the identity.",
+      "who": "The Dutch Blockchain Coalition and the Dutch Ministry of the Interior and Kingdom Relations are inviting anyone who is interested in applying Self-Sovereign Identity to work with the teams, be the first to test and give feedback to the solutions, and then help launch the best solutions.",
+      "references": [
+        {
+          "name": "video",
+          "uri": "https://youtu.be/WHVIPeN9fP0",
+          "description": "Video explainer for the challenge"
+        },
+        {
+          "name": "visual",
+          "uri": "https://www.odyssey.org/wp-content/uploads/2018/11/1_9JMUvRgrBMyA4ehEZ7V6Pw.jpg",
+          "description": "Visual for the challenge"
+        }
+      ]
+    }
+  }
+}

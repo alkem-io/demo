@@ -1,0 +1,26 @@
+{
+  "challengeData": {
+    "name": "Scalable and inclusive living labs",
+    "textID": "living-labs2",
+    "state": "Defined",
+    "context": {
+      "tagline": "How might we automate access to and governance of a public digital ecosystem for citizens and stakeholders within the Living Lab Scheveningen: An innovation playground for digital solutions in public space?",
+      "background": "In the Hague’s Living Lab in Scheveningen, an urban area along the coastline has been equipped with smart City Hubs, consisting of three basic elements: A physical carrier, energy connection point and data connectivity. With 144 use cases and ideas related to livability and business in the neighborhood defined, defined, and several use cases being deployed, the Living Lab seems ready for take off. \n A use case onboarding and testing process has been designed, however, the admission of new stakeholders to the system, the facilitation of new ideas and cooperations, or the deployment of sensors and software remains a manual process until today. The process for admission should move from manual to automatic to scale. We see three roles emerging: the measuring of civil support, a sensor registry, and the establishment of public/private partnerships. \n The Hague wants to open-source and open access, to scale the Living Lab to the rest of the city, the region and (eventually) the world, voicing the voiceless by introducing new forms of democracy based on transparent data, where anyone and anything can contribute.",
+      "vision": "The challenge for the teams and everyone helping them: Build the admission system that automates access to the public digital ecosystem of the Hague: an independent, open, scalable and objective onboarding and networked mechanism, allowing everyone who wants to contribute access to grow innovation, nature and civilians’ initiatives in harmony.",
+      "impact": "Enabling the city through its local stakeholders to automate governance of the public digital ecosystem, allowing millions of actors (man and machine) to get on board and ideas to be tested for societal relevance. Help develop a Living Lab ecosystem blueprint that will serve The Hague and, due to its open nature, is replicable or moldable to serve the rest of the world.",
+      "who": "The City of The Hague is inviting citizens, tourists, emergency workers, shop owners, policymakers, and many other stakeholders to work with the teams, be the first to test and give feedback to the solutions, and then help launch the best solutions",
+      "references": [
+        {
+          "name": "video",
+          "uri": "https://youtu.be/_aU31KUYGCQ",
+          "description": "Video explainer for the challenge"
+        },
+        {
+          "name": "visual",
+          "uri": "https://www.odyssey.org/wp-content/uploads/2020/08/3-4.-The-Hague-One-Image-for-both-Challenges-scaled.jpg",
+          "description": "Visual for the challenge"
+        }
+      ]
+    }
+  }
+}

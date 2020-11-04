@@ -1,15 +1,8 @@
-mutation CreateChallenge($challengeData: ChallengeInput!) {
-  createChallenge(challengeData: $challengeData) {
+mutation updateEcoverse($ecoverseData: EcoverseInput!) {
+  updateEcoverse(ecoverseData: $ecoverseData) {
     name,
-    id,
-    tags{
-      id,
-      name
-    },
-    groups
-    {
-      id,
-      name
+    context {
+      tagline
     }
   }
 }
