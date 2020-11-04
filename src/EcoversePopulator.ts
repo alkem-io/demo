@@ -362,12 +362,11 @@ export class EcoversePopulator {
   }
 
   // Set the ecoverse context
-  async updateEcoverseContext(): Promise<Boolean> {
-    const variablesDir = "./src/data/ecoverse";
+  async updateEcoverseContext(variable: string): Promise<Boolean> {
     try {
       const result = await this.ctClient.submitSingleMutations(
         this.updateEcoverseMutationFile,
-        variablesDir,
+        variable,
         "ecoverse"
       );
       if (result) {
@@ -452,12 +451,11 @@ export class EcoversePopulator {
   }
 
   // Load in mutations file
-  async updateHostOrganisation(): Promise<Boolean> {
-    const variablesDir = "./src/data/host-organisation";
+  async updateHostOrganisation(variable: string): Promise<Boolean> {
     try {
       const result = await this.ctClient.submitSingleMutations(
         this.updateOrganisationMutationFile,
-        variablesDir,
+        variable,
         "host organisation"
       );
       if (result) {
