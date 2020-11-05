@@ -22,6 +22,7 @@ Prerequisites:
 The following commands are used to run this project:
 - `docker-compose --env-file .env.default up -d --build` (to pull the images and start the containers in detached mode)
 - verify that the server is available at http://localhost:4000/graphql (using a browser). This can take a minute as everything fires up. 
+- copy the `.env.devault` file to be `.env`
 - `npm run sample-data` (to populate the server with additional sample data)
 
 Now both client and server are exposed locally and can be accessed, e.g. through a browser:

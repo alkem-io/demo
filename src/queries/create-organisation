@@ -1,6 +1,16 @@
 mutation CreateOrganisation($organisationData: OrganisationInput!) {
   createOrganisation(organisationData: $organisationData) {
     name,
-    id
+    id,
+    members
+    {
+     	name
+    },
+    tagset
+    {
+      id,
+      name
+      tags
+    }
   }
 }

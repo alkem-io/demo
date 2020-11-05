@@ -1,12 +1,10 @@
 mutation CreateUser($userData: UserInput!) {
-  createUser(userData: $userData) {
+  createUserProfile(userData: $userData) {
     name,
     id,
-  	profile {
-      tagsets {
-        name
-        tags 
-      }
+    profile {
+      id
     }
   }
 }
+

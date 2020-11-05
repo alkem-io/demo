@@ -1,6 +1,12 @@
-mutation CreateGroupOnEcoverse($groupName: String!) {
+mutation createGroupOnEcoverse($groupName: String!) {
   createGroupOnEcoverse(groupName: $groupName) {
-    name,
-    id,
+    id
+    name
+    profile {
+      tagsets {
+        name
+        id
+      }
+    }
   }
 }
