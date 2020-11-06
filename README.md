@@ -40,6 +40,29 @@ Bonus: the docker-compose scripts also installs Portainer, which can be accessed
 
   ## Alternative loading of sample data
   It is also possible to use the [Data Management page](http://localhost:4000/data-management) of the server to both load sample data and to reset the ecoverse to an empty state - please see the [Server readme](http://github.com/cherrytwist/Server) for more details on this.
+
+## Ecoverse
+For populating the instance of CherryTwist for the Odyssey ecosystem.
+
+## Setup instructions for local usage
+The following commands are used to setup this project:
+* npm install -SD ts-node-dev
+* npm install
+
+## Poplating Odyssey data
+To populate a cherrytwist instance with Odyssey data:
+* Ensure that the right server location is specified in the `.env` file (can copy from .env.default)
+* Ensure that server has authentication __disabled__
+* Ensure that you are able to access the gsheet with the ecoverse details
+* Ensure that you are authenticated and have stored the access token gsheet access locally in the file specified in the code
+* Execute `npm run sample_data`
+* Execute `npm run populate-avatars`
+
+Note: the population of the users connects to a particular gsheet api; a token is required to access this file via the api. Details available at: https://developers.google.com/sheets/api/quickstart/nodejs
+
+
+
+
   
 
 
