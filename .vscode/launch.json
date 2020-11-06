@@ -27,6 +27,18 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
+        },
+        {
+            "name": "Opportunity",
+            "request": "launch",
+            "runtimeArgs": [
+                "run", "sample-opportunity"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }

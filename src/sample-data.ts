@@ -1,7 +1,7 @@
 import { EcoversePopulator } from "./util/EcoversePopulator";
 import { GSheetsConnector } from "./util/GSheetsConnector";
-import { EcoverseUsersPopulator } from "./util/UserPopulator";
 import { gql } from "graphql-request";
+import { EcoverseUsersPopulator } from "./util/UserPopulator";
 
 const CRED_PATH = "secret/credentials-cherrytwist.json";
 const TOKEN_PATH = "secret/token.json";
