@@ -34,6 +34,10 @@ export class EcoversePopulator {
   addTagToTagsetFile = "./src/queries/add-tag-to-tagset";
   createReferenceOnProfileFile = "./src/queries/create-reference-on-profile";
   createUserMutationFile = "./src/queries/create-user";
+  createOpportunityMutationFile = "./src/queries/create/create-opportunity";
+  createActorGroupMutationFile = "./src/queries/create/create-actor-group";
+  createActorMutationFile = "./src/queries/create/create-actor";
+  createAspectMutationFile = "./src/queries/create/create-aspect";
   replaceTagsOnTagsetFile = "./src/queries/replace-tags-on-tagset";
   updateEcoverseMutationFile = "./src/queries/update-ecoverse";
   updateOrganisationMutationFile = "./src/queries/update-organisation";
@@ -49,6 +53,10 @@ export class EcoversePopulator {
   addUserToChallengeMutationStr: string;
   createTagsetOnProfileMutationStr: string;
   createReferenceOnProfileMutationStr: string;
+  createOpportunityMutationStr: string;
+  createActorGroupMutationStr: string;
+  createActorMutationStr: string;
+  createAspectMutationStr: string;
   replaceTagsOnTagsetMutationStr: string;
   userQueryStr: string;
   updateProfileStr: string;
@@ -139,6 +147,22 @@ export class EcoversePopulator {
 
     this.createChallengeMutationStr = fs
       .readFileSync(this.createChallengeMutationFile)
+      .toString();
+
+    this.createOpportunityMutationStr = fs
+      .readFileSync(this.createOpportunityMutationFile)
+      .toString();
+
+    this.createActorGroupMutationStr = fs
+      .readFileSync(this.createActorGroupMutationFile)
+      .toString();
+
+    this.createActorMutationStr = fs
+      .readFileSync(this.createActorMutationFile)
+      .toString();
+
+    this.createAspectMutationStr = fs
+      .readFileSync(this.createAspectMutationFile)
       .toString();
   }
 
@@ -396,6 +420,114 @@ export class EcoversePopulator {
     );
     this.logger.info(`...........and added the "${tagName}" tag`);
     return true;
+  }
+
+  // Create a gouup at the ecoverse level with the given name
+  async createOpportuntiy(
+    challengeID: number,
+    opportunityName: string,
+    opportunityTextID: string
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const createOpportunityVariable = gql`
+                  {
+                    "challengeID": ${challengeID},
+                    "opportunityData":
+                    {
+                        "name": "${opportunityName}",
+                        "textID": "${opportunityTextID}"
+                    }
+          }`;
+
+    const createOpportunityResponse = await this.client.request(
+      this.createOpportunityMutationStr,
+      createOpportunityVariable
+    );
+    this.logger.info(
+      `...........and added the following opportunity: ${opportunityName}`
+    );
+    return createOpportunityResponse;
+  }
+
+  // Create a actorgroup for the given opportunity
+  async createActorGroup(
+    opportunityID: number,
+    actorGroupName: string,
+    description: string
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const createActorGroupVariable = gql`
+                  {
+                    "opportunityID": ${opportunityID},
+                    "actorGroupData":
+                    {
+                        "name": "${actorGroupName}",
+                        "description": "${description}"
+                    }
+          }`;
+
+    const createActorGroupResponse = await this.client.request(
+      this.createActorGroupMutationStr,
+      createActorGroupVariable
+    );
+    this.logger.info(
+      `...........and added the following actor group: ${actorGroupName}`
+    );
+    return createActorGroupResponse;
+  }
+
+  // Create a actorgroup for the given opportunity
+  async createActor(
+    actorGroupID: number,
+    actorName: string,
+    description: string
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const createActorVariable = gql`
+                  {
+                    "actorGroupID": ${actorGroupID},
+                    "actorData":
+                    {
+                        "name": "${actorName}",
+                        "description": "${description}",
+                        "value": "Ensuring a robust design",
+                        "impact": "Time allocated to work on the solution"
+                    }
+          }`;
+
+    const createActorResponse = await this.client.request(
+      this.createActorMutationStr,
+      createActorVariable
+    );
+    this.logger.info(`...........and added the following actor : ${actorName}`);
+    return createActorResponse;
+  }
+
+  // Create a aspect for the given opportunity
+  async createAspect(
+    opportunityID: number,
+    title: string,
+    framing: string,
+    explanation: string
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const createAspectVariable = gql`
+                  {
+                    "opportunityID": ${opportunityID},
+                    "aspectData":
+                    {
+                      "title": "${title}",
+                      "framing": "${framing}",
+                      "explanation": "${explanation}"                    
+                    }
+          }`;
+
+    const createAspectResponse = await this.client.request(
+      this.createAspectMutationStr,
+      createAspectVariable
+    );
+    this.logger.info(`...........and added the following aspect : ${title}`);
+    return createAspectResponse;
   }
 
   // Create a gouup at the ecoverse level with the given name

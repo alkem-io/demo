@@ -4,7 +4,8 @@
   "description": "Demo of setting up and populating a Cherrytwist Ecoverse",
   "main": "src/submit-sample-data.js",
   "scripts": {
-    "sample-data": "ts-node-dev  src/submit-sample-data.ts",
+    "sample-data": "ts-node-dev  src/sample-data.ts",
+    "sample-opportunity": "ts-node-dev  src/sample-opportunity.ts",
     "populate-avatars": "ts-node-dev  src/populate-avatars.ts"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",
     "googleapis": "^64.0.0",
+    "jsonpath": "^1.0.2",
     "typescript": "^4.0.2",
     "winston": "^3.3.3"
   }
