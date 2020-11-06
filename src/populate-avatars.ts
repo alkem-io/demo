@@ -1,4 +1,4 @@
-import { EcoversePopulator } from "./EcoversePopulator";
+import { EcoversePopulator } from "./util/EcoversePopulator";
 import { gql } from "graphql-request";
 
 const main = async () => {
