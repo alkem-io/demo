@@ -53,7 +53,7 @@ Navigate to the [Data Management page](http://localhost:4000/data-management) an
 ### Full Sample Data
 This involves running a set of functionality inside this repository, so the development environment will need to be setup properly and then data loading scripts can be run.
 
-#### Development Environment setup
+#### **Development Environment setup**
 The commands to setup for running the data loading scripts are:
 * npm install -SD ts-node-dev
 * npm install

@@ -5,6 +5,7 @@ import { EcoverseUsersPopulator } from "./util/UserPopulator";
 
 const CRED_PATH = "secrets/credentials.json";
 const TOKEN_PATH = "secrets/token.json";
+// This is the unique identifier for the google sheet from which data is loaded.
 const TEAMS_GSHEET = "1pXofg_2KauXSDmA2iDqZJipblJUfpMXC_N5KtruZqwM";
 
 const main = async () => {
