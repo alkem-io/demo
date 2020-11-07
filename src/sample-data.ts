@@ -3,16 +3,18 @@ import { GSheetsConnector } from "./util/GSheetsConnector";
 import { gql } from "graphql-request";
 import { EcoverseUsersPopulator } from "./util/UserPopulator";
 
-const CRED_PATH = "secret/credentials-cherrytwist.json";
-const TOKEN_PATH = "secret/token.json";
+const CRED_PATH = "secrets/credentials.json";
+const TOKEN_PATH = "secrets/token.json";
 const TEAMS_GSHEET = "1pXofg_2KauXSDmA2iDqZJipblJUfpMXC_N5KtruZqwM";
 
 const main = async () => {
   require("dotenv").config();
 
   ////////// First connect to the ecoverse //////////////////
-  const endPoint = process.env.CT_SERVER;
-  if (!endPoint) throw new Error("CT_SERVER enironment variable not set");
+  let endPoint = process.env.CT_SERVER;
+  if (!endPoint) {
+    endPoint = 'http://localhost:4000/graphql';
+  }
 
   const populator = new EcoversePopulator(endPoint);
   // Get an authorisation token
@@ -43,8 +45,8 @@ const main = async () => {
   await populator.updateHostOrganisation(hostOrgVariable);
   await createGroups(populator);
 
-  const userVariablesDir = "./src/data/users";
-  await populator.createUsers(userVariablesDir);
+  //const userVariablesDir = "./src/data/users";
+  //await populator.createUsers(userVariablesDir);
 
   //const challengesVariablesDir = "./src/data/challenges";
   //await populator.createChallenges(challengesVariablesDir);
@@ -166,7 +168,7 @@ async function loadChallengesFromSheet(
         createChallengeVariable
       );
     } catch (e) {
-      throw e;
+      populator.logger.error(`Unable to load challenge (${challengeName}): ${e.message}`);
     }
   }
 }
