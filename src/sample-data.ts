@@ -179,12 +179,9 @@ async function createGroups(populator: EcoversePopulator) {
   const groups = [
     "Team Leads",
     "Team Members",
-    "Jedis - Partner",
-    "Jedis - Freelance",
-    "Delegates",
-    "Delegate Leads",
-    "Track Mayors",
-    "Crew",
+    "Jedis",
+    "Jedis",
+    "Stakeholders",
     "Challenge Leads",
   ];
   populator.logger.info(
