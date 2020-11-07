@@ -180,7 +180,6 @@ async function createGroups(populator: EcoversePopulator) {
     "Team Leads",
     "Team Members",
     "Jedis",
-    "Jedis",
     "Stakeholders",
     "Challenge Leads",
   ];
