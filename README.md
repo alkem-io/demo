@@ -1,5 +1,5 @@
 # Demo 
-A simple demo to create a running instance of Cherrytwist server, populate it with some data and connect to it from a web client. 
+This repository helps get a simple demonstrator instance of Cherrytwist running and populated. 
 
 The core pieces of the demo are:
 - **Server**: The core Cherrytwist server that maintains the Ecoverse, and that exposes a GraphQL based api
@@ -13,7 +13,7 @@ The user can then intereact in two ways with the demo:
 
 ![ComponentDiagram](./design/ComponentDiagram.png)
 
-## Setup instructions
+## Software Setup
 
 Prerequisites: 
 - Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
@@ -29,36 +29,53 @@ Now both client and server are exposed locally and can be accessed, e.g. through
 - server: http://localhost:4000/graphql
 - client: http://localhost
 
->> Note: the demo does not use tls
+>> Note: the demo has authentication __disabled__ and it also does not use tls.
 
-It is also possible to revert the server back to a default empty ecoverse using `
+It is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
 
 Bonus: the docker-compose scripts also installs Portainer, which can be accessed from http://localhost:9000 to check the status of the demo.
 - first install: 
   - choose password
   - choose local endpoint
 
-  ## Alternative loading of sample data
-  It is also possible to use the [Data Management page](http://localhost:4000/data-management) of the server to both load sample data and to reset the ecoverse to an empty state - please see the [Server readme](http://github.com/cherrytwist/Server) for more details on this.
+At this point you hopefully will have a running empty ecoverse! To verify the different components:
+* server: please go to the [server](http://localhost:4000/graphql) and execute a simple query: ```query { name }```
+* client: just browing to the localhost location is sufficient.
 
-## Ecoverse
-For populating the instance of CherryTwist for the Odyssey ecosystem.
+## Data Setup 
+Now that the software is installed and running via Docker, the next step is to populate the Ecoverse with some sample data. For this there are two options provided:
+* Basic: a few entities and some meta data
+* Full: that populates the ecoverse with a set of challenges, a few hundred sample users etc. 
 
-## Setup instructions for local usage
-The following commands are used to setup this project:
+### Basic Sample Data 
+Navigate to the [Data Management page](http://localhost:4000/data-management) and clieck on the "Sample data" button. 
+
+### Full Sample Data
+This involves running a set of functionality inside this repository, so the development environment will need to be setup properly and then data loading scripts can be run.
+
+#### Development Environment setup
+The commands to setup for running the data loading scripts are:
 * npm install -SD ts-node-dev
 * npm install
 
-## Poplating Odyssey data
-To populate a cherrytwist instance with Odyssey data:
-* Ensure that the right server location is specified in the `.env` file (can copy from .env.default)
-* Ensure that server has authentication __disabled__
-* Ensure that you are able to access the gsheet with the ecoverse details
-* Ensure that you are authenticated and have stored the access token gsheet access locally in the file specified in the code
+#### **Poplating Sample data**
+The data that we will be loading into the ecoverse is from both files within this repository and a [GoogleSheet file that is publicly available](https://docs.google.com/spreadsheets/d/1bDPcVCyl0IDq1kAEPDB1Vs6dYdhWcm5Rlg2NUVueaWg/). 
+
+Checks steps before starting:
+* Ensure that the server is available. If you have moved it from the default location then you can make a copy of `.env.default` to creat a `.env` file and specify the location there.
+* Ensure that you are able to [access the gsheet](https://docs.google.com/spreadsheets/d/1bDPcVCyl0IDq1kAEPDB1Vs6dYdhWcm5Rlg2NUVueaWg/) with the ecoverse details
+
+The next step is to be able to authenticate via an api to the Google Sheet. The instructions to do this are specified in the following article: [https://developers.google.com/sheets/api/quickstart/nodejs](https://developers.google.com/sheets/api/quickstart/nodejs). Key steps are:
+* Select the application type 'desktop'
+* Save the created file into the "secrets" folder with the default name i.e. `credentials.json`
+* Run a script to access the google api. The first time you will be prompted to verify your identity. This gives a warning which can be ignored. Please follow the instructions. All going well you should have a second file called `token.json` that is then to be stored inside the `secrets` folder. The script will abort with an error this one time - that is ok.
+* Please verify that you now have two files inside your `secrets` folder: `credentials.json` and `token.json`.
+
+Finally you should now be in a position to run the data population!
 * Execute `npm run sample_data`
 * Execute `npm run populate-avatars`
 
-Note: the population of the users connects to a particular gsheet api; a token is required to access this file via the api. Details available at: https://developers.google.com/sheets/api/quickstart/nodejs
+Now you can navigate the web client and see a sample populated Ecoverse - enjoy!
 
 
 
