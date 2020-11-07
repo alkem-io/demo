@@ -123,13 +123,12 @@ export class EcoverseUsersPopulator {
         this.profiler.profile("userReference");
 
         // Add the user to the challenge user group if applicable
-        this.profiler.profile("userChallenge");
         const challengeName = userRow[Columns.CHALLENGE];
-        await this.populator.addUserToChallenge(
-          challengeName,
-          userID
-        );
-        this.profiler.profile("userChallenge");
+        if (challengeName) {
+          this.profiler.profile("userChallenge");
+          await this.populator.addUserToChallenge(challengeName, userID);
+          this.profiler.profile("userChallenge");
+        }
 
         // TODO - populate the bio
 
@@ -197,7 +196,11 @@ export class EcoverseUsersPopulator {
         }
 
         // update the avatar + bio
-        await this.populator.updateProfile(userRow[Columns.EMAIL], userRow[Columns.BIO], userRow[Columns.PORTRAIT])
+        await this.populator.updateProfile(
+          userRow[Columns.EMAIL],
+          userRow[Columns.BIO],
+          userRow[Columns.PORTRAIT]
+        );
 
         // Add in the tagsets
         await this.populator.addTagset(
@@ -248,8 +251,6 @@ export class EcoverseUsersPopulator {
     }
     this.logger.info(`Iterated over ${count} user entries`);
   }
-
-
 
   async addUserToRole(
     groupName: string,
