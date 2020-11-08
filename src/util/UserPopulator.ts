@@ -22,7 +22,7 @@ enum Columns {
   KEYWORDS = "KEYWORDS",
   TEAM = "TEAM",
   CHALLENGE = "CHALLENGE",
-  PORTRAIT = "PORTRAIT",
+  AVATAR = "AVATAR",
 }
 
 enum Tagsets {
@@ -130,8 +130,6 @@ export class EcoverseUsersPopulator {
           this.profiler.profile("userChallenge");
         }
 
-        // TODO - populate the bio
-
         // Add the user to the Teams Captains group if applicable
         const role = userRow[Columns.ROLE];
         if (role === "Team members") {
@@ -199,7 +197,7 @@ export class EcoverseUsersPopulator {
         await this.populator.updateProfile(
           userRow[Columns.EMAIL],
           userRow[Columns.BIO],
-          userRow[Columns.PORTRAIT]
+          userRow[Columns.AVATAR]
         );
 
         // Add in the tagsets
