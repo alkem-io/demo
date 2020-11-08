@@ -53,17 +53,17 @@ Navigate to the [Data Management page](http://localhost:4000/data-management) an
 ### Full Sample Data
 This involves running a set of functionality inside this repository, so the development environment will need to be setup properly and then data loading scripts can be run.
 
-#### Development Environment setup
+#### **Development Environment setup**
 The commands to setup for running the data loading scripts are:
 * npm install -SD ts-node-dev
 * npm install
 
 #### **Poplating Sample data**
-The data that we will be loading into the ecoverse is from both files within this repository and a [GoogleSheet file that is publicly available](https://docs.google.com/spreadsheets/d/1bDPcVCyl0IDq1kAEPDB1Vs6dYdhWcm5Rlg2NUVueaWg/). 
+The data that we will be loading into the ecoverse is from both files within this repository and a [GoogleSheet file that is publicly available](https://docs.google.com/spreadsheets/d/1pXofg_2KauXSDmA2iDqZJipblJUfpMXC_N5KtruZqwM/). 
 
 Checks steps before starting:
 * Ensure that the server is available. If you have moved it from the default location then you can make a copy of `.env.default` to creat a `.env` file and specify the location there.
-* Ensure that you are able to [access the gsheet](https://docs.google.com/spreadsheets/d/1bDPcVCyl0IDq1kAEPDB1Vs6dYdhWcm5Rlg2NUVueaWg/) with the ecoverse details
+* Ensure that you are able to [access the gsheet](https://docs.google.com/spreadsheets/d/1pXofg_2KauXSDmA2iDqZJipblJUfpMXC_N5KtruZqwM/) with the ecoverse details
 
 The next step is to be able to authenticate via an api to the Google Sheet. The instructions to do this are specified in the following article: [https://developers.google.com/sheets/api/quickstart/nodejs](https://developers.google.com/sheets/api/quickstart/nodejs). Key steps are:
 * Select the application type 'desktop'
