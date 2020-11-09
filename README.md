@@ -72,7 +72,7 @@ The next step is to be able to authenticate via an api to the Google Sheet. The 
 * Please verify that you now have two files inside your `secrets` folder: `credentials.json` and `token.json`.
 
 Finally you should now be in a position to run the data population!
-* Execute `npm run sample_data`
+* Execute `npm run sample-data`
 * Execute `npm run populate-avatars`
 
 Now you can navigate the web client and see a sample populated Ecoverse - enjoy!
