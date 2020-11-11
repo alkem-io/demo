@@ -33,6 +33,7 @@ export class EcoversePopulator {
   createOrganisationMutationFile = "./src/queries/create/create-organisation";
   createTagsetOnProfileFile = "./src/queries/create-tagset-on-profile";
   addTagToTagsetFile = "./src/queries/add-tag-to-tagset";
+  addChallengeLeadFile = "./src/queries/add-challenge-lead";
   createReferenceOnProfileFile = "./src/queries/create-reference-on-profile";
   createUserMutationFile = "./src/queries/create/create-user";
   createOpportunityMutationFile = "./src/queries/create/create-opportunity";
@@ -52,12 +53,14 @@ export class EcoversePopulator {
   addUserToGroupMutationStr: string;
   addTagToTagsetMutationStr: string;
   addUserToChallengeMutationStr: string;
+  addChallengeLeadMutationStr: string;
   createTagsetOnProfileMutationStr: string;
   createReferenceOnProfileMutationStr: string;
   createOpportunityMutationStr: string;
   createActorGroupMutationStr: string;
   createActorMutationStr: string;
   createAspectMutationStr: string;
+  createOrganisationMutationStr: string;
   createRelationMutationStr: string;
   replaceTagsOnTagsetMutationStr: string;
   userQueryStr: string;
@@ -167,7 +170,15 @@ export class EcoversePopulator {
       .readFileSync(this.createAspectMutationFile)
       .toString();
 
-      this.createRelationMutationStr = fs
+    this.createOrganisationMutationStr = fs
+      .readFileSync(this.createOrganisationMutationFile)
+      .toString();
+
+    this.addChallengeLeadMutationStr = fs
+      .readFileSync(this.addChallengeLeadFile)      
+      .toString();
+
+    this.createRelationMutationStr = fs
       .readFileSync(this.createRelationMutationFile)
       .toString();
   }
@@ -218,7 +229,7 @@ export class EcoversePopulator {
     return true;
   }
 
-  async updateProfile(
+  async updateUserProfile(
     userEmail: string,
     description: string,
     avatarURI: string
@@ -240,6 +251,16 @@ export class EcoversePopulator {
       this.logger.warn(`Unable to locate user: ${userEmail}`);
       return false;
     }
+    await this.updateProfile(profileID, description, avatarURI);
+    return true;
+  }
+
+  async updateProfile(
+    profileID: string,
+    description: string,
+    avatarURI: string
+  ): Promise<Boolean> {
+    let profileDesc = "";
     try {
       // hacky: if an empty string is passed in then do not update the description field
       let descToUse = description;
@@ -263,7 +284,7 @@ export class EcoversePopulator {
       return true;
     } catch (e) {
       this.logger.warn(
-        `Unable to update profile for user: ${userEmail} - ${e}`
+        `Unable to update profile: ${profileID} - ${e}`
       );
       return false;
     }
@@ -272,18 +293,13 @@ export class EcoversePopulator {
   async addTagset(
     tagsStr: string,
     tagsetName: string,
-    userProfileID: string
+    profileID: string
   ): Promise<Boolean> {
     if (tagsStr) {
-      var tagsArr = tagsStr.split(",");
-      if (tagsArr.length == 0) {
-        // Empty set of tags, just return
-        return true;
-      }
       // Add the skills tagset
       const createTagsetVariable = gql`
                   {
-                      "profileID": ${userProfileID},
+                      "profileID": ${profileID},
                       "tagsetName": "${tagsetName}"
                   } `;
       const tagsetResponse = await this.client.request(
@@ -293,7 +309,7 @@ export class EcoversePopulator {
       this.logger.info(`....created ${tagsetName} tagset`);
 
       // Now set the tags
-      const tagsJSON = JSON.stringify(tagsArr);
+      const tagsJSON = this.convertCsvToJson(tagsStr);
       const tagsetID = tagsetResponse.createTagsetOnProfile.id;
       const replaceTagsVariable = gql`
                   {
@@ -308,6 +324,12 @@ export class EcoversePopulator {
       this.logger.info(`...........added the following tags: ${tagsStr}`);
     }
     return true;
+  }
+
+  convertCsvToJson(tagsCsv: string): string {
+    var tagsArr = tagsCsv.split(",");
+    const tagsJSON = JSON.stringify(tagsArr);
+    return tagsJSON;
   }
 
   async addUserToGroup(userID: string, groupID: string): Promise<Boolean> {
@@ -348,33 +370,30 @@ export class EcoversePopulator {
     return true;
   }
 
-  async addUserToChallenge(
-    challengeName: string,
-    userID: string
-  ): Promise<Boolean> {
-    let challengeInfoMatch: ChallengeInfo = new ChallengeInfo("");
+  lookupChallengeID(challengeName: string): ChallengeInfo | undefined {
     const challengeNameLC = challengeName.toLowerCase();
 
-    let index = -1;
-    for (const challengeInfo of this.challengesInfoArray) {
-      const name = challengeInfo.name.toLowerCase();
-      if (challengeNameLC === name) {
-        // found the match
-        challengeInfoMatch = challengeInfo;
-        break;
-      }
-    }
-    if (challengeInfoMatch.name === "") {
+    const challengeInfo = this.challengesInfoArray.find(challenge => challenge.name.toLowerCase() === challengeName.toLowerCase());
+    if (!challengeInfo) {
       // No match found
       this.logger.error(
         `Not able to identify specified challenge: ${challengeName}`
       );
-      return false;
+      return;
     }
+    return challengeInfo;
+  }
+
+  async addUserToChallenge(
+    challengeName: string,
+    userID: string
+  ): Promise<Boolean> {
+    const challengeInfo = this.lookupChallengeID(challengeName);
+    if (!challengeInfo) return false;
     const addUserToChallengeVariable = gql`
               {
                 "userID": ${userID},
-                "challengeID": ${challengeInfoMatch.challengeID}      
+                "challengeID": ${challengeInfo.challengeID}      
               }`;
 
     const groupResponse = await this.client.request(
@@ -384,6 +403,30 @@ export class EcoversePopulator {
 
     if (groupResponse) {
       this.logger.info(`....added user to challenge: ${challengeName}`);
+    }
+
+    return true;
+  }
+
+  async addChallengeLead(
+    challengeName: string,
+    organisationID: string
+  ): Promise<Boolean> {
+    const challengeInfo = this.lookupChallengeID(challengeName);
+    if (!challengeInfo) return false;
+    const variable = gql`
+              {
+                "organisationID": ${organisationID},
+                "challengeID": ${challengeInfo.challengeID}                     
+              }`;
+
+    const challengeResponse = await this.client.request(
+      this.addChallengeLeadMutationStr,
+      variable
+    );
+
+    if (challengeResponse) {
+      this.logger.info(`....added lead to challenge: ${challengeName}`);
     }
 
     return true;

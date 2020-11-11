@@ -194,7 +194,7 @@ export class EcoverseUsersPopulator {
         }
 
         // update the avatar + bio
-        await this.populator.updateProfile(
+        await this.populator.updateUserProfile(
           userRow[Columns.EMAIL],
           userRow[Columns.BIO],
           userRow[Columns.AVATAR]
