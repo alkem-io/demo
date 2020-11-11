@@ -40,22 +40,22 @@ const main = async () => {
   }
 
   // Update the context and set the host
-  //const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse.json";
-  //await populator.updateEcoverseContext(ecoverseContextVariable);
-  //const hostOrgVariable = "./src/data/cherrytwist-host.json";
-  //await populator.updateHostOrganisation(hostOrgVariable);
-  //await createGroups(populator);
+  const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse.json";
+  await populator.updateEcoverseContext(ecoverseContextVariable);
+  const hostOrgVariable = "./src/data/cherrytwist-host.json";
+  await populator.updateHostOrganisation(hostOrgVariable);
+  await createGroups(populator);
 
-  //await loadChallengesFromSheet("Challenges", gsheetConnector, populator);
-  //await loadTeamsFromSheet("Teams", gsheetConnector, populator);
-  //await createGroups(populator);
+  await loadChallengesFromSheet("Challenges", gsheetConnector, populator);
+  await loadTeamsFromSheet("Teams", gsheetConnector, populator);
+  await createGroups(populator);
 
   
   // Assume teams + challenges are available so load them in
   await populator.initialiseEcoverseData();
 
   // Load in the users
-  //await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
+  await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
   await loadOrganisationsFromSheet("Organisations", gsheetConnector, populator);
 
 };

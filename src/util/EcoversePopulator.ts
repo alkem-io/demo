@@ -28,13 +28,14 @@ export class EcoversePopulator {
   addUserToGroupMutationFile = "./src/queries/add-user-to-group";
   addUserToChallengeMutationFile = "./src/queries/add-user-to-challenge";
   createGroupOnEcoverseMutationFile = "./src/queries/create-group-on-ecoverse";
-  createChallengeMutationFile = "./src/queries/create-challenge";
+  createChallengeMutationFile = "./src/queries/create/create-challenge";
+  createRelationMutationFile = "./src/queries/create/create-relation";
   createOrganisationMutationFile = "./src/queries/create/create-organisation";
   createTagsetOnProfileFile = "./src/queries/create-tagset-on-profile";
   addTagToTagsetFile = "./src/queries/add-tag-to-tagset";
   addChallengeLeadFile = "./src/queries/add-challenge-lead";
   createReferenceOnProfileFile = "./src/queries/create-reference-on-profile";
-  createUserMutationFile = "./src/queries/create-user";
+  createUserMutationFile = "./src/queries/create/create-user";
   createOpportunityMutationFile = "./src/queries/create/create-opportunity";
   createActorGroupMutationFile = "./src/queries/create/create-actor-group";
   createActorMutationFile = "./src/queries/create/create-actor";
@@ -60,6 +61,7 @@ export class EcoversePopulator {
   createActorMutationStr: string;
   createAspectMutationStr: string;
   createOrganisationMutationStr: string;
+  createRelationMutationStr: string;
   replaceTagsOnTagsetMutationStr: string;
   userQueryStr: string;
   updateProfileStr: string;
@@ -172,8 +174,12 @@ export class EcoversePopulator {
       .readFileSync(this.createOrganisationMutationFile)
       .toString();
 
-      this.addChallengeLeadMutationStr = fs
-      .readFileSync(this.addChallengeLeadFile)
+    this.addChallengeLeadMutationStr = fs
+      .readFileSync(this.addChallengeLeadFile)      
+      .toString();
+
+    this.createRelationMutationStr = fs
+      .readFileSync(this.createRelationMutationFile)
       .toString();
   }
 
@@ -490,6 +496,39 @@ export class EcoversePopulator {
       `...........and added the following opportunity: ${opportunityName}`
     );
     return createOpportunityResponse;
+  }
+
+  // Create a relation for the given opportunity
+  async createRelation(
+    opportunityID: number,
+    type: string,
+    description: string,
+    actorRole: string,
+    actorType: string,
+    actorName: string
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const createRelationVariable = gql`
+                  {
+                    "opportunityID": ${opportunityID},
+                    "relationData":
+                      {
+                        "type": "${type}",
+                        "description": "${description}",
+                        "actorName": "${actorName}",
+                        "actorType": "${actorType}",
+                        "actorRole": "${actorRole}"
+                      }
+          }`;
+
+    const createRelationResponse = await this.client.request(
+      this.createRelationMutationStr,
+      createRelationVariable
+    );
+    this.logger.info(
+      `...........and added the following relation: ${type} - ${actorName}`
+    );
+    return createRelationResponse;
   }
 
   // Create a actorgroup for the given opportunity
