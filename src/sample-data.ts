@@ -2,6 +2,7 @@ import { EcoversePopulator } from "./util/EcoversePopulator";
 import { GSheetsConnector } from "./util/GSheetsConnector";
 import { gql } from "graphql-request";
 import { EcoverseUsersPopulator } from "./util/UserPopulator";
+import fs from "fs";
 
 const CRED_PATH = "secrets/credentials.json";
 const TOKEN_PATH = "secrets/token.json";
@@ -55,8 +56,12 @@ const main = async () => {
   await populator.initialiseEcoverseData();
 
   // Load in the users
-  await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
   await loadOrganisationsFromSheet("Organisations", gsheetConnector, populator);
+  await loadOpportunity(populator);
+
+  // users as last...
+  await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
+  
 
 };
 
@@ -102,6 +107,14 @@ async function loadTeamsFromSheet(
       throw e;
     }
   }
+}
+
+async function loadOpportunity(populator: EcoversePopulator) {
+  const opportunityJsonFile = "./src/data/opportunities/earth-gas-for-bio.json";
+  const opportunityJsonStr = fs.readFileSync(opportunityJsonFile).toString();
+  const opportunityJson = JSON.parse(opportunityJsonStr);
+
+  await populator.createOpportunity(4, opportunityJson);
 }
 
 // Load users from a particular googlesheet

@@ -175,7 +175,7 @@ export class EcoversePopulator {
       .toString();
 
     this.addChallengeLeadMutationStr = fs
-      .readFileSync(this.addChallengeLeadFile)      
+      .readFileSync(this.addChallengeLeadFile)
       .toString();
 
     this.createRelationMutationStr = fs
@@ -199,6 +199,144 @@ export class EcoversePopulator {
       throw new Error("Unable to connect, aborting...");
     }
     return true;
+  }
+
+  async createOpportunity(challengeID: number, opportunityJson: any) {
+    // create the variable for the group mutation
+    const createOpportunityVariable = gql`
+                  {
+                    "challengeID": ${challengeID},
+                    "opportunityData":
+                    {
+                        "name": "${opportunityJson.name}",
+                        "textID": "${opportunityJson.textID}",
+                        "context": {
+                          "background": "${opportunityJson.problem}",
+                          "vision": "${opportunityJson.pilot_goal}",
+                          "tagline": "${opportunityJson.spotlight}",
+                          "who": "${opportunityJson.polaris.un_sdg}",
+                          "impact": "${opportunityJson.polaris.long_term_vision}",
+                          "references": [
+                            {
+                              "name": "github",
+                              "uri": "${opportunityJson.urls.github}",
+                              "description": "make it buildable"
+                            },
+                            {
+                              "name": "demo",
+                              "uri": "${opportunityJson.urls.demo}",
+                              "description": "make it understandable"
+                            },
+                            {
+                              "name": "poster",
+                              "uri": "${opportunityJson.images.poster}",
+                              "description": "make it visual"
+                            },
+                            {
+                              "name": "meme",
+                              "uri": "${opportunityJson.images.meme}",
+                              "description": "make it resonate"
+                            }
+                          ]
+                        }
+                    }
+          }`;
+
+    const response = await this.client.request(
+      this.createOpportunityMutationStr,
+      createOpportunityVariable
+    );
+    this.logger.verbose(
+      `Created opportunity with name: ${response.createOpportunityOnChallenge.name}`
+    );
+    const opportunityID = response.createOpportunityOnChallenge.id;
+
+    // Create actor groups
+    const stakeholderAG = await this.createActorGroup(
+      opportunityID,
+      "stakeholders",
+      "test"
+    );
+    const stakeholders = opportunityJson.stakeholders;
+    for (let i = 0; i < stakeholders.length; i++) {
+      const stakeholder = stakeholders[i];
+      const stakeholderResponse = await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        stakeholder.name,
+        stakeholder.wins_how
+      );
+      this.logger.verbose(`${stakeholderResponse}`);
+    }
+    const keyUsersAG = await this.createActorGroup(
+      opportunityID,
+      "key_users",
+      "test"
+    );
+    const keyUsers = opportunityJson.key_users;
+    for (let i = 0; i < keyUsers.length; i++) {
+      const keyUser = keyUsers[i];
+      const keyUserResponse = await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        keyUser.name,
+        keyUser.wins_how
+      );
+      this.logger.verbose(`${keyUserResponse}`);
+    }
+    const collaboratorsAG = await this.createActorGroup(
+      opportunityID,
+      "collaborations",
+      "test"
+    );
+
+    // Create the aspects
+    const solutionDetails = opportunityJson.solution_details;
+
+    var jp = require("jsonpath");
+    var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
+    var solutions = solutionsRoot[0];
+    const solutionAspectNames = Object.keys(solutions);
+    for (let i = 0; i < solutionAspectNames.length; i++) {
+      const name = solutionAspectNames[i];
+      var solution = solutions[name];
+      const aspectResponse = await this.createAspect(
+        opportunityID,
+        name,
+        solution.question,
+        solution.explanation
+      );
+      this.logger.verbose(`${aspectResponse.createAspect.title}`);
+    }
+
+    // Create the collaborations
+    const outgoingRelations = opportunityJson.collaborations.outgoing;
+    for (let i = 0; i < outgoingRelations.length; i++) {
+      const relation = outgoingRelations[i];
+      const response = await this.createRelation(
+        opportunityID,
+        "outgoing",
+        relation.reason,
+        "peer",
+        "group",
+        relation.team_name
+      );
+    }
+
+    const incomingRelations = opportunityJson.collaborations.incoming;
+    for (let i = 0; i < incomingRelations.length; i++) {
+      const relation = incomingRelations[i];
+      const response = await this.createRelation(
+        opportunityID,
+        "incoming",
+        relation.reason,
+        relation.role,
+        relation.organization,
+        relation.name
+      );
+    }
+
+    this.logger.verbose(
+      `Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
+    );
   }
 
   async addReference(
@@ -283,9 +421,7 @@ export class EcoversePopulator {
 
       return true;
     } catch (e) {
-      this.logger.warn(
-        `Unable to update profile: ${profileID} - ${e}`
-      );
+      this.logger.warn(`Unable to update profile: ${profileID} - ${e}`);
       return false;
     }
   }
@@ -373,7 +509,10 @@ export class EcoversePopulator {
   lookupChallengeID(challengeName: string): ChallengeInfo | undefined {
     const challengeNameLC = challengeName.toLowerCase();
 
-    const challengeInfo = this.challengesInfoArray.find(challenge => challenge.name.toLowerCase() === challengeName.toLowerCase());
+    const challengeInfo = this.challengesInfoArray.find(
+      (challenge) =>
+        challenge.name.toLowerCase() === challengeName.toLowerCase()
+    );
     if (!challengeInfo) {
       // No match found
       this.logger.error(
@@ -469,33 +608,6 @@ export class EcoversePopulator {
     );
     this.logger.info(`...........and added the "${tagName}" tag`);
     return true;
-  }
-
-  // Create a gouup at the ecoverse level with the given name
-  async createOpportuntiy(
-    challengeID: number,
-    opportunityName: string,
-    opportunityTextID: string
-  ): Promise<any> {
-    // create the variable for the group mutation
-    const createOpportunityVariable = gql`
-                  {
-                    "challengeID": ${challengeID},
-                    "opportunityData":
-                    {
-                        "name": "${opportunityName}",
-                        "textID": "${opportunityTextID}"
-                    }
-          }`;
-
-    const createOpportunityResponse = await this.client.request(
-      this.createOpportunityMutationStr,
-      createOpportunityVariable
-    );
-    this.logger.info(
-      `...........and added the following opportunity: ${opportunityName}`
-    );
-    return createOpportunityResponse;
   }
 
   // Create a relation for the given opportunity
