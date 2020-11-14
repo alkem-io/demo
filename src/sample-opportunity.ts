@@ -14,13 +14,14 @@ const main = async () => {
   const populator = new EcoversePopulator(endPoint);
   // Get an authorisation token
   populator.logger.info(`Cherrytwist server: ${endPoint}`);
+  populator.loadAdminToken();
 
   // Update the context and set the host
   const opportunityJsonFile = "./src/data/opportunities/earth-gas-for-bio.json";
   const opportunityJsonStr = fs.readFileSync(opportunityJsonFile).toString();
   const opportunityJson = JSON.parse(opportunityJsonStr);
 
-  await populator.createOpportunity(3, opportunityJson);
+  await populator.createOpportunity(1, opportunityJson);
 
 };
 
