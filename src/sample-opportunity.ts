@@ -1,19 +1,13 @@
 import { EcoversePopulator } from "./util/EcoversePopulator";
-import { GSheetsConnector } from "./util/GSheetsConnector";
-import { EcoverseUsersPopulator } from "./util/UserPopulator";
-import { gql } from "graphql-request";
 import fs from "fs";
+import { EnvironmentFactory } from "./util/EnvironmentFactory";
 
 const main = async () => {
-  require("dotenv").config();
-
-  ////////// First connect to the ecoverse //////////////////
-  const endPoint = process.env.CT_SERVER;
-  if (!endPoint) throw new Error("CT_SERVER enironment variable not set");
-
-  const populator = new EcoversePopulator(endPoint);
+  const config = EnvironmentFactory.getEnvironmentConfig();
+  const populator = new EcoversePopulator(config);
+  
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${endPoint}`);
+  populator.logger.info(`Cherrytwist server: ${config.server}`);
   populator.loadAdminToken();
 
   // Update the context and set the host
