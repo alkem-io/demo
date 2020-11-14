@@ -2,6 +2,7 @@ import { CherrytwistClient } from "cherrytwist-lib";
 import { GraphQLClient, gql } from "graphql-request";
 import fs from "fs";
 const winston = require("winston");
+require("dotenv").config();
 
 enum Tagsets {
   SKILLS = "Skills",
@@ -200,6 +201,22 @@ export class EcoversePopulator {
     }
     return true;
   }
+
+  loadAdminToken() {
+    const adminUserTokenFile = process.env.CT_ADMIN_USER_TOKEN_FILE;
+    if (!adminUserTokenFile)
+      throw new Error("CT_ADMIN_USER_TOKEN_FILE enironment variable not set");
+    const adminUserToken = fs.readFileSync(adminUserTokenFile).toString();
+    if (adminUserToken.length == 0)
+      throw new Error(
+        `Unable to load in admin user token from ${adminUserTokenFile}`
+      );
+    this.logger.info(`Loaded admin user token ok`);
+    // Set the auth header
+    this.client.setHeader("Authorization", `Bearer ${adminUserToken}`);
+    this.logger.info(`Bearer token:  ${adminUserToken}`);
+  }
+
 
   async createOpportunity(challengeID: number, opportunityJson: any) {
     // create the variable for the group mutation
