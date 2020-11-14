@@ -1,8 +1,9 @@
 import { EcoversePopulator } from "./util/EcoversePopulator";
 import { GSheetsConnector } from "./util/GSheetsConnector";
 import { gql } from "graphql-request";
-import { EcoverseUsersPopulator } from "./util/UserPopulator";
+import { EcoverseUsersPopulator } from "./util/UsersSheetPopulator";
 import fs from "fs";
+import { OrgSheetPopulator } from "./util/OrganisationsSheetPopulator";
 
 const CRED_PATH = "secrets/credentials.json";
 const TOKEN_PATH = "secrets/token.json";
@@ -28,11 +29,8 @@ const main = async () => {
   );
 
   // Get the actual sheet populator
-  const userSheetPopulator = new EcoverseUsersPopulator(
-    populator,
-    populator.logger,
-    populator.profiler
-  );
+  const userSheetPopulator = new EcoverseUsersPopulator(populator);
+  const orgSheetPopulator = new OrgSheetPopulator(populator);
 
   ////////// Now connect to google  /////////////////////////
   const sheetsObj = await gsheetConnector.getSheetsObj();
@@ -51,18 +49,18 @@ const main = async () => {
   await loadTeamsFromSheet("Teams", gsheetConnector, populator);
   await createGroups(populator);
 
-  
   // Assume teams + challenges are available so load them in
   await populator.initialiseEcoverseData();
 
   // Load in the users
-  await loadOrganisationsFromSheet("Organisations", gsheetConnector, populator);
+  await orgSheetPopulator.loadOrganisationsFromSheet(
+    "Organisations",
+    gsheetConnector
+  );
   await loadOpportunity(populator);
 
   // users as last...
   await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
-  
-
 };
 
 // Load users from a particular googlesheet
@@ -181,74 +179,6 @@ async function loadChallengesFromSheet(
     } catch (e) {
       populator.logger.error(
         `Unable to load challenge (${challengeName}): ${e.message}`
-      );
-    }
-  }
-}
-
-// Load users from a particular googlesheet
-async function loadOrganisationsFromSheet(
-  sheetName: string,
-  sheetsConnector: GSheetsConnector,
-  populator: EcoversePopulator
-) {
-  const sheetRange = `${sheetName}!A1:Z1200`;
-  const organisationsGSheet = await sheetsConnector.getObjectArray(sheetRange);
-  populator.logger.info(
-    `===================================================================`
-  );
-  populator.logger.info(
-    `====== Obtained gsheet ${sheetRange}  with ${organisationsGSheet.length} rows`
-  );
-
-  // Iterate over the rows
-  for (let organisationRow of organisationsGSheet) {
-    const organisationName = organisationRow["NAME"];
-    if (!organisationName) {
-      // End of valid organisations
-      break;
-    }
-
-    const variable = gql`
-    {
-      "organisationData": {
-        "name": "${organisationName}"
-        }
-    }`;
-
-    // start processing
-    populator.logger.info(`Processing organisation: ${organisationName}....`);
-    const organisationProfileID = "===> organisationCreation - FULL";
-    populator.profiler.profile(organisationProfileID);
-
-    try {
-      const orgResponse = await populator.client.request(
-        populator.createOrganisationMutationStr,
-        variable
-      );
-      const profileID = orgResponse.createOrganisation.profile.id;
-      if (profileID) {
-        await populator.addTagset(
-          organisationRow["KEYWORDS"],
-          "Keywords",
-          profileID
-        );
-        await populator.updateProfile(profileID, organisationRow["DESCRIPTION"], organisationRow["AVATAR"])
-      }
-      const organisationID = orgResponse.createOrganisation.id;
-
-      const challengesStr = organisationRow["LEADING"];
-      if (challengesStr) {
-        const challengesArr = challengesStr.split(",");
-        for (let i = 0; i < challengesArr.length; i++) {
-          const challengeName = challengesArr[i].trim();
-          await populator.addChallengeLead(challengeName, organisationID);
-          populator.logger.verbose(`Added organisation as lead to challenge: ${challengesArr[0]}`);
-        }
-      }
-    } catch (e) {
-      populator.logger.error(
-        `Unable to create organisation (${organisationName}): ${e.message}`
       );
     }
   }

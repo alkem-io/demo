@@ -50,10 +50,10 @@ export class EcoverseUsersPopulator {
   profiler;
 
   // Create the ecoverse with enough defaults set/ members populated
-  constructor(populator: EcoversePopulator, logger: any, profiler: any) {
+  constructor(populator: EcoversePopulator) {
     this.populator = populator;
-    this.logger = logger;
-    this.profiler = profiler;
+    this.logger = populator.logger;
+    this.profiler = populator.profiler;
   }
 
   // Load users from a particular googlesheet

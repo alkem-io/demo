@@ -419,7 +419,7 @@ export class EcoversePopulator {
     try {
       // hacky: if an empty string is passed in then do not update the description field
       let descToUse = description;
-      if (description.length == 0) {
+      if (description && description.length == 0) {
         descToUse = profileDesc;
       }
       // get the users id
