@@ -17,6 +17,18 @@
             "type": "pwa-node"
         },
         {
+            "name": "Organisations Update",
+            "request": "launch",
+            "runtimeArgs": [
+                "run", "update-organisations"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Avatars",
             "request": "launch",
             "runtimeArgs": [
