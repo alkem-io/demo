@@ -63,6 +63,18 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
+        },
+        {
+            "name": "Achiever",
+            "request": "launch",
+            "runtimeArgs": [
+                "run", "match-opportunity-to-challenge"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }

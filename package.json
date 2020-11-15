@@ -9,7 +9,8 @@
     "populate-avatars": "ts-node-dev  src/populate-avatars.ts",
     "update-organisations": "ts-node-dev  src/update-organisations.ts",
     "users-undefined-references": "ts-node-dev  src/users-undefined-references.ts",
-    "update-challenge-contexts": "ts-node-dev  src/update-challenge-contexts.ts"
+    "update-challenge-contexts": "ts-node-dev  src/update-challenge-contexts.ts",
+    "match-opportunity-to-challenge": "ts-node-dev  src/opportunity-challenge-matcher.ts"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "@types/node": "^14.6.0",
+    "axios": "^0.21.0",
     "cherrytwist-lib": "^0.2.0",
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",
