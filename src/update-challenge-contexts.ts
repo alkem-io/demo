@@ -1,7 +1,7 @@
 import { EcoversePopulator } from "./util/EcoversePopulator";
 import { GSheetsConnector } from "./util/GSheetsConnector";
-import { OrganisationsSheetPopulator } from "./util/OrganisationsSheetPopulator";
 import { EnvironmentFactory } from "./util/EnvironmentFactory";
+import { ChallengesSheetPopulator } from "./util/ChallengesSheetPopulator";
 
 const main = async () => {
   const config = EnvironmentFactory.getEnvironmentConfig();
@@ -15,7 +15,7 @@ const main = async () => {
     config.gsheet
   );
 
-  const orgSheetPopulator = new OrganisationsSheetPopulator(populator);
+  const challengesSheetPopulator = new ChallengesSheetPopulator(populator);
 
   ////////// Now connect to google  /////////////////////////
   const sheetsObj = await gsheetConnector.getSheetsObj();
@@ -24,8 +24,8 @@ const main = async () => {
   }
 
   // users as last...
-  await orgSheetPopulator.updateOrganisationsFromSheet(
-    "Organisations",
+  await challengesSheetPopulator.updateChallengesContextFromSheet(
+    "Challenges",
     gsheetConnector
   );
 };
