@@ -1,6 +1,7 @@
 import { CherrytwistClient } from "cherrytwist-lib";
 import { GraphQLClient, gql } from "graphql-request";
 import fs from "fs";
+import { EnvironmentConfig } from "./EnvironmentFactory";
 const winston = require("winston");
 require("dotenv").config();
 
@@ -17,7 +18,7 @@ enum Tagsets {
 
 export class EcoversePopulator {
   // The graphql end point for the ecoverse instance
-  ecoverseEndpoint: string;
+  config: EnvironmentConfig;
 
   // The CT client
   ctClient: CherrytwistClient;
@@ -77,8 +78,8 @@ export class EcoversePopulator {
   profiler;
 
   // Create the ecoverse with enough defaults set/ members populated
-  constructor(endPoint: string) {
-    this.ecoverseEndpoint = endPoint;
+  constructor(environmentConfig: EnvironmentConfig) {
+    this.config = environmentConfig;
 
     // Set up the logging
     const logFormat = winston.format.combine(
@@ -109,8 +110,8 @@ export class EcoversePopulator {
       ],
     });
 
-    this.ctClient = new CherrytwistClient(this.ecoverseEndpoint, this.logger);
-    this.client = new GraphQLClient(this.ecoverseEndpoint);
+    this.ctClient = new CherrytwistClient(this.config.server, this.logger);
+    this.client = new GraphQLClient(this.config.server);
 
     this.challengesInfoArray = [];
     this.groupsIdsMap = new Map();
@@ -203,13 +204,10 @@ export class EcoversePopulator {
   }
 
   loadAdminToken() {
-    const adminUserTokenFile = process.env.CT_ADMIN_USER_TOKEN_FILE;
-    if (!adminUserTokenFile)
-      throw new Error("CT_ADMIN_USER_TOKEN_FILE enironment variable not set");
-    const adminUserToken = fs.readFileSync(adminUserTokenFile).toString();
+    const adminUserToken = fs.readFileSync(this.config.admin_token).toString();
     if (adminUserToken.length == 0)
       throw new Error(
-        `Unable to load in admin user token from ${adminUserTokenFile}`
+        `Unable to load in admin user token from ${this.config.admin_token}`
       );
     this.logger.info(`Loaded admin user token ok`);
     // Set the auth header
@@ -852,7 +850,7 @@ export class EcoversePopulator {
     `;
 
     this.logger.info(
-      `Loading challenges from server: ${this.ecoverseEndpoint}`
+      `Loading challenges from server: ${this.config.server}`
     );
     const ecoverseIdentifiersData = await this.client.request(challengesQuery);
     var ecoverseName = ecoverseIdentifiersData.name;
@@ -917,7 +915,7 @@ export class EcoversePopulator {
       }
     `;
 
-    this.logger.info(`Loading groups from server: ${this.ecoverseEndpoint}`);
+    this.logger.info(`Loading groups from server: ${this.config.server}`);
     const groupsData = await this.client.request(groupsQuery);
     var ecoverseName = groupsData.name;
     if (!ecoverseName) {

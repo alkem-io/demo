@@ -17,6 +17,18 @@
             "type": "pwa-node"
         },
         {
+            "name": "Challenges Update",
+            "request": "launch",
+            "runtimeArgs": [
+                "run", "update-challenge-contexts"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Organisations Update",
             "request": "launch",
             "runtimeArgs": [

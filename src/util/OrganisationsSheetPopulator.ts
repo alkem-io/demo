@@ -16,7 +16,7 @@ enum Tagsets {
   KEYWORDS = "Keywords",
 }
 
-export class OrgSheetPopulator {
+export class OrganisationsSheetPopulator {
   // The populator to use to interact with the server
   populator: EcoversePopulator;
 

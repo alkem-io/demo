@@ -3,34 +3,25 @@ import { GSheetsConnector } from "./util/GSheetsConnector";
 import { gql } from "graphql-request";
 import { EcoverseUsersPopulator } from "./util/UsersSheetPopulator";
 import fs from "fs";
-import { OrgSheetPopulator } from "./util/OrganisationsSheetPopulator";
-
-const CRED_PATH = "secrets/credentials.json";
-const TOKEN_PATH = "secrets/token.json";
-// This is the unique identifier for the google sheet from which data is loaded.
-const TEAMS_GSHEET = "1pXofg_2KauXSDmA2iDqZJipblJUfpMXC_N5KtruZqwM";
+import { OrganisationsSheetPopulator } from "./util/OrganisationsSheetPopulator";
+import { EnvironmentFactory } from "./util/EnvironmentFactory";
+import { ChallengesSheetPopulator } from "./util/ChallengesSheetPopulator";
 
 const main = async () => {
-  require("dotenv").config();
-
-  ////////// First connect to the ecoverse //////////////////
-  let endPoint = process.env.CT_SERVER;
-  if (!endPoint) {
-    endPoint = "http://localhost:4000/graphql";
-  }
-
-  const populator = new EcoversePopulator(endPoint);
+  const config = EnvironmentFactory.getEnvironmentConfig();
+  const populator = new EcoversePopulator(config);
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${endPoint}`);
+  populator.logger.info(`Cherrytwist server: ${config}`);
   const gsheetConnector = new GSheetsConnector(
-    CRED_PATH,
-    TOKEN_PATH,
-    TEAMS_GSHEET
+    config.google_credentials,
+    config.google_token,
+    config.gsheet
   );
 
   // Get the actual sheet populator
   const userSheetPopulator = new EcoverseUsersPopulator(populator);
-  const orgSheetPopulator = new OrgSheetPopulator(populator);
+  const orgSheetPopulator = new OrganisationsSheetPopulator(populator);
+  const challengesSheetPopulator = new ChallengesSheetPopulator(populator);
 
   ////////// Now connect to google  /////////////////////////
   const sheetsObj = await gsheetConnector.getSheetsObj();
@@ -45,7 +36,7 @@ const main = async () => {
   await populator.updateHostOrganisation(hostOrgVariable);
   await createGroups(populator);
 
-  await loadChallengesFromSheet("Challenges", gsheetConnector, populator);
+  await challengesSheetPopulator.loadChallengesFromSheet("Challenges", gsheetConnector, populator);
   await loadTeamsFromSheet("Teams", gsheetConnector, populator);
   await createGroups(populator);
 
@@ -60,7 +51,7 @@ const main = async () => {
   await loadOpportunity(populator);
 
   // users as last...
-  await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
+  //await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
 };
 
 // Load users from a particular googlesheet
@@ -115,74 +106,6 @@ async function loadOpportunity(populator: EcoversePopulator) {
   await populator.createOpportunity(4, opportunityJson);
 }
 
-// Load users from a particular googlesheet
-async function loadChallengesFromSheet(
-  sheetName: string,
-  sheetsConnector: GSheetsConnector,
-  populator: EcoversePopulator
-) {
-  const sheetRange = `${sheetName}!A1:Z1200`;
-  const challengesGSheet = await sheetsConnector.getObjectArray(sheetRange);
-  populator.logger.info(
-    `===================================================================`
-  );
-  populator.logger.info(
-    `====== Obtained gsheet ${sheetRange}  with ${challengesGSheet.length} rows`
-  );
-
-  // Iterate over the rows
-  for (let challengeRow of challengesGSheet) {
-    const challengeName = challengeRow["CHALLENGE_NAME"];
-    if (!challengeName) {
-      // End of valid challenges
-      break;
-    }
-
-    const createChallengeVariable = gql`
-    {
-      "challengeData": {
-        "name": "${challengeRow["CHALLENGE_NAME"]}",
-        "textID": "${challengeRow["TEXT_ID"]}",
-        "state": "Defined",
-        "context": {
-          "tagline": "${challengeRow["TAGLINE"]}",
-          "background": "${challengeRow["BACKGROUND"]}",
-          "vision": "${challengeRow["VISION"]}",
-          "impact": "${challengeRow["IMAPCT"]}",
-          "who": "${challengeRow["WHO"]}",
-          "references": [
-            {
-              "name": "video",
-              "uri": "${challengeRow["VIDEO"]}",
-              "description": "Video explainer for the challenge"
-            },
-            {
-              "name": "visual",
-              "uri": "${challengeRow["IMAGE"]}",
-              "description": "Visual for the challenge"
-            }
-          ]
-        }
-      }
-    }`;
-
-    // start processing
-    populator.logger.info(`Processing challenge: ${challengeName}....`);
-    const challengeProfileID = "===> challengeCreation - FULL";
-    populator.profiler.profile(challengeProfileID);
-
-    try {
-      const challenge = await populator.client.request(
-        populator.createChallengeMutationStr,
-        createChallengeVariable
-      );
-    } catch (e) {
-      populator.logger.error(
-        `Unable to load challenge (${challengeName}): ${e.message}`
-      );
-    }
-  }
-}
 
 // Load in mutations file
 async function createGroups(populator: EcoversePopulator) {
