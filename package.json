@@ -8,7 +8,8 @@
     "sample-opportunity": "ts-node-dev  src/sample-opportunity.ts",
     "populate-avatars": "ts-node-dev  src/populate-avatars.ts",
     "update-organisations": "ts-node-dev  src/update-organisations.ts",
-    "users-undefined-references": "ts-node-dev  src/users-undefined-references.ts"
+    "users-undefined-references": "ts-node-dev  src/users-undefined-references.ts",
+    "update-challenge-contexts": "ts-node-dev  src/update-challenge-contexts.ts"
   },
   "repository": {
     "type": "git",

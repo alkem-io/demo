@@ -1,15 +1,20 @@
 import { gql } from "graphql-request";
 import { GSheetsConnector } from "./GSheetsConnector";
 import { EcoversePopulator } from "./EcoversePopulator";
+import { CONNREFUSED } from "dns";
 const winston = require("winston");
 
 enum Columns {
-  NAME = "NAME",
+  NAME = "CHALLENGE_NAME",
   TEXT_ID = "TEXT_ID",
-  LOGO = "LOGO",
-  LEADING = "LEADING",
-  DESCRIPTION = "DESCRIPTION",
-  KEYWORDS = "KEYWORDS",
+  IMAGE = "IMAGE",
+  VISUAL2 = "VISUAL2",
+  VIDEO = "VIDEO",
+  TAGLINE = "TAGLINE",
+  IMPACT = "IMPACT",
+  WHO = "WHO",
+  VISION = "VISION",
+  BACKGROUND = "BACKGROUND",
 }
 
 enum Tagsets {
@@ -57,24 +62,29 @@ async loadChallengesFromSheet(
     const createChallengeVariable = gql`
     {
       "challengeData": {
-        "name": "${challengeRow["CHALLENGE_NAME"]}",
-        "textID": "${challengeRow["TEXT_ID"]}",
+        "name": "${challengeRow[Columns.NAME]}",
+        "textID": "${challengeRow[Columns.TEXT_ID]}",
         "state": "Defined",
         "context": {
-          "tagline": "${challengeRow["TAGLINE"]}",
-          "background": "${challengeRow["BACKGROUND"]}",
-          "vision": "${challengeRow["VISION"]}",
-          "impact": "${challengeRow["IMAPCT"]}",
-          "who": "${challengeRow["WHO"]}",
+          "tagline": "${challengeRow[Columns.TAGLINE]}",
+          "background": "${challengeRow[Columns.BACKGROUND]}",
+          "vision": "${challengeRow[Columns.VISION]}",
+          "impact": "${challengeRow[Columns.IMPACT]}",
+          "who": "${challengeRow[Columns.WHO]}",
           "references": [
             {
               "name": "video",
-              "uri": "${challengeRow["VIDEO"]}",
+              "uri": "${challengeRow[Columns.VIDEO]}",
               "description": "Video explainer for the challenge"
             },
             {
               "name": "visual",
-              "uri": "${challengeRow["IMAGE"]}",
+              "uri": "${challengeRow[Columns.IMAGE]}",
+              "description": "Banner for the challenge"
+            },
+            {
+              "name": "visual2",
+              "uri": "${challengeRow[Columns.VISUAL2]}",
               "description": "Visual for the challenge"
             }
           ]
@@ -119,7 +129,7 @@ async loadChallengesFromSheet(
     // First get all the users
     let challengesJson = [];
     try {
-      const orgsQuery = gql`
+      const challengesQuery = gql`
         query {
           challenges {
             name
@@ -128,13 +138,18 @@ async loadChallengesFromSheet(
               id
               tagline
               impact
+              references {
+                id
+                name
+                uri
+              }
             }
           }
         }
       `;
 
-      const challengesResponse = await this.populator.client.request(orgsQuery);
-      if (challengesResponse) challengesJson = challengesResponse.organisations;
+      const challengesResponse = await this.populator.client.request(challengesQuery);
+      if (challengesResponse) challengesJson = challengesResponse.challenges;
     } catch (e) {
       this.populator.logger.error(`Unable to load challenges data: ${e}`);
     }
@@ -143,18 +158,11 @@ async loadChallengesFromSheet(
 
     // Iterate over the rows
     for (let challengeRow of challengesGSheet) {
-      const challengeName = challengeRow["NAME"];
+      const challengeName = challengeRow[Columns.NAME];
       if (!challengeName) {
-        // End of valid organisations
+        // End of valid challenges
         break;
       }
-
-      const variable = gql`
-    {
-      "challengeData": {
-        "name": "${challengeName}"
-        }
-    }`;
 
       // start processing
       this.logger.info(`Processing challenge: ${challengeName}....`);
@@ -163,11 +171,45 @@ async loadChallengesFromSheet(
       const challengeJson = challengesJson.find((challenge: { name: any; }) => challenge.name === challengeRow[Columns.NAME]);
       if (!challengeJson) throw new Error(`Unable to locate challenge on server with name: ${challengeRow[Columns.NAME]}`);
       try {
-        // const profileID = challengeJson.context.id;
-        // if (profileID) {
-        //   await this.populator.updateProfile(profileID, challengeRow[Columns.DESCRIPTION], challengeRow[Columns.LOGO]);
-        //   this.logger.info(`....updated: ${challengeName}....`);
-        // }
+        const challengeID = challengeJson.id;
+        const updateChallengeVariable = gql`
+          {
+            "challengeID": ${challengeID},
+            "challengeData": {
+              "context": {
+                "tagline": "${challengeRow[Columns.TAGLINE]}",
+                "background": "${challengeRow[Columns.BACKGROUND]}",
+                "vision": "${challengeRow[Columns.VISION]}",
+                "impact": "${challengeRow[Columns.IMPACT]}",
+                "who": "${challengeRow[Columns.WHO]}",
+                "references": [
+                  {
+                    "name": "video",
+                    "uri": "${challengeRow[Columns.VIDEO]}",
+                    "description": "Video explainer for the challenge"
+                  },
+                  {
+                    "name": "visual",
+                    "uri": "${challengeRow[Columns.IMAGE]}",
+                    "description": "Banner for the challenge"
+                  },
+                  {
+                    "name": "visual2",
+                    "uri": "${challengeRow[Columns.VISUAL2]}",
+                    "description": "Visual for the challenge"
+                  }
+                ]
+              }
+            }
+          }`;
+          const mutationStr = `mutation UpdateChallenge($challengeID: Float! $challengeData: ChallengeInput!) {
+            updateChallenge(challengeID: $challengeID, challengeData: $challengeData) {
+              name,
+              id
+            }
+          }`;
+          await this.populator.client.request(mutationStr, updateChallengeVariable);
+          this.logger.info(`....updated: ${challengeName}....`);
       } catch (e) {
         this.populator.logger.error(
           `Unable to update challenge (${challengeName}): ${e.message}`

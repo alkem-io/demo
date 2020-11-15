@@ -19,6 +19,8 @@ const main = async () => {
     const usersQuery = `query { 
       users { 
         name, id, email, firstName, lastName, accountUpn, profile { 
+          avatar,
+          description,
           references {
             name, uri, id
           }

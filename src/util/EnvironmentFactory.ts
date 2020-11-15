@@ -28,6 +28,10 @@ export class EnvironmentFactory {
     let environmentJson = undefined;
     if (environmentVar === "local") {
       environmentJson = environmentsJson.local;
+    } else if (environmentVar === "local_odyssey") {
+      environmentJson = environmentsJson.local_odyssey;
+    } else if (environmentVar === "acc_odyssey") {
+      environmentJson = environmentsJson.acc_odyssey;
     } else {
       throw new Error("Not supported environment encountered");
     }

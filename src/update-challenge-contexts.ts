@@ -6,6 +6,7 @@ import { ChallengesSheetPopulator } from "./util/ChallengesSheetPopulator";
 const main = async () => {
   const config = EnvironmentFactory.getEnvironmentConfig();
   const populator = new EcoversePopulator(config);
+  populator.loadAdminToken();
   
   // Get an authorisation token
   populator.logger.info(`Cherrytwist server: ${config.server}`);
