@@ -68,7 +68,7 @@
             "name": "Achiever",
             "request": "launch",
             "runtimeArgs": [
-                "run", "match-opportunity-to-challenge"
+                "run", "opportunity-challenge-matcher"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [

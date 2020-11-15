@@ -215,7 +215,6 @@ export class EcoversePopulator {
     this.logger.info(`Bearer token:  ${adminUserToken}`);
   }
 
-
   async createOpportunity(challengeID: number, opportunityJson: any) {
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
@@ -348,6 +347,177 @@ export class EcoversePopulator {
         relation.name
       );
     }
+
+    this.logger.verbose(
+      `Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
+    );
+  }
+
+  async createOpportunity2(
+    challengeID: number,
+    opportunityJson: any,
+    teamJson: any
+  ) {
+    // create the variable for the group mutation
+    const createOpportunityVariable = gql`
+                  {
+                    "challengeID": ${challengeID},
+                    "opportunityData":
+                    {
+                        "name": "${opportunityJson.name}",
+                        "textID": "team_${teamJson.ct_id}",
+                        "context": {
+                          "background": "${opportunityJson.problem}",
+                          "vision": "${opportunityJson.solution}",
+                          "tagline": "${opportunityJson.spotlight}",
+                          "who": "${opportunityJson.polaris_un_sdg}",
+                          "impact": "${opportunityJson.polaris_long_term_vision}",
+                          "references": [
+                            {
+                              "name": "github",
+                              "uri": "${teamJson.githubUrl}",
+                              "description": "make it buildable"
+                            },
+                            {
+                              "name": "demo",
+                              "uri": "${teamJson.demoUrl}",
+                              "description": "make it understandable"
+                            },
+                            {
+                              "name": "poster",
+                              "uri": "${teamJson.flagUrl}",
+                              "description": "make it visual"
+                            },
+                            {
+                              "name": "meme",
+                              "uri": "${teamJson.memeUrl}",
+                              "description": "make it resonate"
+                            },
+                            {
+                              "name": "miroboard",
+                              "uri": "${teamJson.miroboard}",
+                              "description": "make it over seeable"
+                            }
+                          ]
+                        }
+                    }
+          }`;
+
+    const response = await this.client.request(
+      this.createOpportunityMutationStr,
+      createOpportunityVariable
+    );
+    this.logger.verbose(
+      `Created opportunity with name: ${response.createOpportunityOnChallenge.name}`
+    );
+    const opportunityID = response.createOpportunityOnChallenge.id;
+
+    // Create actor groups
+    const stakeholderAG = await this.createActorGroup(
+      opportunityID,
+      "stakeholders",
+      "test"
+    );
+
+    if (opportunityJson.stakeholder_1 && opportunityJson.stakeholder_1.name.length > 0) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_1.name,
+        opportunityJson.stakeholder_1.wins_how
+      );
+    }
+    if (opportunityJson.stakeholder_2 && opportunityJson.stakeholder_2.name.length > 0) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_2.name,
+        opportunityJson.stakeholder_2.wins_how
+      );
+    }
+    if (opportunityJson.stakeholder_3 && opportunityJson.stakeholder_3.name.length > 0) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_3.name,
+        opportunityJson.stakeholder_3.wins_how
+      );
+    }
+
+    const keyUsersAG = await this.createActorGroup(
+      opportunityID,
+      "key_users",
+      "test"
+    );
+    const keyUsers = opportunityJson.key_users;
+    if (opportunityJson.key_user_1 && opportunityJson.key_user_1.name.length > 0) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_1.name,
+        opportunityJson.key_user_1.wins_how
+      );
+    }
+    if (opportunityJson.key_user_1 && opportunityJson.key_user_2.name.length > 0) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_2.name,
+        opportunityJson.key_user_2.wins_how
+      );
+    }
+    if (opportunityJson.key_user_1 && opportunityJson.key_user_3.name.length > 0) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_3.name,
+        opportunityJson.key_user_3.wins_how
+      );
+    }
+
+    // const collaboratorsAG = await this.createActorGroup(
+    //   opportunityID,
+    //   "collaborations",
+    //   "test"
+    // );
+
+    // Create the aspects
+    var jp = require("jsonpath");
+    var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
+    var solutions = solutionsRoot[0];
+    const solutionAspectNames = Object.keys(solutions);
+    for (let i = 0; i < solutionAspectNames.length; i++) {
+      const name = solutionAspectNames[i];
+      var solution = solutions[name];
+      const aspectResponse = await this.createAspect(
+        opportunityID,
+        name,
+        solution.question,
+        solution.explanation
+      );
+      this.logger.verbose(`${aspectResponse.createAspect.title}`);
+    }
+
+    // Create the collaborations
+    // const outgoingRelations = opportunityJson.collaborations.outgoing;
+    // for (let i = 0; i < outgoingRelations.length; i++) {
+    //   const relation = outgoingRelations[i];
+    //   const response = await this.createRelation(
+    //     opportunityID,
+    //     "outgoing",
+    //     relation.reason,
+    //     "peer",
+    //     "group",
+    //     relation.team_name
+    //   );
+    // }
+
+    // const incomingRelations = opportunityJson.collaborations.incoming;
+    // for (let i = 0; i < incomingRelations.length; i++) {
+    //   const relation = incomingRelations[i];
+    //   const response = await this.createRelation(
+    //     opportunityID,
+    //     "incoming",
+    //     relation.reason,
+    //     relation.role,
+    //     relation.organization,
+    //     relation.name
+    //   );
+    // }
 
     this.logger.verbose(
       `Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
@@ -849,9 +1019,7 @@ export class EcoversePopulator {
       }
     `;
 
-    this.logger.info(
-      `Loading challenges from server: ${this.config.server}`
-    );
+    this.logger.info(`Loading challenges from server: ${this.config.server}`);
     const ecoverseIdentifiersData = await this.client.request(challengesQuery);
     var ecoverseName = ecoverseIdentifiersData.name;
     if (!ecoverseName) {
