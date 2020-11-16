@@ -17,20 +17,25 @@ const main = async () => {
   const momentumApi = new MomentumApi();
   const teamsMap = await getTeams(momentumApi);
 
-  for (let i = 5; i < 10; i++) {
+  for (let i = 1; i < 98; i++) {
     const opportunityJson = await momentumApi.getAchiever(i.toString())
     const teamJson = teamsMap.get(opportunityJson.team);
     const challengeName = opportunityJson.challenge_name;
-    console.log(`Found team ${teamJson.name} for opportunity ${challengeName}`);
+    populator.logger.info(`(${i}) - Found team ${teamJson.name} for opportunity ${challengeName}`);
     // Map the challenge name to a challenge ID
     const challengeID = populator.lookupChallengeID(challengeName);
     if (!challengeID) {
-      console.log(`Unable to locate challenge with name: ${challengeName}`);
+      populator.logger.error(`Unable to locate challenge with name: ${challengeName}`);
       continue;
     }
-    const mapping = await populator.createOpportunity2(parseInt(challengeID.challengeID), opportunityJson, teamJson);
-
-    if (i > 3) break;
+    try {
+      await populator.createOpportunity2(parseInt(challengeID.challengeID), opportunityJson, teamJson);
+    } catch (e) {
+      const opportunityStr = JSON.stringify(opportunityJson);
+      const teamStr = JSON.stringify(teamJson);
+      populator.logger.error(`Unable to create opportunity: ${opportunityJson.team} - ${e.message}`);
+      //populator.logger.warn(`${opportunityJson} && ${teamStr}`);
+    }
     
   }
 };

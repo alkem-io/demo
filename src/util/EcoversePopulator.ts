@@ -215,6 +215,8 @@ export class EcoversePopulator {
     this.logger.info(`Bearer token:  ${adminUserToken}`);
   }
 
+  
+
   async createOpportunity(challengeID: number, opportunityJson: any) {
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
@@ -353,25 +355,40 @@ export class EcoversePopulator {
     );
   }
 
+  escapeStrings(input: string): string {
+    if (!input) return '';
+    return input      
+          .replace(/[\\]/g, '\\\\')
+          .replace(/[\/]/g, '\\/')
+          .replace(/[\b]/g, '\\b')
+          .replace(/[\f]/g, '\\f')
+          .replace(/[\n]/g, '\\n')
+          .replace(/[\r]/g, '\\r')
+          .replace(/[\t]/g, '\\t')
+          .replace(/[\"]/g, '\\"')
+          .replace(/\\'/g, "\\'"); 
+  }
+
   async createOpportunity2(
     challengeID: number,
     opportunityJson: any,
     teamJson: any
   ) {
+    //this.logger.error(`Impact context length: ${opportunityJson.polaris_long_term_vision.length}`);
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
                   {
                     "challengeID": ${challengeID},
                     "opportunityData":
                     {
-                        "name": "${opportunityJson.name}",
+                        "name": "${teamJson.name}",
                         "textID": "team_${teamJson.ct_id}",
                         "context": {
-                          "background": "${opportunityJson.problem}",
-                          "vision": "${opportunityJson.solution}",
-                          "tagline": "${opportunityJson.spotlight}",
-                          "who": "${opportunityJson.polaris_un_sdg}",
-                          "impact": "${opportunityJson.polaris_long_term_vision}",
+                          "background": "${this.escapeStrings(teamJson.problem)}",
+                          "vision": "${this.escapeStrings(teamJson.solution)}",
+                          "tagline": "${this.escapeStrings(opportunityJson.spotlight)}",
+                          "who": "${this.escapeStrings(opportunityJson.polaris_un_sdg)}",
+                          "impact": "${this.escapeStrings(opportunityJson.polaris_long_term_vision)}",
                           "references": [
                             {
                               "name": "github",
@@ -403,9 +420,19 @@ export class EcoversePopulator {
                     }
           }`;
 
+    let variableJson = null;
+    const escapedStr = this.escapeStrings(createOpportunityVariable);
+    try {
+      variableJson = JSON.parse(createOpportunityVariable);
+    } catch (e) {
+      this.logger.error(`${e.message}`);
+      this.logger.info(`before: ${createOpportunityVariable}`);
+      this.logger.info(`after: ${escapedStr}`);
+      return false;
+    }
     const response = await this.client.request(
       this.createOpportunityMutationStr,
-      createOpportunityVariable
+      JSON.stringify(variableJson)
     );
     this.logger.verbose(
       `Created opportunity with name: ${response.createOpportunityOnChallenge.name}`
@@ -419,21 +446,30 @@ export class EcoversePopulator {
       "test"
     );
 
-    if (opportunityJson.stakeholder_1 && opportunityJson.stakeholder_1.name.length > 0) {
+    if (
+      opportunityJson.stakeholder_1 &&
+      opportunityJson.stakeholder_1.name.length > 0
+    ) {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_1.name,
         opportunityJson.stakeholder_1.wins_how
       );
     }
-    if (opportunityJson.stakeholder_2 && opportunityJson.stakeholder_2.name.length > 0) {
+    if (
+      opportunityJson.stakeholder_2 &&
+      opportunityJson.stakeholder_2.name.length > 0
+    ) {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_2.name,
         opportunityJson.stakeholder_2.wins_how
       );
     }
-    if (opportunityJson.stakeholder_3 && opportunityJson.stakeholder_3.name.length > 0) {
+    if (
+      opportunityJson.stakeholder_3 &&
+      opportunityJson.stakeholder_3.name.length > 0
+    ) {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_3.name,
@@ -447,21 +483,30 @@ export class EcoversePopulator {
       "test"
     );
     const keyUsers = opportunityJson.key_users;
-    if (opportunityJson.key_user_1 && opportunityJson.key_user_1.name.length > 0) {
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_1.name.length > 0
+    ) {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_1.name,
         opportunityJson.key_user_1.wins_how
       );
     }
-    if (opportunityJson.key_user_1 && opportunityJson.key_user_2.name.length > 0) {
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_2.name.length > 0
+    ) {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_2.name,
         opportunityJson.key_user_2.wins_how
       );
     }
-    if (opportunityJson.key_user_1 && opportunityJson.key_user_3.name.length > 0) {
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_3.name.length > 0
+    ) {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_3.name,
@@ -483,13 +528,16 @@ export class EcoversePopulator {
     for (let i = 0; i < solutionAspectNames.length; i++) {
       const name = solutionAspectNames[i];
       var solution = solutions[name];
-      const aspectResponse = await this.createAspect(
-        opportunityID,
-        name,
-        solution.question,
-        solution.explanation
-      );
-      this.logger.verbose(`${aspectResponse.createAspect.title}`);
+      if (solution) {
+        const aspectResponse = await this.createAspect(
+          opportunityID,
+          name,
+          solution.question,
+          solution.explanation
+        );
+
+        this.logger.verbose(`${aspectResponse.createAspect.title}`);
+      }
     }
 
     // Create the collaborations
@@ -890,6 +938,7 @@ export class EcoversePopulator {
     explanation: string
   ): Promise<any> {
     // create the variable for the group mutation
+    //this.logger.error(`Framing length: ${framing.length}`);
     const createAspectVariable = gql`
                   {
                     "opportunityID": ${opportunityID},
