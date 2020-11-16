@@ -8,7 +8,7 @@ enum Columns {
   NAME = "CHALLENGE_NAME",
   TEXT_ID = "TEXT_ID",
   IMAGE = "IMAGE",
-  VISUAL2 = "VISUAL2",
+  VISUAL = "VISUAL",
   VIDEO = "VIDEO",
   TAGLINE = "TAGLINE",
   IMPACT = "IMPACT",
@@ -195,7 +195,7 @@ async loadChallengesFromSheet(
                   },
                   {
                     "name": "visual2",
-                    "uri": "${challengeRow[Columns.VISUAL2]}",
+                    "uri": "${challengeRow[Columns.VISUAL]}",
                     "description": "Visual for the challenge"
                   }
                 ]
