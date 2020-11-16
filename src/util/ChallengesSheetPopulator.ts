@@ -84,7 +84,7 @@ async loadChallengesFromSheet(
             },
             {
               "name": "visual2",
-              "uri": "${challengeRow[Columns.VISUAL2]}",
+              "uri": "${challengeRow[Columns.VISUAL]}",
               "description": "Visual for the challenge"
             }
           ]
