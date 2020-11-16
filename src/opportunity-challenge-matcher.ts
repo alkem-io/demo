@@ -13,7 +13,7 @@ const main = async () => {
   // Get an authorisation token
   populator.logger.info(`Cherrytwist server: ${config.server}`);
 
-  ////////// First connect to the ecoverse //////////////////
+  // Get the momentum teams
   const momentumApi = new MomentumApi();
   const teamsMap = await getTeams(momentumApi);
 
@@ -31,10 +31,7 @@ const main = async () => {
     try {
       await populator.createOpportunity2(parseInt(challengeID.challengeID), opportunityJson, teamJson);
     } catch (e) {
-      const opportunityStr = JSON.stringify(opportunityJson);
-      const teamStr = JSON.stringify(teamJson);
       populator.logger.error(`Unable to create opportunity: ${opportunityJson.team} - ${e.message}`);
-      //populator.logger.warn(`${opportunityJson} && ${teamStr}`);
     }
     
   }

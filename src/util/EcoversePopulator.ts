@@ -215,8 +215,6 @@ export class EcoversePopulator {
     this.logger.info(`Bearer token:  ${adminUserToken}`);
   }
 
-  
-
   async createOpportunity(challengeID: number, opportunityJson: any) {
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
@@ -356,17 +354,17 @@ export class EcoversePopulator {
   }
 
   escapeStrings(input: string): string {
-    if (!input) return '';
-    return input      
-          .replace(/[\\]/g, '\\\\')
-          .replace(/[\/]/g, '\\/')
-          .replace(/[\b]/g, '\\b')
-          .replace(/[\f]/g, '\\f')
-          .replace(/[\n]/g, '\\n')
-          .replace(/[\r]/g, '\\r')
-          .replace(/[\t]/g, '\\t')
-          .replace(/[\"]/g, '\\"')
-          .replace(/\\'/g, "\\'"); 
+    if (!input) return "";
+    return input
+      .replace(/[\\]/g, "\\\\")
+      .replace(/[\/]/g, "\\/")
+      .replace(/[\b]/g, "\\b")
+      .replace(/[\f]/g, "\\f")
+      .replace(/[\n]/g, "\\n")
+      .replace(/[\r]/g, "\\r")
+      .replace(/[\t]/g, "\\t")
+      .replace(/[\"]/g, '\\"')
+      .replace(/\\'/g, "\\'");
   }
 
   async createOpportunity2(
@@ -374,7 +372,22 @@ export class EcoversePopulator {
     opportunityJson: any,
     teamJson: any
   ) {
-    //this.logger.error(`Impact context length: ${opportunityJson.polaris_long_term_vision.length}`);
+    let demoRef = "";
+    if (teamJson.demoUrl &&(teamJson.demoUrl.length > 0)) {
+      demoRef = `{
+          "name": "demo",
+          "uri": "${teamJson.demoUrl}",
+          "description": "make it understandable"
+        },`;
+    }
+    let posterRef = "";
+    if (teamJson.flagUrl && (teamJson.flagUrl.length > 0)) {
+      posterRef = `{
+          "name": "poster",
+          "uri": "${teamJson.flagUrl}",
+          "description": "make it visual"
+        },`;
+    }
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
                   {
@@ -384,27 +397,27 @@ export class EcoversePopulator {
                         "name": "${teamJson.name}",
                         "textID": "team_${teamJson.ct_id}",
                         "context": {
-                          "background": "${this.escapeStrings(teamJson.problem)}",
+                          "background": "${this.escapeStrings(
+                            teamJson.problem
+                          )}",
                           "vision": "${this.escapeStrings(teamJson.solution)}",
-                          "tagline": "${this.escapeStrings(opportunityJson.spotlight)}",
-                          "who": "${this.escapeStrings(opportunityJson.polaris_un_sdg)}",
-                          "impact": "${this.escapeStrings(opportunityJson.polaris_long_term_vision)}",
+                          "tagline": "${this.escapeStrings(
+                            opportunityJson.spotlight
+                          )}",
+                          "who": "${this.escapeStrings(
+                            opportunityJson.polaris_un_sdg
+                          )}",
+                          "impact": "${this.escapeStrings(
+                            opportunityJson.polaris_long_term_vision
+                          )}",
                           "references": [
                             {
                               "name": "github",
                               "uri": "${teamJson.githubUrl}",
                               "description": "make it buildable"
                             },
-                            {
-                              "name": "demo",
-                              "uri": "${teamJson.demoUrl}",
-                              "description": "make it understandable"
-                            },
-                            {
-                              "name": "poster",
-                              "uri": "${teamJson.flagUrl}",
-                              "description": "make it visual"
-                            },
+                            ${demoRef}
+                            ${posterRef}
                             {
                               "name": "meme",
                               "uri": "${teamJson.memeUrl}",
@@ -412,7 +425,7 @@ export class EcoversePopulator {
                             },
                             {
                               "name": "miroboard",
-                              "uri": "${teamJson.miroboard}",
+                              "uri": "${teamJson.miroBoard}",
                               "description": "make it over seeable"
                             }
                           ]
@@ -438,6 +451,7 @@ export class EcoversePopulator {
       `Created opportunity with name: ${response.createOpportunityOnChallenge.name}`
     );
     const opportunityID = response.createOpportunityOnChallenge.id;
+    // Check if need to remove any references
 
     // Create actor groups
     const stakeholderAG = await this.createActorGroup(
@@ -520,6 +534,7 @@ export class EcoversePopulator {
     //   "test"
     // );
 
+    const aspectsToSkip = ["problem", "solution", "url_github", "url_demo"];
     // Create the aspects
     var jp = require("jsonpath");
     var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
@@ -527,6 +542,7 @@ export class EcoversePopulator {
     const solutionAspectNames = Object.keys(solutions);
     for (let i = 0; i < solutionAspectNames.length; i++) {
       const name = solutionAspectNames[i];
+      if (aspectsToSkip.includes(name)) continue;
       var solution = solutions[name];
       if (solution) {
         const aspectResponse = await this.createAspect(
@@ -567,8 +583,8 @@ export class EcoversePopulator {
     //   );
     // }
 
-    this.logger.verbose(
-      `Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
+    this.logger.info(
+      `==> Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
     );
   }
 
