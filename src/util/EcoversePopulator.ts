@@ -544,11 +544,16 @@ export class EcoversePopulator {
       const name = solutionAspectNames[i];
       if (aspectsToSkip.includes(name)) continue;
       var solution = solutions[name];
+      let framing: string = solution.question;
+      if (solution.question && solution.question.length > 255) {
+        framing = framing.slice(0,255);
+        this.logger.warn(`Truncating framing in aspect: ${name}`);
+      }
       if (solution) {
         const aspectResponse = await this.createAspect(
           opportunityID,
           name,
-          solution.question,
+          framing,
           solution.explanation
         );
 
