@@ -528,12 +528,6 @@ export class EcoversePopulator {
       );
     }
 
-    // const collaboratorsAG = await this.createActorGroup(
-    //   opportunityID,
-    //   "collaborations",
-    //   "test"
-    // );
-
     const aspectsToSkip = ["problem", "solution", "url_github", "url_demo"];
     // Create the aspects
     var jp = require("jsonpath");
@@ -561,32 +555,44 @@ export class EcoversePopulator {
       }
     }
 
-    // Create the collaborations
-    // const outgoingRelations = opportunityJson.collaborations.outgoing;
-    // for (let i = 0; i < outgoingRelations.length; i++) {
-    //   const relation = outgoingRelations[i];
-    //   const response = await this.createRelation(
-    //     opportunityID,
-    //     "outgoing",
-    //     relation.reason,
-    //     "peer",
-    //     "group",
-    //     relation.team_name
-    //   );
-    // }
+    const descriptionMax = 399;
+    // Create the team collaborations
+    const teamRelations = opportunityJson.team_ups;
+    for (let i = 0; i < teamRelations.length; i++) {
+      const teamRelation = teamRelations[i];
+      let description: string = teamRelation.reason;
+      if (description && description.length > descriptionMax) {
+        description = description.slice(0,descriptionMax);
+        this.logger.warn(`Truncating description in aspect: ${teamRelation.team.name}`);
+      }
+      
+      await this.createRelation(
+        opportunityID,
+        "outgoing",
+        this.escapeStrings(description),
+        'team',
+        "group",
+        teamRelation.team.name
+      );
+    }
 
-    // const incomingRelations = opportunityJson.collaborations.incoming;
-    // for (let i = 0; i < incomingRelations.length; i++) {
-    //   const relation = incomingRelations[i];
-    //   const response = await this.createRelation(
-    //     opportunityID,
-    //     "incoming",
-    //     relation.reason,
-    //     relation.role,
-    //     relation.organization,
-    //     relation.name
-    //   );
-    // }
+    const ecosystemRelations = opportunityJson.ecosystem_joins;
+    for (let i = 0; i < ecosystemRelations.length; i++) {
+      const ecosystemJoin = ecosystemRelations[i];
+      let description: string = ecosystemJoin.reason;
+      if (description && description.length > descriptionMax) {
+        description = description.slice(0,descriptionMax);
+        this.logger.warn(`Truncating description in aspect: ${ecosystemJoin.user.name}`);
+      }
+      await this.createRelation(
+        opportunityID,
+        "incoming",
+        this.escapeStrings(description),
+        ecosystemJoin.user.organisation,
+        'user',
+        ecosystemJoin.user.name
+      );
+    }
 
     this.logger.info(
       `==> Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
