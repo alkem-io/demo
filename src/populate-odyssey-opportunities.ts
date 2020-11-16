@@ -17,7 +17,7 @@ const main = async () => {
   const momentumApi = new MomentumApi();
   const teamsMap = await getTeams(momentumApi);
 
-  for (let i = 1; i < 98; i++) {
+  for (let i = 11; i < 13; i++) {
     const opportunityJson = await momentumApi.getAchiever(i.toString())
     const teamJson = teamsMap.get(opportunityJson.team);
     const challengeName = opportunityJson.challenge_name;

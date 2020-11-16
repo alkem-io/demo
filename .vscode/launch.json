@@ -65,10 +65,10 @@
             "type": "pwa-node"
         },
         {
-            "name": "Achiever",
+            "name": "Odyssey Opportunities",
             "request": "launch",
             "runtimeArgs": [
-                "run", "opportunity-challenge-matcher"
+                "run", "populate-odyssey-opportunities"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [

@@ -364,7 +364,11 @@ export class EcoversePopulator {
       .replace(/[\r]/g, "\\r")
       .replace(/[\t]/g, "\\t")
       .replace(/[\"]/g, '\\"')
-      .replace(/\\'/g, "\\'");
+      .replace(/\\'/g, "\\'")
+      .replace(
+        /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+        ""
+      ); // last line to filter out emojis
   }
 
   async createOpportunity2(
@@ -373,7 +377,7 @@ export class EcoversePopulator {
     teamJson: any
   ) {
     let demoRef = "";
-    if (teamJson.demoUrl &&(teamJson.demoUrl.length > 0)) {
+    if (teamJson.demoUrl && teamJson.demoUrl.length > 0) {
       demoRef = `{
           "name": "demo",
           "uri": "${teamJson.demoUrl}",
@@ -381,7 +385,7 @@ export class EcoversePopulator {
         },`;
     }
     let posterRef = "";
-    if (teamJson.flagUrl && (teamJson.flagUrl.length > 0)) {
+    if (teamJson.flagUrl && teamJson.flagUrl.length > 0) {
       posterRef = `{
           "name": "poster",
           "uri": "${teamJson.flagUrl}",
@@ -534,64 +538,87 @@ export class EcoversePopulator {
     var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
     var solutions = solutionsRoot[0];
     const solutionAspectNames = Object.keys(solutions);
-    for (let i = 0; i < solutionAspectNames.length; i++) {
-      const name = solutionAspectNames[i];
-      if (aspectsToSkip.includes(name)) continue;
-      var solution = solutions[name];
-      let framing: string = solution.question;
-      if (solution.question && solution.question.length > 255) {
-        framing = framing.slice(0,255);
-        this.logger.warn(`Truncating framing in aspect: ${name}`);
-      }
-      if (solution) {
-        const aspectResponse = await this.createAspect(
-          opportunityID,
-          name,
-          framing,
-          solution.explanation
-        );
+    if (solutionAspectNames) {
+      for (let i = 0; i < solutionAspectNames.length; i++) {
+        const name = solutionAspectNames[i];
+        if (aspectsToSkip.includes(name)) continue;
+        var solution = solutions[name];
+        let framing: string = "";
+        if (solution.question) {
+          framing = solution.question;
+          if (solution.question.length > 255) {
+            framing = framing.slice(0, 255);
+            this.logger.warn(`Truncating framing in aspect: ${name}`);
+          }
+        }
+        if (solution && framing.length > 0) {
+          const aspectResponse = await this.createAspect(
+            opportunityID,
+            name,
+            framing,
+            solution.explanation
+          );
 
-        this.logger.verbose(`${aspectResponse.createAspect.title}`);
+          this.logger.verbose(`${aspectResponse.createAspect.title}`);
+        }
       }
     }
 
     const descriptionMax = 399;
     // Create the team collaborations
     const teamRelations = opportunityJson.team_ups;
-    for (let i = 0; i < teamRelations.length; i++) {
-      const teamRelation = teamRelations[i];
-      let description: string = teamRelation.reason;
-      if (description && description.length > descriptionMax) {
-        description = description.slice(0,descriptionMax);
-        this.logger.warn(`Truncating description in aspect: ${teamRelation.team.name}`);
+    if (teamRelations) {
+      for (let i = 0; i < teamRelations.length; i++) {
+        const teamRelation = teamRelations[i];
+        let description = '';
+        if (teamRelation.reason) {
+          description = teamRelation.reason;
+        }
+        if (description.length > descriptionMax) {
+          description = description.slice(0, descriptionMax);
+          this.logger.warn(
+            `Truncating description in aspect: ${teamRelation.team.name}`
+          );
+        }
+        // Complete hack
+        //description = description.
+
+        await this.createRelation(
+          opportunityID,
+          "outgoing",
+          this.escapeStrings(description),
+          "team",
+          "group",
+          teamRelation.team.name
+        );
       }
-      
-      await this.createRelation(
-        opportunityID,
-        "outgoing",
-        this.escapeStrings(description),
-        'team',
-        "group",
-        teamRelation.team.name
-      );
     }
 
     const ecosystemRelations = opportunityJson.ecosystem_joins;
-    for (let i = 0; i < ecosystemRelations.length; i++) {
-      const ecosystemJoin = ecosystemRelations[i];
-      let description: string = ecosystemJoin.reason;
-      if (description && description.length > descriptionMax) {
-        description = description.slice(0,descriptionMax);
-        this.logger.warn(`Truncating description in aspect: ${ecosystemJoin.user.name}`);
+    if (ecosystemRelations) {
+      for (let i = 0; i < ecosystemRelations.length; i++) {
+        const ecosystemJoin = ecosystemRelations[i];
+        let description = '';
+        if (ecosystemJoin.reason) {
+          description = ecosystemJoin.reason;
+        }
+        if (description.length > descriptionMax) {
+          description = description.slice(0, descriptionMax);
+          this.logger.warn(
+            `Truncating description in aspect: ${ecosystemJoin.user.name}`
+          );
+        }
+        // Complete hack
+        //description = description.replace('\\xF0\\x9F\\x98', '');
+        await this.createRelation(
+          opportunityID,
+          "incoming",
+          this.escapeStrings(description),
+          ecosystemJoin.user.organisation,
+          "user",
+          ecosystemJoin.user.name
+        );
       }
-      await this.createRelation(
-        opportunityID,
-        "incoming",
-        this.escapeStrings(description),
-        ecosystemJoin.user.organisation,
-        'user',
-        ecosystemJoin.user.name
-      );
     }
 
     this.logger.info(

@@ -10,7 +10,7 @@
     "update-organisations": "ts-node-dev  src/update-organisations.ts",
     "users-undefined-references": "ts-node-dev  src/users-undefined-references.ts",
     "update-challenge-contexts": "ts-node-dev  src/update-challenge-contexts.ts",
-    "opportunity-challenge-matcher": "ts-node-dev  src/opportunity-challenge-matcher.ts"
+    "populate-odyssey-opportunities": "ts-node-dev  src/populate-odyssey-opportunities.ts"
   },
   "repository": {
     "type": "git",
