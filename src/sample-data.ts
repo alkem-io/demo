@@ -48,7 +48,7 @@ const main = async () => {
     "Organisations",
     gsheetConnector
   );
-  await loadOpportunity(populator);
+  //await loadOpportunity(populator);
 
   // users as last...
   //await userSheetPopulator.loadUsersFromSheet("Users", gsheetConnector);
