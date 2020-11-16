@@ -1,19 +1,29 @@
 {
-    "ecoverseData": {
-        "name": "Cherrytwist",
-        "context": {
-            "tagline": "Open source Challenge Management Platform",
-            "background": "The challenges facing our society are ever more complex, interdependent and multilateral.  ",
-            "vision": "The Cherrytwist Foundation is a non-profit, open source platform and community focussed on providing a digital public infrastructure to enable society to come together and proactively co-create outcomes.",
-            "impact": "A step change in how complex challenges are managed and our ability as society to collaborate in creating solutions to our problems",
-            "who": "Everyone.",
-            "references": [
-                {
-                    "name": "website",
-                    "uri": "http://cherrytwist.org",
-                    "description": "The open source challenge management platform"
-                }
-            ]
+  "ecoverseData": {
+    "name": "Cherrytwist",
+    "context": {
+      "tagline": "Open source Challenge Management Platform",
+      "background": "The challenges facing our society are ever more complex, interdependent and multilateral.  ",
+      "vision": "The Cherrytwist Foundation is a non-profit, open source platform and community focussed on providing a digital public infrastructure to enable society to come together and proactively co-create outcomes.",
+      "impact": "A step change in how complex challenges are managed and our ability as society to collaborate in creating solutions to our problems",
+      "who": "Everyone.",
+      "references": [
+        {
+          "name": "website",
+          "uri": "http://cherrytwist.org",
+          "description": "The open source challenge management platform"
+        },
+        {
+          "name": "logo",
+          "uri": "https://prod-v3.odyssey.ninja/backend/storage/organisation_logos/cherrytwist.png",
+          "description": "Logo"
+        },
+        {
+          "name": "repo",
+          "uri": "http://github.com/cherrytwist",
+          "description": "The open source repository"
         }
+      ]
     }
+  }
 }

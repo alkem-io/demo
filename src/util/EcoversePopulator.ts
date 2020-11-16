@@ -215,7 +215,6 @@ export class EcoversePopulator {
     this.logger.info(`Bearer token:  ${adminUserToken}`);
   }
 
-
   async createOpportunity(challengeID: number, opportunityJson: any) {
     // create the variable for the group mutation
     const createOpportunityVariable = gql`
@@ -351,6 +350,241 @@ export class EcoversePopulator {
 
     this.logger.verbose(
       `Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
+    );
+  }
+
+  escapeStrings(input: string): string {
+    if (!input) return "";
+    return input
+      .replace(/[\\]/g, "\\\\")
+      .replace(/[\/]/g, "\\/")
+      .replace(/[\b]/g, "\\b")
+      .replace(/[\f]/g, "\\f")
+      .replace(/[\n]/g, "\\n")
+      .replace(/[\r]/g, "\\r")
+      .replace(/[\t]/g, "\\t")
+      .replace(/[\"]/g, '\\"')
+      .replace(/\\'/g, "\\'");
+  }
+
+  async createOpportunity2(
+    challengeID: number,
+    opportunityJson: any,
+    teamJson: any
+  ) {
+    let demoRef = "";
+    if (teamJson.demoUrl &&(teamJson.demoUrl.length > 0)) {
+      demoRef = `{
+          "name": "demo",
+          "uri": "${teamJson.demoUrl}",
+          "description": "make it understandable"
+        },`;
+    }
+    let posterRef = "";
+    if (teamJson.flagUrl && (teamJson.flagUrl.length > 0)) {
+      posterRef = `{
+          "name": "poster",
+          "uri": "${teamJson.flagUrl}",
+          "description": "make it visual"
+        },`;
+    }
+    // create the variable for the group mutation
+    const createOpportunityVariable = gql`
+                  {
+                    "challengeID": ${challengeID},
+                    "opportunityData":
+                    {
+                        "name": "${teamJson.name}",
+                        "textID": "team_${teamJson.ct_id}",
+                        "context": {
+                          "background": "${this.escapeStrings(
+                            teamJson.problem
+                          )}",
+                          "vision": "${this.escapeStrings(teamJson.solution)}",
+                          "tagline": "${this.escapeStrings(
+                            opportunityJson.spotlight
+                          )}",
+                          "who": "${this.escapeStrings(
+                            opportunityJson.polaris_un_sdg
+                          )}",
+                          "impact": "${this.escapeStrings(
+                            opportunityJson.polaris_long_term_vision
+                          )}",
+                          "references": [
+                            {
+                              "name": "github",
+                              "uri": "${teamJson.githubUrl}",
+                              "description": "make it buildable"
+                            },
+                            ${demoRef}
+                            ${posterRef}
+                            {
+                              "name": "meme",
+                              "uri": "${teamJson.memeUrl}",
+                              "description": "make it resonate"
+                            },
+                            {
+                              "name": "miroboard",
+                              "uri": "${teamJson.miroBoard}",
+                              "description": "make it over seeable"
+                            }
+                          ]
+                        }
+                    }
+          }`;
+
+    let variableJson = null;
+    const escapedStr = this.escapeStrings(createOpportunityVariable);
+    try {
+      variableJson = JSON.parse(createOpportunityVariable);
+    } catch (e) {
+      this.logger.error(`${e.message}`);
+      this.logger.info(`before: ${createOpportunityVariable}`);
+      this.logger.info(`after: ${escapedStr}`);
+      return false;
+    }
+    const response = await this.client.request(
+      this.createOpportunityMutationStr,
+      JSON.stringify(variableJson)
+    );
+    this.logger.verbose(
+      `Created opportunity with name: ${response.createOpportunityOnChallenge.name}`
+    );
+    const opportunityID = response.createOpportunityOnChallenge.id;
+    // Check if need to remove any references
+
+    // Create actor groups
+    const stakeholderAG = await this.createActorGroup(
+      opportunityID,
+      "stakeholders",
+      "test"
+    );
+
+    if (
+      opportunityJson.stakeholder_1 &&
+      opportunityJson.stakeholder_1.name.length > 0
+    ) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_1.name,
+        opportunityJson.stakeholder_1.wins_how
+      );
+    }
+    if (
+      opportunityJson.stakeholder_2 &&
+      opportunityJson.stakeholder_2.name.length > 0
+    ) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_2.name,
+        opportunityJson.stakeholder_2.wins_how
+      );
+    }
+    if (
+      opportunityJson.stakeholder_3 &&
+      opportunityJson.stakeholder_3.name.length > 0
+    ) {
+      await this.createActor(
+        stakeholderAG.createActorGroup.id,
+        opportunityJson.stakeholder_3.name,
+        opportunityJson.stakeholder_3.wins_how
+      );
+    }
+
+    const keyUsersAG = await this.createActorGroup(
+      opportunityID,
+      "key_users",
+      "test"
+    );
+    const keyUsers = opportunityJson.key_users;
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_1.name.length > 0
+    ) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_1.name,
+        opportunityJson.key_user_1.wins_how
+      );
+    }
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_2.name.length > 0
+    ) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_2.name,
+        opportunityJson.key_user_2.wins_how
+      );
+    }
+    if (
+      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_3.name.length > 0
+    ) {
+      await this.createActor(
+        keyUsersAG.createActorGroup.id,
+        opportunityJson.key_user_3.name,
+        opportunityJson.key_user_3.wins_how
+      );
+    }
+
+    // const collaboratorsAG = await this.createActorGroup(
+    //   opportunityID,
+    //   "collaborations",
+    //   "test"
+    // );
+
+    const aspectsToSkip = ["problem", "solution", "url_github", "url_demo"];
+    // Create the aspects
+    var jp = require("jsonpath");
+    var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
+    var solutions = solutionsRoot[0];
+    const solutionAspectNames = Object.keys(solutions);
+    for (let i = 0; i < solutionAspectNames.length; i++) {
+      const name = solutionAspectNames[i];
+      if (aspectsToSkip.includes(name)) continue;
+      var solution = solutions[name];
+      if (solution) {
+        const aspectResponse = await this.createAspect(
+          opportunityID,
+          name,
+          solution.question,
+          solution.explanation
+        );
+
+        this.logger.verbose(`${aspectResponse.createAspect.title}`);
+      }
+    }
+
+    // Create the collaborations
+    // const outgoingRelations = opportunityJson.collaborations.outgoing;
+    // for (let i = 0; i < outgoingRelations.length; i++) {
+    //   const relation = outgoingRelations[i];
+    //   const response = await this.createRelation(
+    //     opportunityID,
+    //     "outgoing",
+    //     relation.reason,
+    //     "peer",
+    //     "group",
+    //     relation.team_name
+    //   );
+    // }
+
+    // const incomingRelations = opportunityJson.collaborations.incoming;
+    // for (let i = 0; i < incomingRelations.length; i++) {
+    //   const relation = incomingRelations[i];
+    //   const response = await this.createRelation(
+    //     opportunityID,
+    //     "incoming",
+    //     relation.reason,
+    //     relation.role,
+    //     relation.organization,
+    //     relation.name
+    //   );
+    // }
+
+    this.logger.info(
+      `==> Finished creating opportunity: ${response.createOpportunityOnChallenge.name}`
     );
   }
 
@@ -720,6 +954,7 @@ export class EcoversePopulator {
     explanation: string
   ): Promise<any> {
     // create the variable for the group mutation
+    //this.logger.error(`Framing length: ${framing.length}`);
     const createAspectVariable = gql`
                   {
                     "opportunityID": ${opportunityID},
@@ -849,9 +1084,7 @@ export class EcoversePopulator {
       }
     `;
 
-    this.logger.info(
-      `Loading challenges from server: ${this.config.server}`
-    );
+    this.logger.info(`Loading challenges from server: ${this.config.server}`);
     const ecoverseIdentifiersData = await this.client.request(challengesQuery);
     var ecoverseName = ecoverseIdentifiersData.name;
     if (!ecoverseName) {
