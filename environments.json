@@ -25,5 +25,23 @@
     "admin_token": "./admin-user.token",
     "google_credentials": "secrets/credentials.json",
     "google_token": "secrets/token.json"
+  },
+  "dev_ct": {
+    "server": "https://dev.cherrytwist.org/graphql",
+    "gsheet": "1z7uNEvpYPYf_lXXvk8hXqGRFLgp6xOZD7yZsMq4_vxM",
+    "users_sheet": "Users",
+    "populate_structure": true,
+    "admin_token": "./admin-user.token",
+    "google_credentials": "secrets/credentials.json",
+    "google_token": "secrets/token.json"
+  },
+  "test_ct": {
+    "server": "https://test.cherrytwist.org/graphql",
+    "gsheet": "1z7uNEvpYPYf_lXXvk8hXqGRFLgp6xOZD7yZsMq4_vxM",
+    "users_sheet": "Users",
+    "populate_structure": true,
+    "admin_token": "./admin-user.token",
+    "google_credentials": "secrets/credentials.json",
+    "google_token": "secrets/token.json"
   }
 }

@@ -25,23 +25,17 @@ export class EnvironmentFactory {
     // get the server endpoint
     const environmentsStr = fs.readFileSync(environmentsFile).toString();
     const environmentsJson = JSON.parse(environmentsStr);
-    let environmentJson = undefined;
-    if (environmentVar === "local") {
-      environmentJson = environmentsJson.local;
-    } else if (environmentVar === "local_odyssey") {
-      environmentJson = environmentsJson.local_odyssey;
-    } else if (environmentVar === "acc_odyssey") {
-      environmentJson = environmentsJson.acc_odyssey;
-    } else {
-      throw new Error("Not supported environment encountered");
-    }
-    const environment = new EnvironmentConfig();
-    environmentJson.name = environmentVar;
-    environment.server = environmentJson.server;
-    environment.gsheet = environmentJson.gsheet;
-    environment.users_sheet = environmentJson.users_sheet;
-    environment.admin_token = environmentJson.admin_token;
-    environment.populate_structure = environmentJson.populate_structure;
+    const environment = this.getEnvironment(environmentsJson, environmentVar); 
+
     return environment;
+  }
+
+  static getEnvironment(environments: any, env: string): EnvironmentConfig
+  {
+    const targetEnv = environments[env];
+    if(targetEnv) 
+      return targetEnv as EnvironmentConfig;
+
+    throw new Error("Not supported environment encountered");
   }
 }
