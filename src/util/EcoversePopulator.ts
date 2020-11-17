@@ -63,6 +63,7 @@ export class EcoversePopulator {
   createActorMutationStr: string;
   createAspectMutationStr: string;
   createOrganisationMutationStr: string;
+  updateOrganisationMutationStr: string;
   createRelationMutationStr: string;
   replaceTagsOnTagsetMutationStr: string;
   userQueryStr: string;
@@ -174,6 +175,10 @@ export class EcoversePopulator {
 
     this.createOrganisationMutationStr = fs
       .readFileSync(this.createOrganisationMutationFile)
+      .toString();
+
+    this.updateOrganisationMutationStr = fs
+      .readFileSync(this.updateOrganisationMutationFile)
       .toString();
 
     this.addChallengeLeadMutationStr = fs
@@ -552,7 +557,7 @@ export class EcoversePopulator {
             this.logger.warn(`Truncating framing in aspect: ${name}`);
           }
         }
-        name = name.replace(/_/g, ' ');
+        name = name.replace(/_/g, " ");
         if (solution && framing.length > 0) {
           const aspectResponse = await this.createAspect(
             opportunityID,
@@ -572,7 +577,7 @@ export class EcoversePopulator {
     if (teamRelations) {
       for (let i = 0; i < teamRelations.length; i++) {
         const teamRelation = teamRelations[i];
-        let description = '';
+        let description = "";
         if (teamRelation.reason) {
           description = teamRelation.reason;
         }
@@ -600,7 +605,7 @@ export class EcoversePopulator {
     if (ecosystemRelations) {
       for (let i = 0; i < ecosystemRelations.length; i++) {
         const ecosystemJoin = ecosystemRelations[i];
-        let description = '';
+        let description = "";
         if (ecosystemJoin.reason) {
           description = ecosystemJoin.reason;
         }
@@ -1067,17 +1072,40 @@ export class EcoversePopulator {
     return true;
   }
 
+
+
   // Load in mutations file
-  async updateHostOrganisation(variableFile: string): Promise<Boolean> {
-    const variable = fs.readFileSync(variableFile).toString();
-    const updateOrganisationMutationStr = fs
-      .readFileSync(this.updateOrganisationMutationFile)
-      .toString();
+  async updateHostOrganisation(name: string, logoUri?: string): Promise<Boolean> {
     try {
+      const queryHostInfo = gql`
+        query {
+          host {
+            id
+            profile {
+              id
+            }
+          }
+        }
+      `;
+      const hostInfoResponse = await this.client.request(queryHostInfo);
+      const hostID = hostInfoResponse.host.id;
+      const hostProfileID = hostInfoResponse.host.profile.id;
+      // Now update the name
+      const variableUpdateName = gql`
+          {
+            "orgID": ${hostID},
+            "organisationData": 
+            {
+              "name": "${name}"
+            }
+          }`;
       const result = await this.client.request(
-        updateOrganisationMutationStr,
-        variable
+        this.updateOrganisationMutationStr,
+        variableUpdateName
       );
+      if (logoUri) {
+        await this.addReference("logo", logoUri, "Logo for the ecoverse host", hostProfileID);
+      }
       if (result) {
         this.logger.info(`==> Updated host organisation successfully!`);
       }
