@@ -404,7 +404,7 @@ export class EcoversePopulator {
                     "opportunityData":
                     {
                         "name": "${teamJson.name}",
-                        "textID": "team_${teamJson.ct_id}",
+                        "textID": "opp_${teamJson.ct_id}",
                         "context": {
                           "background": "${this.escapeStrings(
                             teamJson.problem
