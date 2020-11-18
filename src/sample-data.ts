@@ -1,6 +1,5 @@
 import { EcoversePopulator } from "./util/EcoversePopulator";
 import { GSheetsConnector } from "./util/GSheetsConnector";
-import { gql } from "graphql-request";
 import { EcoverseUsersPopulator } from "./util/UsersSheetPopulator";
 import fs from "fs";
 import { OrganisationsSheetPopulator } from "./util/OrganisationsSheetPopulator";
@@ -33,22 +32,20 @@ const main = async () => {
   // Update the context and set the host
   const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse.json";
   await populator.updateEcoverseContext(ecoverseContextVariable);
-  const hostOrgVariable = "./src/data/cherrytwist-host.json";
-  await populator.updateHostOrganisation(hostOrgVariable);
-  await createGroups(populator);
+  await populator.updateHostOrganisation("Cherrytwist Sample Ecoverse", "https://cherrytwist.org/wp-content/uploads/2020/10/cherrytwist-2.png");
 
   await challengesSheetPopulator.loadChallengesFromSheet("Challenges", gsheetConnector, populator);
   await loadTeamsFromSheet("Teams", gsheetConnector, populator);
   await createGroups(populator);
 
   // Assume teams + challenges are available so load them in
-  await populator.initialiseEcoverseData();
+  // await populator.initialiseEcoverseData();
 
-  // Load in the users
-  await orgSheetPopulator.loadOrganisationsFromSheet(
-    "Organisations",
-    gsheetConnector
-  );
+  // // Load in the users
+  // await orgSheetPopulator.loadOrganisationsFromSheet(
+  //   "Organisations",
+  //   gsheetConnector
+  // );
   //await loadOpportunity(populator);
 
   // users as last...
