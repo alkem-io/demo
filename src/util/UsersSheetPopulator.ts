@@ -23,6 +23,8 @@ enum Columns {
   TEAM = "TEAM",
   CHALLENGE = "CHALLENGE",
   AVATAR = "AVATAR",
+  LINKEDIN = "LINKEDIN",
+  TWITTER = "TWITTER",
 }
 
 enum Tagsets {
@@ -114,12 +116,20 @@ export class EcoverseUsersPopulator {
 
         // Add in the linkedin reference
         this.profiler.profile("userReference");
-        await this.populator.addReference(
-          "LinkedIn",
-          "not-set",
-          "User profile on LinkedIN",
-          userProfileID
-        );
+        if (userRow[Columns.LINKEDIN])
+          await this.populator.addReference(
+            "LinkedIn",
+            `${userRow[Columns.LINKEDIN]}`,
+            "LinkedIn profile",
+            userProfileID
+          );
+        if (userRow[Columns.TWITTER])
+          await this.populator.addReference(
+            "Twitter",
+            `${userRow[Columns.TWITTER]}`,
+            "Twitter profile",
+            userProfileID
+          );
         this.profiler.profile("userReference");
 
         // Add the user to the challenge user group if applicable
