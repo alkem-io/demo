@@ -75,6 +75,18 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
+        },
+        {
+            "name": "Odyssey Update Opportunity",
+            "request": "launch",
+            "runtimeArgs": [
+                "run", "update-odyssey-opportunity-actors"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }
