@@ -18,7 +18,7 @@
     "google_token": "secrets/token.json"
   },
   "acc_odyssey": {
-    "server": "https://momentum.odyssey.ninja/graphql",
+    "server": "https://acc.odyssey.ninja/graphql",
     "gsheet": "1z7uNEvpYPYf_lXXvk8hXqGRFLgp6xOZD7yZsMq4_vxM",
     "users_sheet": "Users",
     "populate_structure": true,
