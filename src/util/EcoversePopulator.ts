@@ -41,6 +41,7 @@ export class EcoversePopulator {
   createOpportunityMutationFile = "./src/queries/create/create-opportunity";
   createActorGroupMutationFile = "./src/queries/create/create-actor-group";
   createActorMutationFile = "./src/queries/create/create-actor";
+  updateActorMutationFile = "./src/queries/update/update-actor";
   createAspectMutationFile = "./src/queries/create/create-aspect";
   replaceTagsOnTagsetFile = "./src/queries/replace-tags-on-tagset";
   updateEcoverseMutationFile = "./src/queries/update-ecoverse";
@@ -61,6 +62,7 @@ export class EcoversePopulator {
   createOpportunityMutationStr: string;
   createActorGroupMutationStr: string;
   createActorMutationStr: string;
+  updateActorMutationStr: string;
   createAspectMutationStr: string;
   createOrganisationMutationStr: string;
   updateOrganisationMutationStr: string;
@@ -167,6 +169,10 @@ export class EcoversePopulator {
 
     this.createActorMutationStr = fs
       .readFileSync(this.createActorMutationFile)
+      .toString();
+
+    this.updateActorMutationStr = fs
+      .readFileSync(this.updateActorMutationFile)
       .toString();
 
     this.createAspectMutationStr = fs
@@ -282,7 +288,8 @@ export class EcoversePopulator {
       const stakeholderResponse = await this.createActor(
         stakeholderAG.createActorGroup.id,
         stakeholder.name,
-        stakeholder.wins_how
+        stakeholder.wins_how,
+        stakeholder.required_effort
       );
       this.logger.verbose(`${stakeholderResponse}`);
     }
@@ -297,7 +304,8 @@ export class EcoversePopulator {
       const keyUserResponse = await this.createActor(
         keyUsersAG.createActorGroup.id,
         keyUser.name,
-        keyUser.wins_how
+        keyUser.wins_how,
+        keyUser.required_effort
       );
       this.logger.verbose(`${keyUserResponse}`);
     }
@@ -476,7 +484,8 @@ export class EcoversePopulator {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_1.name,
-        opportunityJson.stakeholder_1.wins_how
+        opportunityJson.stakeholder_1.wins_how,
+        opportunityJson.stakeholder_1.required_effort
       );
     }
     if (
@@ -486,7 +495,8 @@ export class EcoversePopulator {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_2.name,
-        opportunityJson.stakeholder_2.wins_how
+        opportunityJson.stakeholder_2.wins_how,
+        opportunityJson.stakeholder_2.required_effort
       );
     }
     if (
@@ -496,7 +506,8 @@ export class EcoversePopulator {
       await this.createActor(
         stakeholderAG.createActorGroup.id,
         opportunityJson.stakeholder_3.name,
-        opportunityJson.stakeholder_3.wins_how
+        opportunityJson.stakeholder_3.wins_how,
+        opportunityJson.stakeholder_3.required_effort
       );
     }
 
@@ -513,27 +524,30 @@ export class EcoversePopulator {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_1.name,
-        opportunityJson.key_user_1.wins_how
+        opportunityJson.key_user_1.wins_how,
+        opportunityJson.key_user_1.required_effort
       );
     }
     if (
-      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_2 &&
       opportunityJson.key_user_2.name.length > 0
     ) {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_2.name,
-        opportunityJson.key_user_2.wins_how
+        opportunityJson.key_user_2.wins_how,
+        opportunityJson.key_user_2.required_effort
       );
     }
     if (
-      opportunityJson.key_user_1 &&
+      opportunityJson.key_user_3 &&
       opportunityJson.key_user_3.name.length > 0
     ) {
       await this.createActor(
         keyUsersAG.createActorGroup.id,
         opportunityJson.key_user_3.name,
-        opportunityJson.key_user_3.wins_how
+        opportunityJson.key_user_3.wins_how,
+        opportunityJson.key_user_3.required_effort
       );
     }
 
@@ -968,7 +982,9 @@ export class EcoversePopulator {
   async createActor(
     actorGroupID: number,
     actorName: string,
-    description: string
+    value: string,
+    impact: string,  
+    description = ''
   ): Promise<any> {
     // create the variable for the group mutation
     const createActorVariable = gql`
@@ -978,8 +994,8 @@ export class EcoversePopulator {
                     {
                         "name": "${actorName}",
                         "description": "${description}",
-                        "value": "Ensuring a robust design",
-                        "impact": "Time allocated to work on the solution"
+                        "value": "${value}",
+                        "impact": "${impact}"
                     }
           }`;
 
@@ -988,6 +1004,35 @@ export class EcoversePopulator {
       createActorVariable
     );
     this.logger.info(`...........and added the following actor : ${actorName}`);
+    return createActorResponse;
+  }
+
+  // Create a actorgroup for the given opportunity
+  async updateActor(
+    actorID: number,
+    actorName: string,
+    value: string,
+    impact = '',  
+    description = '',  
+  ): Promise<any> {
+    // create the variable for the group mutation
+    const updateActorVariable = gql`
+                  {
+                    "ID": ${actorID},
+                    "actorData":
+                    {
+                        "name": "${actorName}",
+                        "description": "${description}",
+                        "value": "${value}",
+                        "impact": "${impact}"
+                    }
+          }`;
+
+    const createActorResponse = await this.client.request(
+      this.updateActorMutationStr,
+      updateActorVariable
+    );
+    this.logger.info(`...........updated the following actor : ${actorName}`);
     return createActorResponse;
   }
 
@@ -1072,10 +1117,11 @@ export class EcoversePopulator {
     return true;
   }
 
-
-
   // Load in mutations file
-  async updateHostOrganisation(name: string, logoUri?: string): Promise<Boolean> {
+  async updateHostOrganisation(
+    name: string,
+    logoUri?: string
+  ): Promise<Boolean> {
     try {
       const queryHostInfo = gql`
         query {
@@ -1104,7 +1150,12 @@ export class EcoversePopulator {
         variableUpdateName
       );
       if (logoUri) {
-        await this.addReference("logo", logoUri, "Logo for the ecoverse host", hostProfileID);
+        await this.addReference(
+          "logo",
+          logoUri,
+          "Logo for the ecoverse host",
+          hostProfileID
+        );
       }
       if (result) {
         this.logger.info(`==> Updated host organisation successfully!`);
