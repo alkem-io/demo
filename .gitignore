@@ -5,3 +5,6 @@ log
 .env
 *.log
 .DS_Store
+
+# WebStorm's env generated folder
+.idea
