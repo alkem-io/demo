@@ -11,7 +11,8 @@
     "users-undefined-references": "ts-node-dev  src/users-undefined-references.ts",
     "update-challenge-contexts": "ts-node-dev  src/update-challenge-contexts.ts",
     "populate-odyssey-opportunities": "ts-node-dev  src/populate-odyssey-opportunities.ts",
-    "update-odyssey-opportunity-actors": "ts-node-dev  src/update-odyssey-opportunity-actors.ts"
+    "update-odyssey-opportunity-actors": "ts-node-dev  src/update-odyssey-opportunity-actors.ts",
+    "populate-opportunity-members": "ts-node-dev  src/populate-opportunity-members.ts"
   },
   "repository": {
     "type": "git",
