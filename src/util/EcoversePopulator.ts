@@ -29,6 +29,7 @@ export class EcoversePopulator {
   // The various query / mutation definitions
   addUserToGroupMutationFile = "./src/queries/add-user-to-group";
   addUserToChallengeMutationFile = "./src/queries/add-user-to-challenge";
+  addUserToOpportunityMutationFile = "./src/queries/add-user-to-opportunity";
   createGroupOnEcoverseMutationFile = "./src/queries/create-group-on-ecoverse";
   createChallengeMutationFile = "./src/queries/create/create-challenge";
   createRelationMutationFile = "./src/queries/create/create-relation";
@@ -56,6 +57,7 @@ export class EcoversePopulator {
   addUserToGroupMutationStr: string;
   addTagToTagsetMutationStr: string;
   addUserToChallengeMutationStr: string;
+  addUserToOpportunityMutationStr: string;
   addChallengeLeadMutationStr: string;
   createTagsetOnProfileMutationStr: string;
   createReferenceOnProfileMutationStr: string;
@@ -134,6 +136,10 @@ export class EcoversePopulator {
     this.addUserToChallengeMutationStr = fs
       .readFileSync(this.addUserToChallengeMutationFile)
       .toString();
+
+    this.addUserToOpportunityMutationStr = fs
+        .readFileSync(this.addUserToOpportunityMutationFile)
+        .toString();
 
     this.createTagsetOnProfileMutationStr = fs
       .readFileSync(this.createTagsetOnProfileFile)
@@ -855,6 +861,28 @@ export class EcoversePopulator {
     return true;
   }
 
+  async addUserToOpportunity(
+      opportunityID: string,
+      userID: string
+  ): Promise<Boolean> {
+    const addUserToOpportunityVariable = gql`
+      {
+         "userID": ${userID},
+         "opportunityID": ${opportunityID}     
+      }
+    `
+    const mutationResponse = await this.client.request(
+        this.addUserToOpportunityMutationStr,
+        addUserToOpportunityVariable
+    )
+
+    if (mutationResponse) {
+      this.logger.info(`---> added user ${userID} to opportunity ${opportunityID}`);
+    }
+
+    return true;
+  }
+
   async addChallengeLead(
     challengeName: string,
     organisationID: string
@@ -983,7 +1011,7 @@ export class EcoversePopulator {
     actorGroupID: number,
     actorName: string,
     value: string,
-    impact: string,  
+    impact: string,
     description = ''
   ): Promise<any> {
     // create the variable for the group mutation
@@ -1012,8 +1040,8 @@ export class EcoversePopulator {
     actorID: number,
     actorName: string,
     value: string,
-    impact = '',  
-    description = '',  
+    impact = '',
+    description = '',
   ): Promise<any> {
     // create the variable for the group mutation
     const updateActorVariable = gql`

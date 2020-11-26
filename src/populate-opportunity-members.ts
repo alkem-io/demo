@@ -47,17 +47,10 @@ const main = async () => {
         const foundOpp = opportunities.find((o: any) => o.name === name)
 
         if(foundOpp) {
-            // if that opportunity exist, find "members" group (name, id) from that opportunity
-            const membersGrp = foundOpp.groups.find((g: {id: string, name: string}) => g.name === 'members')
-
-            // in case "members" group does not exist in groups list
-            if(membersGrp.id) {
-                // add each member of matched "Team" group, in the opportunity "members" group
-                members.forEach(async (member) => {
-                    await populator.addUserToGroup(member.id, membersGrp.id)
-                    populator.logger.info(`---> Adding user ${member.name} to group ${membersGrp.name}`)
-                })
-            } else console.error(`No "members" group found in ${foundOpp.name} group `)
+            // add each member of matched "Team" group, to the opportunity
+            members.forEach(async (member) => {
+                await populator.addUserToOpportunity(member.id, foundOpp.id)
+            })
     } else console.error(`No opportunity with name ${name} found`)
     })
 
