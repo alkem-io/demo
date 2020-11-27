@@ -878,6 +878,8 @@ export class EcoversePopulator {
 
     if (mutationResponse) {
       this.logger.info(`---> added user ${userID} to opportunity ${opportunityID}`);
+    } else {
+      this.logger.info(`---> NOT able to add user ${userID} to opportunity ${opportunityID}`);
     }
 
     return true;
