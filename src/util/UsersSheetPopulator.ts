@@ -45,17 +45,17 @@ enum Groups {
 }
 
 export class EcoverseUsersPopulator {
-  // The populator to use to interact with the server
-  populator: EcoversePopulator;
+  // The client to use to interact with the server
+  client: EcoversePopulator;
 
   logger;
   profiler;
 
   // Create the ecoverse with enough defaults set/ members populated
-  constructor(populator: EcoversePopulator) {
-    this.populator = populator;
-    this.logger = populator.logger;
-    this.profiler = populator.profiler;
+  constructor(client: EcoversePopulator) {
+    this.client = client;
+    this.logger = logger;
+    this.profiler = client.profiler;
   }
 
   // Load users from a particular googlesheet
@@ -104,8 +104,8 @@ export class EcoverseUsersPopulator {
                   }
               } `;
         this.profiler.profile("userCreation");
-        const createUserResponse = await this.populator.client.request(
-          this.populator.createUserMutationStr,
+        const createUserResponse = await this.client.client.request(
+          this.client.createUserMutationStr,
           createUserVariable
         );
         this.profiler.profile("userCreation");
@@ -117,14 +117,14 @@ export class EcoverseUsersPopulator {
         // Add in the linkedin reference
         this.profiler.profile("userReference");
         if (userRow[Columns.LINKEDIN])
-          await this.populator.addReference(
+          await this.client.addReference(
             "LinkedIn",
             `${userRow[Columns.LINKEDIN]}`,
             "LinkedIn profile",
             userProfileID
           );
         if (userRow[Columns.TWITTER])
-          await this.populator.addReference(
+          await this.client.addReference(
             "Twitter",
             `${userRow[Columns.TWITTER]}`,
             "Twitter profile",
@@ -136,7 +136,7 @@ export class EcoverseUsersPopulator {
         const challengeName = userRow[Columns.CHALLENGE];
         if (challengeName) {
           this.profiler.profile("userChallenge");
-          await this.populator.addUserToChallenge(challengeName, userID);
+          await this.client.addUserToChallenge(challengeName, userID);
           this.profiler.profile("userChallenge");
         }
 
@@ -185,14 +185,14 @@ export class EcoverseUsersPopulator {
         const teamName = userRow[Columns.TEAM];
         if (teamName) {
           // get the group id
-          const groupID = this.populator.groupsIdsMap.get(teamName);
+          const groupID = this.client.groupsIdsMap.get(teamName);
           if (!groupID) {
             this.logger.warn(
               `Unable to identify team (${teamName}) for user (${firstName})`
             );
           } else {
             this.profiler.profile("userTeam");
-            await this.populator.addUserToGroup(
+            await this.client.addUserToGroup(
               createUserResponse.createUserProfile.id,
               groupID
             );
@@ -204,39 +204,39 @@ export class EcoverseUsersPopulator {
         }
 
         // update the avatar + bio
-        await this.populator.updateUserProfile(
+        await this.client.updateUserProfile(
           userRow[Columns.EMAIL],
           userRow[Columns.BIO],
           userRow[Columns.AVATAR]
         );
 
         // Add in the tagsets
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.SKILLS],
           Tagsets.SKILLS,
           userProfileID
         );
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.FAV_BEVERAGE],
           Tagsets.FAV_BEVERAGE,
           userProfileID
         );
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.FAV_FOOD],
           Tagsets.FAV_FOOD,
           userProfileID
         );
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.KEYWORDS],
           Tagsets.KEYWORDS,
           userProfileID
         );
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.ORGANISATION],
           Tagsets.ORGANISATION,
           userProfileID
         );
-        await this.populator.addTagset(
+        await this.client.addTagset(
           userRow[Columns.ORGANISATION_ROLE],
           Tagsets.ORGANISATION_ROLES,
           userProfileID
@@ -265,7 +265,7 @@ export class EcoverseUsersPopulator {
     username: string,
     userID: string
   ): Promise<boolean> {
-    const groupID = this.populator.groupsIdsMap.get(groupName);
+    const groupID = this.client.groupsIdsMap.get(groupName);
     // Add the user into the team members group
     if (!groupID) {
       this.logger.warn(
@@ -273,7 +273,7 @@ export class EcoverseUsersPopulator {
       );
       return false;
     } else {
-      await this.populator.addUserToGroup(userID, groupID);
+      await this.client.addUserToGroup(userID, groupID);
       this.logger.info(`....added user to group: ${groupName}`);
     }
     return true;

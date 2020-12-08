@@ -1,24 +1,20 @@
-import { EcoversePopulator } from "./util/EcoversePopulator";
-import generator from "generate-password";
+import { createLogger } from './util/create-logger';
 import { EnvironmentFactory } from "./util/EnvironmentFactory";
-import { env } from "process";
-import { GSheetsConnector } from "./util/GSheetsConnector";
 
 const main = async () => {
-  require("dotenv").config();
-  const fs = require("fs");
+  const logger = createLogger();
 
   ////////// First connect to the ecoverse //////////////////
   const environmentConfig = EnvironmentFactory.getEnvironmentConfig();
-  const populator = new EcoversePopulator(environmentConfig);
-  populator.loadAdminToken();
+  const client = new EcoversePopulator(environmentConfig);
+  // client.loadAdminToken();
 
   // Get all the users from the server
   let users = [];
   try {
-    const usersQuery = `query { 
-      users { 
-        name, id, email, firstName, lastName, accountUpn, profile { 
+    const usersQuery = `query {
+      users {
+        name, id, email, firstName, lastName, accountUpn, profile {
           avatar,
           description,
           references {
@@ -27,13 +23,13 @@ const main = async () => {
         }
       }
     }`;
-    const usersResponse = await populator.client.request(usersQuery);
+    const usersResponse = await client.client.request(usersQuery);
     if (!usersResponse.users) throw new Error("Unable to load users");
     users = usersResponse.users;
     const usersCount = users.length;
-    populator.logger.info(`....downloaded ${usersCount} users`);
+    logger.info(`....downloaded ${usersCount} users`);
   } catch (e) {
-    populator.logger.error(`Unable to obtain users: ${e}`);
+    logger.error(`Unable to obtain users: ${e}`);
   }
 
   const accountsInfoArray = [];
@@ -45,15 +41,15 @@ const main = async () => {
       const references = user.profile.references;
       const referenceUndefinedLinkedIn = references.find((reference: { name: string; uri: string; }) => (reference.name === "LinkedIn" && reference.uri === "undefined"));
       if (referenceUndefinedLinkedIn) {
-        populator.logger.info(`Found an undefined ref: ${referenceUndefinedLinkedIn.name} - ${referenceUndefinedLinkedIn.uri} - ${referenceUndefinedLinkedIn.id}`);
-        const removeRefQuery = `mutation { 
-          removeReference(ID: ${referenceUndefinedLinkedIn.id}) 
+        logger.info(`Found an undefined ref: ${referenceUndefinedLinkedIn.name} - ${referenceUndefinedLinkedIn.uri} - ${referenceUndefinedLinkedIn.id}`);
+        const removeRefQuery = `mutation {
+          removeReference(ID: ${referenceUndefinedLinkedIn.id})
         }`;
-        const usersResponse = await populator.client.request(removeRefQuery); 
+        const usersResponse = await client.client.request(removeRefQuery);
       }
 
     } catch (e) {
-      populator.logger.error(`Unable to process user (${i}): ${e}`);
+      logger.error(`Unable to process user (${i}): ${e}`);
     }
   }
 };

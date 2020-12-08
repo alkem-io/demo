@@ -17,17 +17,17 @@ enum Tagsets {
 }
 
 export class OrganisationsSheetPopulator {
-  // The populator to use to interact with the server
-  populator: EcoversePopulator;
+  // The client to use to interact with the server
+  client: EcoversePopulator;
 
   logger;
   profiler;
 
   // Create the ecoverse with enough defaults set/ members populated
-  constructor(populator: EcoversePopulator) {
-    this.populator = populator;
-    this.logger = populator.logger;
-    this.profiler = populator.profiler;
+  constructor(client: EcoversePopulator) {
+    this.client = client;
+    this.logger = logger;
+    this.profiler = client.profiler;
   }
 
   // Load users from a particular googlesheet
@@ -67,18 +67,18 @@ export class OrganisationsSheetPopulator {
       this.profiler.profile(organisationProfileID);
 
       try {
-        const orgResponse = await this.populator.client.request(
-          this.populator.createOrganisationMutationStr,
+        const orgResponse = await this.client.client.request(
+          this.client.createOrganisationMutationStr,
           variable
         );
         const profileID = orgResponse.createOrganisation.profile.id;
         if (profileID) {
-          await this.populator.addTagset(
+          await this.client.addTagset(
             organisationRow[Columns.KEYWORDS],
             "Keywords",
             profileID
           );
-          await this.populator.updateProfile(
+          await this.client.updateProfile(
             profileID,
             organisationRow[Columns.DESCRIPTION],
             organisationRow[Columns.LOGO]
@@ -91,17 +91,17 @@ export class OrganisationsSheetPopulator {
           const challengesArr = challengesStr.split(",");
           for (let i = 0; i < challengesArr.length; i++) {
             const challengeName = challengesArr[i].trim();
-            await this.populator.addChallengeLead(
+            await this.client.addChallengeLead(
               challengeName,
               organisationID
             );
-            this.populator.logger.verbose(
+            this.logger.verbose(
               `Added organisation as lead to challenge: ${challengesArr[0]}`
             );
           }
         }
       } catch (e) {
-        this.populator.logger.error(
+        this.logger.error(
           `Unable to create organisation (${organisationName}): ${e.message}`
         );
       }
@@ -141,10 +141,10 @@ export class OrganisationsSheetPopulator {
         }
       `;
 
-      const orgsResponse = await this.populator.client.request(orgsQuery);
+      const orgsResponse = await this.client.client.request(orgsQuery);
       if (orgsResponse) organisationsJson = orgsResponse.organisations;
     } catch (e) {
-      this.populator.logger.error(`Unable to load organisations data: ${e}`);
+      this.logger.error(`Unable to load organisations data: ${e}`);
     }
 
     if (!organisationsJson) throw new Error('Unable to load organisaitons data');
@@ -173,11 +173,11 @@ export class OrganisationsSheetPopulator {
       try {
         const profileID = organisationJson.profile.id;
         if (profileID) {
-          await this.populator.updateProfile(profileID, organisationRow[Columns.DESCRIPTION], organisationRow[Columns.LOGO]);
+          await this.client.updateProfile(profileID, organisationRow[Columns.DESCRIPTION], organisationRow[Columns.LOGO]);
           this.logger.info(`....updated: ${organisationName}....`);
         }
       } catch (e) {
-        this.populator.logger.error(
+        this.logger.error(
           `Unable to create organisation (${organisationName}): ${e.message}`
         );
       }

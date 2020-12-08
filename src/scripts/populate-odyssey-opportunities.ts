@@ -1,17 +1,19 @@
-import { EcoversePopulator } from "./util/EcoversePopulator";
+import { CherrytwistClient } from 'cherrytwist-lib';
+import { createLogger } from './util/create-logger';
 import { EnvironmentFactory } from "./util/EnvironmentFactory";
 import { MomentumApi } from "./util/http/momentum.api";
 
 const main = async () => {
-  const config = EnvironmentFactory.getEnvironmentConfig();
-  const populator = new EcoversePopulator(config);
-  populator.loadAdminToken();
+  const logger = createLogger();
 
-  // Assume teams + challenges are available so load them in
-  await populator.initialiseEcoverseData();
-  
+  const config = EnvironmentFactory.getEnvironmentConfig();
+  const client = new CherrytwistClient({
+    graphqlEndpoint: config.server,
+  });
+  // client.loadAdminToken();
+
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${config.server}`);
+  logger.info(`Cherrytwist server: ${config.server}`);
 
   // Get the momentum teams
   const momentumApi = new MomentumApi();
@@ -21,19 +23,19 @@ const main = async () => {
     const opportunityJson = await momentumApi.getAchiever(i.toString())
     const teamJson = teamsMap.get(opportunityJson.team);
     const challengeName = opportunityJson.challenge_name;
-    populator.logger.info(`(${i}) - Found team ${teamJson.name} for opportunity ${challengeName}`);
+    logger.info(`(${i}) - Found team ${teamJson.name} for opportunity ${challengeName}`);
     // Map the challenge name to a challenge ID
-    const challengeID = populator.lookupChallengeID(challengeName);
+    const challengeID = client.lookupChallengeID(challengeName);
     if (!challengeID) {
-      populator.logger.error(`Unable to locate challenge with name: ${challengeName}`);
+      logger.error(`Unable to locate challenge with name: ${challengeName}`);
       continue;
     }
     try {
-      await populator.createOpportunity2(parseInt(challengeID.challengeID), opportunityJson, teamJson);
+      await client.createOpportunity2(parseInt(challengeID.challengeID), opportunityJson, teamJson);
     } catch (e) {
-      populator.logger.error(`Unable to create opportunity: ${opportunityJson.team} - ${e.message}`);
+      logger.error(`Unable to create opportunity: ${opportunityJson.team} - ${e.message}`);
     }
-    
+
   }
 };
 

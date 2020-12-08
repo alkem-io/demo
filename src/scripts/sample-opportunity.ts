@@ -1,21 +1,25 @@
-import { EcoversePopulator } from "./util/EcoversePopulator";
+import { CherrytwistClient } from 'cherrytwist-lib';
 import fs from "fs";
+import { createLogger } from './util/create-logger';
 import { EnvironmentFactory } from "./util/EnvironmentFactory";
 
 const main = async () => {
+  const logger = createLogger();
   const config = EnvironmentFactory.getEnvironmentConfig();
-  const populator = new EcoversePopulator(config);
-  
+  const client = new CherrytwistClient({
+    graphqlEndpoint: config.server,
+  });
+
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${config.server}`);
-  populator.loadAdminToken();
+  logger.info(`Cherrytwist server: ${config.server}`);
+  // client.loadAdminToken();
 
   // Update the context and set the host
   const opportunityJsonFile = "./src/data/opportunities/earth-gas-for-bio.json";
   const opportunityJsonStr = fs.readFileSync(opportunityJsonFile).toString();
   const opportunityJson = JSON.parse(opportunityJsonStr);
 
-  await populator.createOpportunity(1, opportunityJson);
+  await client.createOpportunity(1, opportunityJson);
 
 };
 

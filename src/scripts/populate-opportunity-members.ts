@@ -1,17 +1,20 @@
-import { gql } from "graphql-request";
-import { EnvironmentFactory } from "./util/EnvironmentFactory";
-import { EcoversePopulator } from "./util/EcoversePopulator";
+import { gql } from 'graphql-request';
+import { EnvironmentFactory } from './util/EnvironmentFactory';
+import { CherrytwistClient } from 'cherrytwist-lib';
+import { createLogger } from './util/create-logger';
 
 const main = async () => {
-  require("dotenv").config();
+  const logger = createLogger();
 
   ////////// First connect to the ecoverse //////////////////
   const config = EnvironmentFactory.getEnvironmentConfig();
-  const populator = new EcoversePopulator(config);
-  populator.loadAdminToken();
+  const client = new CherrytwistClient({
+    graphqlEndpoint: config.server,
+  });
+  // client.loadAdminToken();
 
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${config.server}`);
+  logger.info(`Cherrytwist server: ${config.server}`);
 
   const groupsQuery = gql`
     {
@@ -39,10 +42,9 @@ const main = async () => {
     }
   `;
 
-  const { groupsWithTag } = await populator.client.request(groupsQuery);
-  const { opportunities } = await populator.client.request(opportunitiesQuery);
+  const { groupsWithTag } = await client.client.request(groupsQuery);
+  const { opportunities } = await client.client.request(opportunitiesQuery);
 
-  const logger = populator.logger;
   for (let t = 0; t < groupsWithTag.length; t++) {
     const group = groupsWithTag[t];
     const name = group.name;
@@ -57,15 +59,15 @@ const main = async () => {
       logger.info(`[${t}] - ... found corresponding opportunity`);
       for (let i = 0; i < members.length; i++) {
         const member = members[i];
-        populator.logger.info(`[${t}] - ......adding user: ${member.name}`);
+        logger.info(`[${t}] - ......adding user: ${member.name}`);
         try {
-          await populator.addUserToOpportunity(foundOpp.id, member.id);
+          await client.addUserToOpportunity(foundOpp.id, member.id);
         } catch (e) {
-          populator.logger.error(`[${t}] - ${e}`);
+          logger.error(`[${t}] - ${e}`);
         }
       }
     } else {
-      populator.logger.error(`No opportunity with name ${name} found`);
+      logger.error(`No opportunity with name ${name} found`);
     }
   }
 };

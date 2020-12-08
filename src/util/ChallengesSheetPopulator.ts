@@ -22,32 +22,32 @@ enum Tagsets {
 }
 
 export class ChallengesSheetPopulator {
-  // The populator to use to interact with the server
-  populator: EcoversePopulator;
+  // The client to use to interact with the server
+  client: EcoversePopulator;
 
   logger;
   profiler;
 
   // Create the ecoverse with enough defaults set/ members populated
-  constructor(populator: EcoversePopulator) {
-    this.populator = populator;
-    this.logger = populator.logger;
-    this.profiler = populator.profiler;
+  constructor(client: EcoversePopulator) {
+    this.client = client;
+    this.logger = logger;
+    this.profiler = client.profiler;
   }
 
-  
+
 // Load challenges from a particular googlesheet
 async loadChallengesFromSheet(
   sheetName: string,
   sheetsConnector: GSheetsConnector,
-  populator: EcoversePopulator
+  client: EcoversePopulator
 ) {
   const sheetRange = `${sheetName}!A1:Z1200`;
   const challengesGSheet = await sheetsConnector.getObjectArray(sheetRange);
-  populator.logger.info(
+  logger.info(
     `===================================================================`
   );
-  populator.logger.info(
+  logger.info(
     `====== Obtained gsheet ${sheetRange}  with ${challengesGSheet.length} rows`
   );
 
@@ -93,17 +93,17 @@ async loadChallengesFromSheet(
     }`;
 
     // start processing
-    populator.logger.info(`Processing challenge: ${challengeName}....`);
+    logger.info(`Processing challenge: ${challengeName}....`);
     const challengeProfileID = "===> challengeCreation - FULL";
-    populator.profiler.profile(challengeProfileID);
+    client.profiler.profile(challengeProfileID);
 
     try {
-      const challenge = await populator.client.request(
-        populator.createChallengeMutationStr,
+      const challenge = await client.client.request(
+        client.createChallengeMutationStr,
         createChallengeVariable
       );
     } catch (e) {
-      populator.logger.error(
+      logger.error(
         `Unable to load challenge (${challengeName}): ${e.message}`
       );
     }
@@ -148,10 +148,10 @@ async loadChallengesFromSheet(
         }
       `;
 
-      const challengesResponse = await this.populator.client.request(challengesQuery);
+      const challengesResponse = await this.client.client.request(challengesQuery);
       if (challengesResponse) challengesJson = challengesResponse.challenges;
     } catch (e) {
-      this.populator.logger.error(`Unable to load challenges data: ${e}`);
+      this.logger.error(`Unable to load challenges data: ${e}`);
     }
 
     if (!challengesJson) throw new Error('Unable to load challenges data');
@@ -208,10 +208,10 @@ async loadChallengesFromSheet(
               id
             }
           }`;
-          await this.populator.client.request(mutationStr, updateChallengeVariable);
+          await this.client.client.request(mutationStr, updateChallengeVariable);
           this.logger.info(`....updated: ${challengeName}....`);
       } catch (e) {
-        this.populator.logger.error(
+        this.logger.error(
           `Unable to update challenge (${challengeName}): ${e.message}`
         );
       }

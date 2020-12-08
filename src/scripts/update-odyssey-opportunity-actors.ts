@@ -1,38 +1,42 @@
-import { EcoversePopulator } from "./util/EcoversePopulator";
+import { CherrytwistClient } from 'cherrytwist-lib';
 import { EnvironmentFactory } from "./util/EnvironmentFactory";
 import { MomentumApi } from "./util/http/momentum.api";
 import { gql } from "graphql-request";
+import { createLogger } from './util/create-logger';
 
 const main = async () => {
+  const logger = createLogger();
   const config = EnvironmentFactory.getEnvironmentConfig();
-  const populator = new EcoversePopulator(config);
-  populator.loadAdminToken();
+  const client = new CherrytwistClient({
+    graphqlEndpoint: config.server,
+  });
+  // client.loadAdminToken();
 
   // Assume teams + challenges are available so load them in
-  await populator.initialiseEcoverseData();
+  await client.initialiseEcoverseData();
 
   // Get an authorisation token
-  populator.logger.info(`Cherrytwist server: ${config.server}`);
+  logger.info(`Cherrytwist server: ${config.server}`);
 
   // Get the momentum teams
   const momentumApi = new MomentumApi();
   //const teamsMap = await getTeams(momentumApi);
 
   // get all the opportunities and store them locally
-  const opportunitiesMap = await getOpportunitiesCT(populator);
+  const opportunitiesMap = await getOpportunitiesCT(client);
 
   for (let i = 1; i < 98; i++) {
     try {
       const opportunityJson = await momentumApi.getAchiever(i.toString());
       //const teamJson = teamsMap.get(opportunityJson.team);
       const opportunityName = opportunityJson.team;
-      populator.logger.info(
+      logger.info(
         `(${i}) - Processing opportunity with name ${opportunityName}`
       );
       // Map the challenge name to a challenge ID
       const opportunityCTJson = opportunitiesMap.get(opportunityName);
       if (!opportunityCTJson) {
-        populator.logger.error(
+        logger.error(
           `Unable to locate opportunity with name: ${opportunityName}`
         );
         continue;
@@ -40,10 +44,10 @@ const main = async () => {
       // Get the right actor group
       const actorGroups = opportunityCTJson.actorGroups;
       if (actorGroups.length == 0) {
-        populator.logger.warn(`No actor groups: ${opportunityName}`);
+        logger.warn(`No actor groups: ${opportunityName}`);
         continue;
       }
-      
+
       // Once off fix...rely on the order, not the name
       const stakeholders = opportunityCTJson.actorGroups[1].actors;
       for (let j = 0; j < stakeholders.length; j++) {
@@ -68,9 +72,9 @@ const main = async () => {
         ) {
           actorLaravel = opportunityJson.stakeholder_3;
         } else {
-          populator.logger.error(`Unable to find matching actor: ${actorName}`);
+          logger.error(`Unable to find matching actor: ${actorName}`);
         }
-        await populator.updateActor(actorID, actorName, actorLaravel.wins_how, actorLaravel.required_effort, ' ');
+        await client.updateActor(actorID, actorName, actorLaravel.wins_how, actorLaravel.required_effort, ' ');
       }
 
       const keyUsers = opportunityCTJson.actorGroups[2].actors;
@@ -96,12 +100,12 @@ const main = async () => {
         ) {
           actorLaravel = opportunityJson.key_user_3;
         } else {
-          populator.logger.error(`Unable to find matching actor: ${actorName}`);
+          logger.error(`Unable to find matching actor: ${actorName}`);
         }
-        await populator.updateActor(actorID, actorName, actorLaravel.wins_how, ' ', ' ');
+        await client.updateActor(actorID, actorName, actorLaravel.wins_how, ' ', ' ');
       }
     } catch (e) {
-      populator.logger.error( 
+      logger.error(
         `Unable to update opportunity: ${e.message}`
       );
     }
@@ -141,7 +145,7 @@ async function getOpportunitiesLaravel(
 }
 
 async function getOpportunitiesCT(
-  populator: EcoversePopulator
+  client: EcoversePopulator
 ): Promise<Map<string, any>> {
   const opportunitiesMap: Map<string, any> = new Map();
 
@@ -165,10 +169,10 @@ async function getOpportunitiesCT(
       }
     `;
 
-    const response = await populator.client.request(opportunitiesQuery);
+    const response = await client.client.request(opportunitiesQuery);
     if (response) opportunitiesJson = response.opportunities;
   } catch (e) {
-    populator.logger.error(`Unable to load opportunities data: ${e}`);
+    logger.error(`Unable to load opportunities data: ${e}`);
   }
 
   if (!opportunitiesJson) throw new Error("Unable to load opportunities data");
