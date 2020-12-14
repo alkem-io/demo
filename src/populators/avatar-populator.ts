@@ -3,14 +3,10 @@ import { AbstractDataAdapter, AbstractPopulator } from 'cherrytwist-populator';
 import { Logger } from 'winston';
 
 export class AvatarPopulator extends AbstractPopulator {
-  constructor(
-    client: CherrytwistClient,
-    data: AbstractDataAdapter,
-    logger: Logger,
-    profiler: Logger
-  ) {
-    super(client, data, logger, profiler);
+  constructor(client: CherrytwistClient) {
+    super(client);
   }
+
   public async populate() {
     const users = await this.client.users();
 

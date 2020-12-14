@@ -1,7 +1,7 @@
 import { CherrytwistClient } from 'cherrytwist-lib';
-import fs from "fs";
-import { createLogger } from './util/create-logger';
-import { EnvironmentFactory } from "./util/EnvironmentFactory";
+import fs from 'fs';
+import { createLogger } from 'cherrytwist-populator';
+import { EnvironmentFactory } from '../util/EnvironmentFactory';
 
 const main = async () => {
   const logger = createLogger();
@@ -15,16 +15,13 @@ const main = async () => {
   // client.loadAdminToken();
 
   // Update the context and set the host
-  const opportunityJsonFile = "./src/data/opportunities/earth-gas-for-bio.json";
+  const opportunityJsonFile = './src/data/opportunities/earth-gas-for-bio.json';
   const opportunityJsonStr = fs.readFileSync(opportunityJsonFile).toString();
   const opportunityJson = JSON.parse(opportunityJsonStr);
 
   await client.createOpportunity(1, opportunityJson);
-
 };
 
-try {
-  main();
-} catch (error) {
+main().catch(error => {
   console.error(error);
-}
+});

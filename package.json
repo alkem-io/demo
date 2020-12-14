@@ -16,7 +16,8 @@
     "update-challenge-contexts": "ts-node-dev  src/scripts/update-challenge-contexts.ts",
     "populate-odyssey-opportunities": "ts-node-dev  src/scripts/populate-odyssey-opportunities.ts",
     "update-odyssey-opportunity-actors": "ts-node-dev  src/scripts/update-odyssey-opportunity-actors.ts",
-    "populate-opportunity-members": "ts-node-dev  src/scripts/populate-opportunity-members.ts"
+    "populate-opportunity-members": "ts-node-dev  src/scripts/populate-opportunity-members.ts",
+    "start": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -39,8 +40,10 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
+    "chalk": "^4.1.0",
     "cherrytwist-lib": "^0.4.0",
     "cherrytwist-populator": "^0.1.0",
+    "commander": "^6.2.1",
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",
     "googleapis": "^64.0.0",
