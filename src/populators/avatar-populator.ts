@@ -1,6 +1,5 @@
 import { CherrytwistClient } from 'cherrytwist-lib';
-import { AbstractDataAdapter, AbstractPopulator } from 'cherrytwist-populator';
-import { Logger } from 'winston';
+import { AbstractPopulator } from 'cherrytwist-populator';
 
 export class AvatarPopulator extends AbstractPopulator {
   constructor(client: CherrytwistClient) {
@@ -23,7 +22,7 @@ export class AvatarPopulator extends AbstractPopulator {
       const avatarUri = `https://eu.ui-avatars.com/api/?name=${userInfo.firstName}+${userInfo.lastName}&background=0D8ABC&color=fff`;
       try {
         await this.client.updateUserProfile(userInfo.email, '', avatarUri);
-        this.logger.info(`...........updated avatar to be "${avatarUri}"`);
+        this.logger.info(`... updated avatar to be "${avatarUri}"`);
 
         matches++;
       } catch (e) {

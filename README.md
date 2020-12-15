@@ -92,17 +92,6 @@ Now you can navigate the web client and see a sample populated Ecoverse - enjoy!
 ### Advanced data population
 
 #### Data population
-The demo app could be installed as CLI.
-
-```
-npm install -g cherrytwist-demo
-```
-
-```bash
-cherrytwist-demo populate -f <file> -s <server>
-```
-
-or if you don't want to install the CLI, you can run it through `npm`
 
 ```bash
 npm start populate -- -f <file> -s <server>
@@ -117,12 +106,6 @@ Where
 ```
 
 #### Avatars
-
-```bash
-cherrytwist-demo populate-avatars -s <server>
-```
-
-or if you don't want to install the CLI:
 
 ```bash
 npm start populate-avatars -- -s <server>

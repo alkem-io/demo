@@ -1,28 +1,26 @@
 import { CherrytwistClient } from 'cherrytwist-lib';
-import environment from '../environments.json';
 import {
   XLSXAdapter,
   Populator,
   createLogger,
   createProfiler,
 } from 'cherrytwist-populator';
+import { assert } from 'console';
 import path from 'path';
 
-export const sampleData = async (fileName?: string, server?: string) => {
+export const sampleData = async (fileName: string, server: string) => {
+  assert(server, 'Server url not provided!');
+
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const config = environment['local'];
-  const graphqlEndpoint = server ?? config.server;
-
   const ctClient = new CherrytwistClient({
-    graphqlEndpoint,
+    graphqlEndpoint: server,
   });
 
-  logger.info(`Cherrytwist server: ${graphqlEndpoint}`);
+  logger.info(`Cherrytwist server: ${server}`);
 
-  const file = fileName ?? path.join(__dirname, '..', 'data', 'sample.ods');
-  const data = new XLSXAdapter(file);
+  const data = new XLSXAdapter(fileName);
 
   // Loading data from google sheets
   const populator = new Populator(ctClient, data, logger, profiler);

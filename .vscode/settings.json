@@ -1,6 +1,11 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "cSpell.words": [
-        "ecoverse"
-    ]
+  "cSpell.words": [
+    "ecoverse"
+  ],
+  "files.eol": "\n",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifierEnding": "minimal",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal"
 }

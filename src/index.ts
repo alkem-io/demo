@@ -3,6 +3,7 @@
 import { program } from 'commander';
 import { populateAvatars } from './actions/populate-avatars';
 import { sampleData } from './actions/sample-data';
+import { DEFAULT_SERVER_URL } from './constants';
 
 const main = async () => {
   const version = process.env.npm_package_version || '';
@@ -28,11 +29,13 @@ const main = async () => {
     .option(
       '-s, --server <url>',
       'cherry twist graphql endpoint',
-      'http://localhost:4000/graphql'
+      DEFAULT_SERVER_URL
     )
     .description('import data from ODS/XLSX file to cherry twist server')
     .action(opts => {
-      sampleData(opts.file, opts.server);
+      const file = opts.file ?? 'cherrytwist-data-template.ods';
+      const server = opts.server ?? DEFAULT_SERVER_URL;
+      sampleData(file, server);
     })
     .on('--help', () => {
       console.log();
@@ -47,11 +50,12 @@ const main = async () => {
     .option(
       '-s, --server <url>',
       'cherry twist graphql endpoint',
-      'http://localhost:4000/graphql'
+      DEFAULT_SERVER_URL
     )
     .description('populate avatars into destination server')
     .action(opts => {
-      populateAvatars(opts.server);
+      const server = opts.server ?? DEFAULT_SERVER_URL;
+      populateAvatars(server);
     })
     .on('--help', () => {
       console.log();

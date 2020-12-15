@@ -4,8 +4,8 @@ const copyfiles = require('copyfiles');
 const path = require('path');
 
 function postBuild(cb) {
-  const paths = [path.join('src/data/**/*'), path.join('dist')];
-  copyfiles(paths, 1, cb);
+  const paths = ['cherrytwist-data-template.ods', 'dist'];
+  copyfiles(paths, 0, cb);
 }
 
 exports.postBuild = postBuild;
