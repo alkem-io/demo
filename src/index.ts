@@ -1,9 +1,8 @@
+#!/usr/bin/env node
+
 import { program } from 'commander';
 import { populateAvatars } from './actions/populate-avatars';
 import { sampleData } from './actions/sample-data';
-
-let fileName: string;
-let serverUrl: string;
 
 const main = async () => {
   const version = process.env.npm_package_version || '';

@@ -21,10 +21,10 @@ export const sampleData = async (fileName?: string, server?: string) => {
 
   logger.info(`Cherrytwist server: ${graphqlEndpoint}`);
 
-  const file = fileName ?? path.join(__dirname,'..', 'data', 'sample.ods');
+  const file = fileName ?? path.join(__dirname, '..', 'data', 'sample.ods');
   const data = new XLSXAdapter(file);
+
   // Loading data from google sheets
   const populator = new Populator(ctClient, data, logger, profiler);
-  console.log('Populate', file);
- // await populator.populate();
+  await populator.populate();
 };

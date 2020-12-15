@@ -8,3 +8,4 @@ log
 
 # WebStorm's env generated folder
 .idea
+dist

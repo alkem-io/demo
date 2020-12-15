@@ -2,8 +2,15 @@
   "name": "cherrytwist-demo",
   "version": "0.1.1",
   "description": "Demo of setting up and populating a Cherrytwist Ecoverse",
-  "main": "src/submit-sample-data.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "cherrytwist-demo": "./dist/index.js"
+  },
   "scripts": {
+    "build": "tsc --project tsconfig.prod.json",
+    "prebuild": "npm run clean",
+    "clean": "rimraf ./dist",
     "format": "prettier --write src/**/*.ts",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
@@ -17,7 +24,8 @@
     "populate-odyssey-opportunities": "ts-node-dev  src/scripts/populate-odyssey-opportunities.ts",
     "update-odyssey-opportunity-actors": "ts-node-dev  src/scripts/update-odyssey-opportunity-actors.ts",
     "populate-opportunity-members": "ts-node-dev  src/scripts/populate-opportunity-members.ts",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -41,13 +49,14 @@
   "dependencies": {
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
-    "cherrytwist-lib": "^0.4.0",
-    "cherrytwist-populator": "^0.1.0",
+    "cherrytwist-lib": "^0.4.5",
+    "cherrytwist-populator": "file:../populator/cherrytwist-populator-0.1.0.tgz",
     "commander": "^6.2.1",
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",
     "googleapis": "^64.0.0",
     "jsonpath": "^1.0.2",
+    "rimraf": "^3.0.2",
     "typescript": "^4.1.2",
     "winston": "^3.3.3"
   }

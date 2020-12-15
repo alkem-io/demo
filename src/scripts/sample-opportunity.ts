@@ -19,7 +19,8 @@ const main = async () => {
   const opportunityJsonStr = fs.readFileSync(opportunityJsonFile).toString();
   const opportunityJson = JSON.parse(opportunityJsonStr);
 
-  await client.createOpportunity(1, opportunityJson);
+  console.error('Not implemented!');
+  // await client.createOpportunity(1, opportunityJson);
 };
 
 main().catch(error => {
