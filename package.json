@@ -10,6 +10,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.prod.json",
     "prebuild": "npm run clean",
+    "postbuild": "npm run gulp postBuild",
+    "gulp": "gulp",
     "clean": "rimraf ./dist",
     "format": "prettier --write src/**/*.ts",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
@@ -18,12 +20,6 @@
     "sample-data": "ts-node-dev  src/scripts/sample-data.ts",
     "sample-opportunity": "ts-node-dev  src/scripts/sample-opportunity.ts",
     "populate-avatars": "ts-node-dev  src/scripts/populate-avatars.ts",
-    "update-organisations": "ts-node-dev  src/scripts/update-organisations.ts",
-    "users-undefined-references": "ts-node-dev  src/scripts/users-undefined-references.ts",
-    "update-challenge-contexts": "ts-node-dev  src/scripts/update-challenge-contexts.ts",
-    "populate-odyssey-opportunities": "ts-node-dev  src/scripts/populate-odyssey-opportunities.ts",
-    "update-odyssey-opportunity-actors": "ts-node-dev  src/scripts/update-odyssey-opportunity-actors.ts",
-    "populate-opportunity-members": "ts-node-dev  src/scripts/populate-opportunity-members.ts",
     "start": "ts-node src/index.ts",
     "prepublishOnly": "npm run build"
   },
@@ -39,12 +35,14 @@
   "homepage": "https://github.com/Cherrytwist/Demo.Simple#readme",
   "devDependencies": {
     "@types/node": "^14.6.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "gulp": "^4.0.2",
+    "nodemon": "^2.0.6",
     "prettier": "^2.2.1",
-    "ts-node-dev": "^1.0.0",
-    "nodemon": "^2.0.6"
+    "ts-node-dev": "^1.0.0"
   },
   "dependencies": {
     "axios": "^0.21.0",

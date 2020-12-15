@@ -11,27 +11,31 @@ const main = async () => {
   program.name(name);
   program.version(version);
 
+  program.on('--help', () => {
+    console.log();
+    console.log(`cherrytwist-demo populate -s `);
+  });
+
   program
-    .command('import ')
-    .alias('i')
-    .option('-f,--file <fileName>', 'file to import')
-    .option('-s,--server <url>', 'cherry twist graphql endpoint')
-    .description('import data from ODS/XLSX file into cherry twist server')
+    .command('populate')
+    .alias('p')
+    .option('-f, --file <fileName>', `ODS/XLSX file to import, if not set sample-data will be populated`)
+    .option('-s, --server <url>', 'cherry twist graphql endpoint', 'http://localhost:4000/graphql')
+    .description('import data from ODS/XLSX file to cherry twist server')
     .action(opts => {
       sampleData(opts.file, opts.server);
     });
 
   program
-    .command('populate-avatars [destination]')
+    .command('populate-avatars')
     .alias('a')
-    .option('-s,--server <url>', 'cherry twist graphql endpoint')
+    .option('-s, --server <url>', 'cherry twist graphql endpoint', 'http://localhost:4000/graphql')
     .description('populate avatars into destination server')
-    .action(opts=> {
+    .action(opts => {
       populateAvatars(opts.server);
     });
 
   await program.parseAsync(process.argv);
-
 };
 
 main().catch(error => {

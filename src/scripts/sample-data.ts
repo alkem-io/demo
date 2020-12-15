@@ -1,3 +1,3 @@
-import { sampleData } from 'src/actions/sample-data';
+import { sampleData } from '../actions/sample-data';
 
 sampleData().catch(error => console.error(error));
