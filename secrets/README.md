@@ -1,1 +1,0 @@
-This directory is used to store the tokens for access the google sheet via an api.

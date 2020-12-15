@@ -1,5 +1,0 @@
-mutation addUserToOpportunity($opportunityID: Float!, $userID: Float!) {
-  addUserToOpportunity(opportunityID: $opportunityID, userID: $userID) {
-    name
-  }
-}
