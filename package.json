@@ -18,7 +18,6 @@
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "nodemon": "nodemon",
     "sample-data": "ts-node-dev  src/scripts/sample-data.ts",
-    "sample-opportunity": "ts-node-dev  src/scripts/sample-opportunity.ts",
     "populate-avatars": "ts-node-dev  src/scripts/populate-avatars.ts",
     "start": "ts-node src/index.ts",
     "prepublishOnly": "npm run build"
@@ -48,7 +47,7 @@
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cherrytwist-lib": "^0.4.5",
-    "cherrytwist-populator": "file:../populator/cherrytwist-populator-0.1.0.tgz",
+    "cherrytwist-populator": "^0.1.0",
     "commander": "^6.2.1",
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",
