@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "cherrytwist-demo": "./dist/index.js"
+    "cherrytwist-demo": "dist/index.js"
   },
   "scripts": {
     "build": "tsc --project tsconfig.prod.json",
