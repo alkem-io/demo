@@ -33,7 +33,7 @@ The following commands are used to run this project:
 Now both client and server are exposed locally and can be accessed, e.g. through a browser:
 
 - server: http://localhost:4000/graphql
-- client: http://localhost
+- client: http://localhost:8080
 
 > > Note: the demo has authentication **disabled** and it also does not use tls.
 

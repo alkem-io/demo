@@ -1,4 +1,4 @@
-version: '2.3'
+version: '2.4'
 
 volumes:
   portainer:
@@ -11,7 +11,7 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server:v0.5.6
+    image: cherrytwist/server:v0.6.6
     networks:
       - ct
     environment:
@@ -41,20 +41,25 @@ services:
     restart: always
     ports:
       - 4000:4000
-    command: sh -c "/wait && npm start"
+    command: sh -c "/wait && npm run migration:run && npm start"
     volumes:
       - server:/usr/src/app/config
 
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:v0.4.3
+    image: cherrytwist/client-web:v0.5.5
     networks:
       - ct
     environment:
       - AUTH_ENABLED
+      - REACT_APP_SENTRY_ENABLED
+      - REACT_APP_FEEDBACK_URL
+      - REACT_APP_SENTRY_PII_ENABLED
+      - REACT_APP_SENTRY_ENDPOINT
+      - REACT_APP_GRAPHQL_ENDPOINT
     ports:
-      - 80:80
+      - 8080:80
     restart: always
 
   db:
@@ -74,7 +79,7 @@ services:
     networks:
       - ct
     ports:
-      - 9000:9000
+      - 9156:9000
     volumes:
       - portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
