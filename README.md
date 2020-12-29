@@ -21,7 +21,7 @@ The user can then intereact in two ways with the demo:
 Prerequisites:
 
 - Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
-- ports 80, 4000 and 9000 free on localhost
+- ports 80 and 4000 free on localhost
 
 The following commands are used to run this project:
 
@@ -38,8 +38,6 @@ Now both client and server are exposed locally and can be accessed, e.g. through
 > > Note: the demo has authentication **disabled** and it also does not use tls.
 
 It is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
-
-Bonus: the docker-compose scripts also installs Portainer, which can be accessed from http://localhost:9000 to check the status of the demo.
 
 - first install:
   - choose password
@@ -59,7 +57,7 @@ Now that the software is installed and running via Docker, the next step is to p
 
 ### Basic Sample Data
 
-Navigate to the [Data Management page](http://localhost:4000/data-management) and clieck on the "Sample data" button.
+Navigate to the [Data Management page](http://localhost:4000/data-management) and click on the "Sample data" button.
 
 ### Full Sample Data
 
