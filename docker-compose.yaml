@@ -1,9 +1,8 @@
 version: '2.4'
 
 volumes:
-  portainer:
-  server:
-
+  ct_server:
+  ct_server_db:
 
 networks:
   ct:
@@ -11,11 +10,10 @@ networks:
 services:
   server:
     container_name: ct_server
-    image: cherrytwist/server:v0.6.6
+    image: cherrytwist/server:v0.7.1
     networks:
       - ct
     environment:
-      - AUTHENTICATION_ENABLED
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
@@ -23,16 +21,16 @@ services:
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
       - WAIT_HOST_CONNECT_TIMEOUT
+      - AUTH_ENABLED
+      - AUTH_AAD_TENANT
+      - AUTH_AAD_CHERRYTWIST_API_SCOPE
       - AUTH_AAD_CHERRYTWIST_API_APP_ID
       - AUTH_AAD_LOGGING_PII
       - AUTH_AAD_LOGGING_LEVEL
       - AUTH_AAD_MSGRAPH_API_SECRET
       - AUTH_AAD_MSGRAPH_API_SCOPE
       - AUTH_AAD_UPN_DOMAIN
-      - AUTH_AAD_TENANT
-      - AUTH_ENABLED
       - AUTH_AAD_CLIENT_APP_ID
-      - AUTH_AAD_CHERRYTWIST_API_SCOPE
       - AUTH_AAD_CLIENT_LOGIN_REDIRECT_URI
       - LOGGING_LEVEL
       - LOGGING_PROFILING_ENABLED
@@ -43,16 +41,15 @@ services:
       - 4000:4000
     command: sh -c "/wait && npm run migration:run && npm start"
     volumes:
-      - server:/usr/src/app/config
+      - ct_server:/usr/src/app/config
 
 
   client:
     container_name: ct_client
-    image: cherrytwist/client-web:v0.5.5
+    image: cherrytwist/client-web:v0.5.6
     networks:
       - ct
     environment:
-      - AUTH_ENABLED
       - REACT_APP_SENTRY_ENABLED
       - REACT_APP_FEEDBACK_URL
       - REACT_APP_SENTRY_PII_ENABLED
@@ -72,15 +69,7 @@ services:
       - ct
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-
-  portainer:
-    container_name: portainer
-    image: portainer/portainer-ce
-    networks:
-      - ct
-    ports:
-      - 9156:9000
     volumes:
-      - portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
+      - ct_server_db:/var/lib/mysql
+
+
