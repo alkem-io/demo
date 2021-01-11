@@ -20,15 +20,18 @@ The user can then intereact in two ways with the demo:
 
 Prerequisites:
 
-- Docker and docker-compose installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
+- Docker, docker-compose, [nodejs](https://nodejs.org/en/download/package-manager/) and git installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
 - ports 80 and 4000 free on localhost
+- Demo repository cloned to local device (`git clone https://github.com/cherrytwist/Demo.git`)
 
 The following commands are used to run this project:
 
 - `docker-compose --env-file .env.default up -d --build` (to pull the images and start the containers in detached mode)
 - verify that the server is available at http://localhost:4000/graphql (using a browser). This can take a minute as everything fires up.
-- copy the `.env.devault` file to be `.env`
-- `npm run sample-data` (to populate the server with additional sample data)
+- copy the `.env.default` file to be `.env`
+- populate the server (see [below](#data-setup) for detailed instructions)
+  - `npm install` (to install dependancies)
+  - `npm run sample-data` (to populate the server with additional sample data)
 
 Now both client and server are exposed locally and can be accessed, e.g. through a browser:
 
