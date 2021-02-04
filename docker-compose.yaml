@@ -72,4 +72,19 @@ services:
     volumes:
       - ct_server_db:/var/lib/mysql
 
+  populator:
+    container_name: ct_demo_populator
+    image: ct_demo_populator
+    depends_on:
+      - server
+    build: .
+    networks:
+      - ct
+    environment:
+      - WAIT_HOSTS
+      - WAIT_HOSTS_TIMEOUT
+      - WAIT_SLEEP_INTERVAL
+      - WAIT_HOST_CONNECT_TIMEOUT
+
+
 
