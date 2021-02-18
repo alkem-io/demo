@@ -42,9 +42,6 @@ Now both client and server are exposed locally and can be accessed, e.g. through
 
 It is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
 
-- first install:
-  - choose password
-  - choose local endpoint
 
 At this point you hopefully will have a running empty ecoverse! To verify the different components:
 
