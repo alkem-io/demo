@@ -75,7 +75,7 @@ services:
 
   ct_auth_provider:
     container_name: ct_simple_auth
-    image: cherrytwist/simple-auth:v0.1.3
+    image: cherrytwist/simple-auth:v0.1.4
     networks:
       - ct
     environment:
