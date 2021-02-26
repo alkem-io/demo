@@ -16,7 +16,7 @@ services:
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
+      - MYSQL_DATABASE=cherrytwist
       - WAIT_HOSTS
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
@@ -36,10 +36,11 @@ services:
       - LOGGING_PROFILING_ENABLED
     depends_on:
       - db
+      - ct_auth_provider
     restart: always
     ports:
       - 4000:4000
-    command: sh -c "/wait && npm run migration:run && npm start"
+    command: sh -c "/wait && /create_db.sh && npm run migration:run && npm start"
     volumes:
       - ct_server:/usr/src/app/config
 
@@ -74,15 +75,15 @@ services:
     volumes:
       - ct_server_db:/var/lib/mysql
 
-  ct.auth.provider:
+  ct_auth_provider:
     container_name: ct_simple_auth
-    image: cherrytwist/simple-auth:v0.1.2
+    image: cherrytwist/simple-auth:v0.1.3
     networks:
       - ct
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_AUTH_DATABASE
+      - MYSQL_DATABASE=ct_auth_db
       - WAIT_HOSTS
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
@@ -94,4 +95,4 @@ services:
     restart: always
     ports:
       - 3002:3002
-    command: sh -c "/wait && npm run start:prod"
+    command: sh -c "/wait && /create_db.sh && npm run start:prod"
