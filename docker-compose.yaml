@@ -70,8 +70,6 @@ services:
       - ct
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    ports:
-      - 3306:3306
     volumes:
       - ct_server_db:/var/lib/mysql
 
