@@ -74,8 +74,8 @@ services:
       - ct_server_db:/var/lib/mysql
 
   ct_auth_provider:
-    container_name: ct_simple_auth
-    image: cherrytwist/simple-auth:v0.1.4
+    container_name: ct_demo_simple_auth
+    image: cherrytwist/simple-auth:v0.1.5
     networks:
       - ct
     environment:
