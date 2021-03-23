@@ -34,9 +34,12 @@ services:
       - AUTH_AAD_CLIENT_LOGIN_REDIRECT_URI
       - LOGGING_LEVEL
       - LOGGING_PROFILING_ENABLED
+      - AUTH_DEMO_AUTH_ISSUER
+      - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
+      - AUTH_DEMO_AUTH_CLIENT_SECRET
     depends_on:
       - db
-      - ct_auth_provider
+      - ct_demo_auth_provider
     restart: always
     ports:
       - 4000:4000
@@ -73,15 +76,15 @@ services:
     volumes:
       - ct_server_db:/var/lib/mysql
 
-  ct_auth_provider:
-    container_name: ct_demo_simple_auth
-    image: cherrytwist/simple-auth:v0.1.5
+  ct_demo_auth_provider:
+    container_name: ct_demo_auth
+    image: cherrytwist/demo-auth:v0.1.7
     networks:
       - ct
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE=ct_auth_db
+      - MYSQL_DATABASE=ct_demo_auth_db
       - WAIT_HOSTS
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
