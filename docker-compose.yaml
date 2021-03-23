@@ -60,7 +60,7 @@ services:
       - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_GRAPHQL_ENDPOINT
     ports:
-      - 8080:80
+      - 3000:80
     restart: always
 
   db:
