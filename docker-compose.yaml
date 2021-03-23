@@ -9,14 +9,14 @@ networks:
 
 services:
   server:
-    container_name: ct_server
+    container_name: ct_demo_server
     image: cherrytwist/server:v0.10.0
     networks:
       - ct
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
+      - MYSQL_DATABASE=cherrytwist
       - WAIT_HOSTS
       - WAIT_HOSTS_TIMEOUT
       - WAIT_SLEEP_INTERVAL
@@ -34,18 +34,22 @@ services:
       - AUTH_AAD_CLIENT_LOGIN_REDIRECT_URI
       - LOGGING_LEVEL
       - LOGGING_PROFILING_ENABLED
+      - AUTH_DEMO_AUTH_ISSUER
+      - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
+      - AUTH_DEMO_AUTH_CLIENT_SECRET
     depends_on:
       - db
+      - ct_demo_auth_provider
     restart: always
     ports:
       - 4000:4000
-    command: sh -c "/wait && npm run migration:run && npm start"
+    command: sh -c "/wait && /create_db.sh && npm run migration:run && npm start"
     volumes:
       - ct_server:/usr/src/app/config
 
 
   client:
-    container_name: ct_client
+    container_name: ct_demo_client
     image: cherrytwist/client-web:v0.7.1
     networks:
       - ct
@@ -60,7 +64,7 @@ services:
     restart: always
 
   db:
-    container_name: ct_server_db
+    container_name: ct_demo_server_db
     image: mysql:8.0.11
     environment:
       - MYSQL_ROOT_PASSWORD
@@ -72,4 +76,24 @@ services:
     volumes:
       - ct_server_db:/var/lib/mysql
 
-
+  ct_demo_auth_provider:
+    container_name: ct_demo_auth
+    image: cherrytwist/demo-auth:v0.1.7
+    networks:
+      - ct
+    environment:
+      - DATABASE_HOST
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=ct_demo_auth_db
+      - WAIT_HOSTS
+      - WAIT_HOSTS_TIMEOUT
+      - WAIT_SLEEP_INTERVAL
+      - WAIT_HOST_CONNECT_TIMEOUT
+      - SERVICE_ENDPOINT_PORT
+      - SECRET
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 3002:3002
+    command: sh -c "/wait && /create_db.sh && npm run start:prod"
