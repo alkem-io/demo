@@ -50,7 +50,7 @@ services:
 
   client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.7.1
+    image: cherrytwist/client-web:v0.7.2
     networks:
       - ct
     environment:
