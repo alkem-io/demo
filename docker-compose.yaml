@@ -10,7 +10,7 @@ networks:
 services:
   server:
     container_name: ct_demo_server
-    image: cherrytwist/server:v0.8.2
+    image: cherrytwist/server:v0.10.0
     networks:
       - ct
     environment:
@@ -37,6 +37,7 @@ services:
       - AUTH_DEMO_AUTH_ISSUER
       - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
       - AUTH_DEMO_AUTH_CLIENT_SECRET
+      - NODE_ENV=dev
     depends_on:
       - db
       - ct_demo_auth_provider
@@ -50,7 +51,7 @@ services:
 
   client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.6.1
+    image: cherrytwist/client-web:v0.7.2
     networks:
       - ct
     environment:
@@ -60,7 +61,7 @@ services:
       - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_GRAPHQL_ENDPOINT
     ports:
-      - 8080:80
+      - 3000:80
     restart: always
 
   db:
