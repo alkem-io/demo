@@ -37,6 +37,7 @@ services:
       - AUTH_DEMO_AUTH_ISSUER
       - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
       - AUTH_DEMO_AUTH_CLIENT_SECRET
+      - NODE_ENV=dev
     depends_on:
       - db
       - ct_demo_auth_provider
