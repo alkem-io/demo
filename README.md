@@ -79,15 +79,12 @@ Populate database with sample data using `http://localhost:4000/graphql` end poi
 npm run sample-data
 ```
 
-Populate avatars data
-
-```bash
-npm run populate-avatars
-```
-
 Now you can navigate the web client and see a sample populated Ecoverse - enjoy!
 
 ### Advanced data population
+
+#### Using environment variables
+To specify your own data file to use for population, please edit your ```.env``` file and modify the following environment variable: *CT_DATA_TEMPLATE*
 
 #### Data population
 
@@ -103,15 +100,3 @@ Where
   -h, --help             display help for command
 ```
 
-#### Avatars
-
-```bash
-npm start populate-avatars -- -s <server>
-```
-
-Where
-
-```
-  -s, --server <url>  cherry twist graphql endpoint (default: "http://localhost:4000/graphql")
-  -h, --help          display help for command
-```
