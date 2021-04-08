@@ -8,7 +8,7 @@ networks:
   ct:
 
 services:
-  server:
+  ct_demo_server:
     container_name: ct_demo_server
     image: cherrytwist/server:v0.10.2
     networks:
@@ -42,8 +42,9 @@ services:
       - IPFS_CLIENT_ENDPOINT
       - IPFS_MAX_FILE_SIZE
     depends_on:
-      - db
+      - ct_demo_db
       - ct_demo_auth_provider
+      - ct_demo_ipfs_server
     restart: always
     ports:
       - 4000:4000
@@ -51,7 +52,7 @@ services:
     volumes:
       - ct_server:/usr/src/app/config
 
-  client:
+  ct_demo_client:
     container_name: ct_demo_client
     image: cherrytwist/client-web:v0.7.5
     networks:
@@ -66,8 +67,8 @@ services:
       - 3000:80
     restart: always
 
-  db:
-    container_name: ct_demo_server_db
+  ct_demo_db:
+    container_name: ct_demo_db
     image: mysql:8.0.11
     environment:
       - MYSQL_ROOT_PASSWORD
@@ -81,8 +82,8 @@ services:
     volumes:
       - ct_server_db:/var/lib/mysql
 
-  ipfs_server:
-    container_name: ipfs_server
+  ct_demo_ipfs_server:
+    container_name: ct_demo_ipfs_server
     image: ipfs/go-ipfs
     networks:
       - ct
@@ -96,7 +97,7 @@ services:
       - /tmp/ipfs-docker-data:/data/ipfs
 
   ct_demo_auth_provider:
-    container_name: ct_demo_auth
+    container_name: ct_demo_auth_provider
     image: cherrytwist/demo-auth:v0.1.8
     networks:
       - ct
@@ -111,7 +112,7 @@ services:
       - SERVICE_ENDPOINT_PORT
       - SECRET=${AUTH_DEMO_AUTH_CLIENT_SECRET}
     depends_on:
-      - db
+      - ct_demo_db
     restart: always
     ports:
       - 3002:3002
