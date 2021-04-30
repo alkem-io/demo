@@ -10,7 +10,7 @@ networks:
 services:
   ct_demo_server:
     container_name: ct_demo_server
-    image: cherrytwist/server:v0.10.8-p1
+    image: cherrytwist/server:v0.10.8-p2
     networks:
       - ct
     environment:
