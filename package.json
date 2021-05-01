@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
-    "@cherrytwist/client-lib": "^0.5.10",
-    "@cherrytwist/populator": "^0.2.3",
+    "@cherrytwist/client-lib": "^0.5.12",
+    "@cherrytwist/populator": "^0.2.7",
     "commander": "^6.2.1",
     "dotenv": "^8.2.0",
     "jsonpath": "^1.0.2",
