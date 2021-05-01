@@ -58,7 +58,8 @@ services:
 
   ct_demo_db:
     container_name: ct_demo_db
-    image: mysql:8.0.11
+    image: mariadb
+    platform: linux/x86_64
     environment:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
