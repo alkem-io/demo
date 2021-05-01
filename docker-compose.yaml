@@ -27,9 +27,6 @@ services:
       - AUTH_DEMO_AUTH_ISSUER
       - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
       - AUTH_DEMO_AUTH_CLIENT_SECRET
-      - AUTH_AAD_IDENTITY_METADATA
-      - AUTH_AAD_ISSUER
-      - AUTH_AAD_AUTHORITY
     depends_on:
       - ct_demo_db
       - ct_demo_auth_provider
@@ -59,7 +56,6 @@ services:
   ct_demo_db:
     container_name: ct_demo_db
     image: mariadb
-    platform: linux/x86_64
     environment:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
