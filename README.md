@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://cherrytwist.org/" target="blank"><img src="https://cherrytwist.org/wp-content/uploads/2020/10/cherrytwist-2.png" width="240" alt="Cherrytwist Logo" /></a>
+  <a href="http://cherrytwist.org/" target="blank"><img src="https://cherrytwist.org/uploads/logos/CT-logo-teal-transparent.svg" width="400" alt="Cherrytwist Logo" /></a>
 </p>
 <p align="center"><i>Enabling society to collaborate. Building a better future, together.</i></p>
 
@@ -10,99 +10,83 @@ This repository helps get a simple demonstrator instance of Cherrytwist running 
 
 The core pieces of the demo are:
 
-- **Server**: The core Cherrytwist server that maintains the Ecoverse, and that exposes a GraphQL based api
-- **Client.Web**: Web front end that interfaces with the Cherrytwist server
+- **[Server](http://github.com/cherrytwist/server)**: The core Cherrytwist server that maintains the Ecoverse, and that exposes a GraphQL based api
+- **[Client-Web](http://github.com/cherrytwist/client-web)**: Web front end that interfaces with the Cherrytwist Server
 
-Once the Server is up and running, this demo then loads some sample data via calls to GraphQL.
+<p >
+<img src="docs/images/docker-compose.png" alt="Docker compose cluster" width="600" />
+</p>
 
-The user can then intereact in two ways with the demo:
-
-- Directly to the web interface
-- Browse the GraphQL schema and make queries / mutations to the data
-
-![ComponentDiagram](./design/ComponentDiagram.png)
+### Interaction
+As shown by the above diagram, you can then intereact in two ways with the demo:
+* **Cherrytwist Web Client**: open a local browser and navigate to [http://localhost:3000](http://localhost:3000), where you can see the Challenges that are hosted
+* **Cherrytwist Server API**: open a local browser and navigate to [http://localhost:4000/graphql](http://localhost:4000/graphql), where you can interact directly with the data representing the Challenges
 
 ## Software Setup
 
 Prerequisites:
 
 - Docker, docker-compose, [nodejs](https://nodejs.org/en/download/package-manager/) and git installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
-- ports 80 and 4000 free on localhost
+- Ports 3000, 3306 and 4000 free on localhost
 - Demo repository cloned to local device (`git clone https://github.com/cherrytwist/Demo.git`)
 
 The following commands are used to run this project:
 
-- `docker-compose --env-file .env.default up -d --build` (to pull the images and start the containers in detached mode)
-- verify that the server is available at http://localhost:4000/graphql (using a browser). This can take a minute as everything fires up.
-- copy the `.env.default` file to be `.env`
-- populate the server (see [below](#data-setup) for detailed instructions)
-  - `npm install` (to install dependancies)
-  - `npm run sample-data` (to populate the server with additional sample data)
+* **Create the cluster**: Execute `docker-compose --env-file .env.default up -d --build`
+  * This creates the docker cluster with the containers connected to each other
+* **Verify the server is running**: Open a browser and navigate to [http://localhost:4000/graphql](http://localhost:4000/graphql)
+  * Note: the first time the cluster starts up it has some installations to make, so it may take a couple of minutes before the Cherrytwist Server is running.
 
-Now both client and server are exposed locally and can be accessed, e.g. through a browser:
+At this point you hopefully will have a running empty ecoverse! Both client and server are exposed locally and can be accessed as [per description](#Interaction) above.
 
-- server: http://localhost:4000/graphql
-- client: http://localhost:8080
+Once the cluster is setup, the next step is to load data into the Cherrytwist Server:
+* **Setup environment variables**: Copy the `.env.default` file to be `.env` file
+* **Install package dependencies**: From the command line execute the following command to install all required package dependencies: `npm install`
+* **Populate with sample data**: From the commang line, execute the following commange to populate the server with data: `npm run sample-data`.
+  * Note: this can take a couple of minutes, you will see the progress in the window where you executed the command.
 
-> > Note: the demo has authentication **disabled** and it also does not use tls.
+At this point you hopefully have a populated Ecoverse, with Challenges / sample users visible.
 
-It is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
+## Authentication
 
+For ease of getting started, the demo is setup with authentication **disabled**. To enable authentication set the `AUTH_ENABLED` environment variable to true in `.env.default` and re-create the docker compose cluster as described above.
 
-At this point you hopefully will have a running empty ecoverse! To verify the different components:
+The demo does provide a non-production Authentication Provider, `Demo Authentication Provider`, that allows the registration of new user accounts and to login.
 
-- server: please go to the [server](http://localhost:4000/graphql) and execute a simple query: `query { name }`
-- client: just browing to the localhost location is sufficient.
+The default administrator login is admin@cherrytwist.org / cherrytwist if you wish to also explore the adminstration capabilities of the platform.
 
-## Data Setup
+## Interacting with the Cherrytwist api
+If you are interested in seeing the data that is held within the Cherrytwist platform, then it is advisable to try out directly querying data from the GraphQL api.
 
-Now that the software is installed and running via Docker, the next step is to populate the Ecoverse with some sample data. For this there are two options provided:
+For this, open a local browser and navigate to [http://localhost:4000/graphql](http://localhost:4000/graphql).
 
-- Basic: a few entities and some meta data
-- Full: that populates the ecoverse with a set of challenges, a few hundred sample users etc.
-
-### Basic Sample Data
-
-Navigate to the [Data Management page](http://localhost:4000/data-management) and click on the "Sample data" button.
-
-### Full Sample Data
-
-This involves running a set of functionality inside this repository, so the development environment will need to be setup properly and then data loading scripts can be run.
-
-#### **Development Environment setup**
-
-The commands to setup for running the data loading scripts are:
-
-Install dependencies
-
-```bash
-npm install
+A simple graphql query to try out is:
+```
+query {
+  ecoverse {
+    name,
+    context {
+     tagline
+    }
+    challenges {
+      name
+    }
+  }
+}
 ```
 
-Populate database with sample data using `http://localhost:4000/graphql` end point.
+Full details of the api can be found on the docs and schema tabs on the right hand side:
+<p >
+<img src="docs/images/graphql-playground.png" alt="Graphql api on playground" width="200" />
+</p>
 
-```bash
-npm run sample-data
-```
 
-Now you can navigate the web client and see a sample populated Ecoverse - enjoy!
+## Custom Data
+The sample data that is loaded is from the ```cherrytwist-sample-data.ods``` file in this repository. This is a spreadsheet, that can be opened in Excel or compatible tools.
 
-### Advanced data population
+To modify the data and see how Cherrytwist coudl be used for hosting your Challenges, you can get a first impression by modifying this file.
 
-#### Using environment variables
-To specify your own data file to use for population, please edit your ```.env``` file and modify the following environment variable: *CT_DATA_TEMPLATE*
+Note: the file to be loaded is specfied by the *CT_DATA_TEMPLATE* environment variable. This is set in the ```.env``` that you created above, so you can also specify a different file name by editing this environment variable.
 
-#### Data population
-
-```bash
-npm start populate -- -f <file> -s <server>
-```
-
-Where
-
-```
-  -f, --file <fileName>  ODS/XLSX file to import, if not set sample-data will be populated
-  -s, --server <url>     cherry twist graphql endpoint (default: "http://localhost:4000/graphql")
-  -h, --help             display help for command
-```
+For experimenting with custom data, it is usefult to be aware that it is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
 
