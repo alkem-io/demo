@@ -1,38 +1,42 @@
-version: '2.4'
+version: '3.7'
 
 volumes:
   ct_server:
   ct_server_db:
 
 networks:
-  ct:
+  ct_demo_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.11.0/24
+          gateway: 192.168.11.1
 
 services:
   ct_demo_server:
     container_name: ct_demo_server
     image: cherrytwist/server:v0.10.8-p2
     networks:
-      - ct
+      - ct_demo_net
     environment:
+      - AUTH_ENABLED
+      - NODE_ENV
       - DATABASE_HOST
       - MYSQL_DATABASE
       - MYSQL_ROOT_PASSWORD
-      - WAIT_HOSTS
-      - AUTH_ENABLED
-      - LOGGING_LEVEL
-      - LOGGING_PROFILING_ENABLED
-      - LOGGING_CONSOLE_ENABLED
-      - NODE_ENV=dev
-      - IPFS_ENDPOINT
-      - AUTH_DEMO_AUTH_ISSUER
-      - AUTH_DEMO_AUTH_TOKEN_ENDPOINT
-      - AUTH_DEMO_AUTH_CLIENT_SECRET
-      - AUTH_AAD_IDENTITY_METADATA
-      - AUTH_AAD_ISSUER
-      - AUTH_AAD_AUTHORITY
+      - MYSQL_DATABASE
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - GRAPHQL_ENDPOINT_PORT=4000
+      - IPFS_ENDPOINT=http://ct_ipfs_server:5001
+      - IPFS_CLIENT_ENDPOINT=http://localhost:8080/ipfs
+      - AUTH_ORY_KRATOS_ISSUER=http://oathkeeper:4455
+      - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
     depends_on:
       - ct_demo_db
-      - ct_demo_auth_provider
       - ct_demo_ipfs_server
     restart: always
     ports:
@@ -43,7 +47,9 @@ services:
 
   ct_demo_client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.7.8
+    image: cherrytwist/client-web:v0.7.5
+    networks:
+      - ct
     environment:
       - REACT_APP_SENTRY_ENABLED
       - REACT_APP_FEEDBACK_URL
@@ -63,7 +69,7 @@ services:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
     networks:
-      - ct
+      - ct_demo_net
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
@@ -75,7 +81,7 @@ services:
     container_name: ct_demo_ipfs_server
     image: ipfs/go-ipfs
     networks:
-      - ct
+      - ct_demo_net
     restart: always
     ports:
       - 4001:4001/tcp
@@ -85,20 +91,39 @@ services:
     volumes:
       - /tmp/ipfs-docker-data:/data/ipfs
 
-  ct_demo_auth_provider:
-    container_name: ct_demo_auth_provider
-    image: cherrytwist/demo-auth:v0.1.8
+  ct_demo_oathkeeper:
+    container_name: ct_demo_oathkeeper
+    image: oryd/oathkeeper:v0.38
+    depends_on:
+      - kratos
+    ports:
+      - 4455:4455
+      - 4456:4456
+    command: serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
+    environment:
+      - LOG_LEVEL=debug
+    restart: on-failure
     networks:
-      - ct
+      - ct_demo_net
+    volumes:
+      - ./.build/ory/oathkeeper:/etc/config/oathkeeper
+
+  ct_demo_kratos_migrate:
+    container_name: ct_demo_kratos_migrate
+    image: oryd/kratos:v0.6.1-alpha.1
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE=${MYSQL_AUTH_DATABASE}
+      - MYSQL_DATABASE=ct_demo_auth_db
       - WAIT_HOSTS
+      - WAIT_HOSTS_TIMEOUT
+      - WAIT_SLEEP_INTERVAL
+      - WAIT_HOST_CONNECT_TIMEOUT
+      - SERVICE_ENDPOINT_PORT
       - SECRET=${AUTH_DEMO_AUTH_CLIENT_SECRET}
     depends_on:
-      - ct_demo_db
-    restart: always
+      - kratos-migrate
+    image: oryd/kratos:v0.6.1-alpha.1
     ports:
       - 3002:3002
     command: sh -c "/wait && /create_db.sh && npm run start:prod"
