@@ -6,12 +6,6 @@ volumes:
 
 networks:
   ct_demo_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.11.0/24
-          gateway: 192.168.11.1
 
 services:
   ct_demo_server:
@@ -23,7 +17,6 @@ services:
       - AUTH_ENABLED
       - NODE_ENV
       - DATABASE_HOST
-      - MYSQL_DATABASE
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
       - WAIT_HOSTS=db:3306
@@ -49,15 +42,13 @@ services:
     container_name: ct_demo_client
     image: cherrytwist/client-web:v0.7.5
     networks:
-      - ct
+      - ct_demo_net
     environment:
       - REACT_APP_SENTRY_ENABLED
       - REACT_APP_FEEDBACK_URL
       - REACT_APP_SENTRY_PII_ENABLED
       - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_GRAPHQL_ENDPOINT
-    networks:
-      - ct
     ports:
       - 3000:80
     restart: always
@@ -95,7 +86,7 @@ services:
     container_name: ct_demo_oathkeeper
     image: oryd/oathkeeper:v0.38
     depends_on:
-      - kratos
+      - ct_demo_kratos
     ports:
       - 4455:4455
       - 4456:4456
@@ -112,18 +103,29 @@ services:
     container_name: ct_demo_kratos_migrate
     image: oryd/kratos:v0.6.1-alpha.1
     environment:
-      - DATABASE_HOST
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE=ct_demo_auth_db
-      - WAIT_HOSTS
-      - WAIT_HOSTS_TIMEOUT
-      - WAIT_SLEEP_INTERVAL
-      - WAIT_HOST_CONNECT_TIMEOUT
-      - SERVICE_ENDPOINT_PORT
-      - SECRET=${AUTH_DEMO_AUTH_CLIENT_SECRET}
+      - DSN=mysql://root:${MYSQL_ROOT_PASSWORD}@tcp(${DATABASE_HOST}:3306)/kratos?max_conns=20&max_idle_conns=4
+    volumes:
+      - ./.build/ory/kratos:/etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - ct_demo_net
+
+  ct_demo_kratos:
+    container_name: ct_demo_kratos
     depends_on:
-      - kratos-migrate
+      - ct_demo_kratos_migrate
     image: oryd/kratos:v0.6.1-alpha.1
     ports:
-      - 3002:3002
-    command: sh -c "/wait && /create_db.sh && npm run start:prod"
+      - '4433:4433' # public
+      - '4434:4434' # admin
+    restart: unless-stopped
+    environment:
+      - DSN=mysql://root:${MYSQL_ROOT_PASSWORD}@tcp(${DATABASE_HOST}:3306)/kratos?max_conns=20&max_idle_conns=4
+      - LOG_LEVEL=trace
+      - SERVE_PUBLIC_BASE_URL=http://localhost:4433/
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    volumes:
+      - ./.build/ory/kratos:/etc/config/kratos
+    networks:
+      - ct_demo_net

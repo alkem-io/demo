@@ -59,7 +59,7 @@ authenticators:
   cookie_session:
     enabled: true
     config:
-      check_session_url: http://kratos:4433/sessions/whoami
+      check_session_url: http://ct_demo_kratos:4433/sessions/whoami
       preserve_path: true
       extra_from: '@this'
       subject_from: 'identity.id'
@@ -71,7 +71,7 @@ authenticators:
     config:
       extra_from: '@this'
       subject_from: 'identity.id'
-      check_session_url: http://kratos:4433/sessions/whoami
+      check_session_url: http://ct_demo_kratos:4433/sessions/whoami
       preserve_path: true
 
   noop:
