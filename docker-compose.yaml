@@ -10,7 +10,7 @@ networks:
 services:
   ct_demo_server:
     container_name: ct_demo_server
-    image: cherrytwist/server:v0.10.8-p2
+    image: cherrytwist/server:v0.11.4-alpha-p1
     networks:
       - ct_demo_net
     environment:
@@ -19,15 +19,16 @@ services:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
-      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS=ct_demo_db:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
       - GRAPHQL_ENDPOINT_PORT=4000
-      - IPFS_ENDPOINT=http://ct_ipfs_server:5001
+      - IPFS_ENDPOINT=http://ct_demo_ipfs_server:5001
       - IPFS_CLIENT_ENDPOINT=http://localhost:8080/ipfs
-      - AUTH_ORY_KRATOS_ISSUER=http://oathkeeper:4455
-      - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
+      - AUTH_ORY_KRATOS_ISSUER=http://ct_demo_oathkeeper:4455
+      - AUTH_ORY_KRATOS_JWKS_URI=http://ct_demo_oathkeeper:4456/.well-known/jwks.json
+      - CORS_ORIGIN=http://localhost:3000
     depends_on:
       - ct_demo_db
       - ct_demo_ipfs_server
@@ -40,7 +41,7 @@ services:
 
   ct_demo_client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.7.5
+    image: cherrytwist/client-web:v0.8.1-alpha
     networks:
       - ct_demo_net
     environment:
@@ -61,12 +62,13 @@ services:
       - MYSQL_DATABASE
     networks:
       - ct_demo_net
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --init-file /bootstrap_scripts/1.sql
     restart: always
     ports:
       - 3306:3306
     volumes:
       - ct_server_db:/var/lib/mysql
+      - ./.scripts/schema.sql:/bootstrap_scripts/1.sql
 
   ct_demo_ipfs_server:
     container_name: ct_demo_ipfs_server
