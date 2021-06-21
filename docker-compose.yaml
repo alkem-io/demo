@@ -10,7 +10,7 @@ networks:
 services:
   ct_demo_server:
     container_name: ct_demo_server
-    image: cherrytwist/server:v0.11.4-alpha-p1
+    image: cherrytwist/server:v0.11.4-alpha2
     networks:
       - ct_demo_net
     environment:
@@ -41,7 +41,7 @@ services:
 
   ct_demo_client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.8.1-alpha
+    image: cherrytwist/client-web:v0.8.1-alpha2
     networks:
       - ct_demo_net
     environment:
