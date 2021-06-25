@@ -132,13 +132,14 @@ services:
     networks:
       - ct_demo_net
     environment:
-      - REACT_APP_SENTRY_ENABLED
-      - REACT_APP_FEEDBACK_URL
-      - REACT_APP_SENTRY_PII_ENABLED
+      - REACT_APP_SENTRY_ENABLED=false
+      - REACT_APP_FEEDBACK_URL="https://cherrytwist.org/feedback/"
+      - REACT_APP_SENTRY_PII_ENABLED=false
       - REACT_APP_SENTRY_ENDPOINT
-      - REACT_APP_GRAPHQL_ENDPOINT
+      - REACT_APP_GRAPHQL_ENDPOINT="http://localhost:4455/graphql"
+      - REACT_APP_BUILD_VERSION=dev
     ports:
-      - 3000:3000
+      - 3000:80
     restart: always
 
 
