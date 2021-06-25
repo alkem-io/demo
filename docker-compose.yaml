@@ -119,7 +119,7 @@ services:
       - AUTH_ORY_KRATOS_ISSUER=http://oathkeeper:4455
       - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
       - CORS_ORIGIN=http://localhost:3000
-      - LOGGING_LEVEL=verbose
+      - LOGGING_LEVEL_CONSOLE=verbose
       - LOGGING_CONSOLE_ENABLED=true      -
     restart: always
     ports:
