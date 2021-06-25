@@ -15,7 +15,7 @@ export const sampleData = async () => {
 
   const server = process.env.CT_SERVER || 'http://localhost:4000/graphql';
   const dataTemplate =
-    process.env.CT_DATA_TEMPLATE || '../cherrytwist-data-template.ods';
+    process.env.CT_DATA_TEMPLATE || '../ct-sdgs.ods';
   const authInfo = await getAuthInfo();
   const ctClient = new CherrytwistClient({
     graphqlEndpoint: server,
@@ -26,8 +26,8 @@ export const sampleData = async () => {
   logger.info(`Cherrytwist data template: ${dataTemplate}`);
 
   await ctClient.validateConnection();
-  const ecoverseID = 'cherrytwist';
-  const ecoverseHostID = 'cherrytwistOrg';
+  const ecoverseID = 'Eco1';
+  const ecoverseHostID = 'Eco1Host';
   const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
   console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
   if (!ecoverseExists) {

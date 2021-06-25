@@ -1,6 +1,6 @@
 {
   "name": "cherrytwist-demo",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Demo of setting up and populating a Cherrytwist Ecoverse",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,6 @@
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "nodemon": "nodemon",
     "sample-data": "ts-node-dev  src/scripts/sample-data.ts",
-    "populate-avatars": "ts-node-dev  src/scripts/populate-avatars.ts",
     "start": "ts-node src/index.ts",
     "prepublishOnly": "npm run build"
   },
@@ -44,8 +43,8 @@
     "ts-node-dev": "^1.1.6"
   },
   "dependencies": {
-    "@cherrytwist/client-lib": "^0.7.5",
-    "@cherrytwist/populator": "^0.2.12",
+    "@cherrytwist/client-lib": "^0.7.7",
+    "@cherrytwist/populator": "^0.2.14",
     "chalk": "^4.1.0",
     "commander": "^6.2.1",
     "dotenv": "^8.2.0",
