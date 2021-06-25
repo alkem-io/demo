@@ -118,7 +118,7 @@ services:
       - IPFS_CLIENT_ENDPOINT=http://localhost:8080/ipfs
       - AUTH_ORY_KRATOS_ISSUER=http://oathkeeper:4455
       - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
-      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http:"http://kratos:4433/"
+      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http:http://kratos:4433/
       - CORS_ORIGIN=http://localhost:3000
       - LOGGING_LEVEL_CONSOLE=verbose
       - LOGGING_CONSOLE_ENABLED=true      -
@@ -134,10 +134,10 @@ services:
       - ct_demo_net
     environment:
       - REACT_APP_SENTRY_ENABLED=false
-      - REACT_APP_FEEDBACK_URL="https://cherrytwist.org/feedback/"
+      - REACT_APP_FEEDBACK_URL=https://cherrytwist.org/feedback/
       - REACT_APP_SENTRY_PII_ENABLED=false
       - REACT_APP_SENTRY_ENDPOINT
-      - REACT_APP_GRAPHQL_ENDPOINT="http://localhost:4455/graphql"
+      - REACT_APP_GRAPHQL_ENDPOINT=http://localhost:4455/graphql
       - REACT_APP_BUILD_VERSION=dev
     ports:
       - 3000:80
