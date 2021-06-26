@@ -6,8 +6,8 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.10.0/24
-          gateway: 192.168.10.1
+        - subnet: 192.168.20.0/24
+          gateway: 192.168.20.1
 
 volumes:
   ct_demo_mysql_db:
