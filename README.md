@@ -32,10 +32,10 @@ Prerequisites:
 
 The following commands are used to run this project:
 
-* **Create the cluster**: Execute `docker-compose --env-file .env.docker up -d --build --force-recreate`
+* **Create the cluster**: Execute `docker-compose --env-file .env.docker up --build --force-recreate`
   * This creates the docker cluster with the containers connected to each other
 * **Verify the server is running**: Open a browser and navigate to [http://localhost:4000/graphql](http://localhost:4000/graphql)
-  * Note: the first time the cluster starts up it has some installations to make, so it may take a couple of minutes before the Cherrytwist Server is running.
+  * Note: the first time the cluster starts up it has some installations to make, so it may take up to 5 minutes before the Cherrytwist Server is running. To monitor how the containers are starting up either use a tool like Docker Desktop (windows) or Portainer (any operating system).
 
 At this point you hopefully will have a running empty ecoverse! Both client and server are exposed locally and can be accessed as [per description](#Interaction) above.
 

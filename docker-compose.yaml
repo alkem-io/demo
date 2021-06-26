@@ -97,7 +97,7 @@ services:
 
   ct_server:
     container_name: ct_demo_server
-    image: cherrytwist/server:v0.11.5-alpha1
+    image: cherrytwist/server:v0.11.5-alpha2
     depends_on:
       - mysql_db
       - ipfs
@@ -116,10 +116,11 @@ services:
       - GRAPHQL_ENDPOINT_PORT=4000
       - IPFS_ENDPOINT=http://ipfs:5001
       - IPFS_CLIENT_ENDPOINT=http://localhost:8080/ipfs
-      - AUTH_ORY_KRATOS_ISSUER=http://oathkeeper:4455
+      - AUTH_ORY_KRATOS_ISSUER=http://cherrytwist-demo/
       - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
-      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http:http://kratos:4433/
-      - CORS_ORIGIN=http://localhost:3000
+      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:4433/
+      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL_SERVER=http://kratos:4433/
+      - CORS_ENABLED=false
       - LOGGING_LEVEL_CONSOLE=verbose
       - LOGGING_CONSOLE_ENABLED=true      -
     restart: always
@@ -129,16 +130,18 @@ services:
 
   ct_client:
     container_name: ct_demo_client
-    image: cherrytwist/client-web:v0.8.1-alph3p1
+    image: cherrytwist/client-web:v0.8.1-alpha4p1
     networks:
       - ct_demo_net
     environment:
       - REACT_APP_SENTRY_ENABLED=false
-      - REACT_APP_FEEDBACK_URL=https://cherrytwist.org/feedback/
       - REACT_APP_SENTRY_PII_ENABLED=false
       - REACT_APP_SENTRY_ENDPOINT
+      - REACT_APP_FEEDBACK_URL=https://cherrytwist.org/feedback/
       - REACT_APP_GRAPHQL_ENDPOINT=http://localhost:4455/graphql
       - REACT_APP_BUILD_VERSION=dev
+      - REACT_APP_VERSION=$npm_package_version
+      - REACT_APP_NAME=$npm_package_name
     ports:
       - 3000:80
     restart: always
