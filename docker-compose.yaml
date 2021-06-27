@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 networks:
   ct_demo_net:
@@ -49,8 +49,8 @@ services:
     depends_on:
       - kratos_migrate
     ports:
-      - '4433:4433' # public
-      - '4434:4434' # admin
+      - "4433:4433" # public
+      - "4434:4434" # admin
     restart: unless-stopped
     environment:
       - DSN=mysql://root:${MYSQL_ROOT_PASSWORD}@tcp(${DATABASE_HOST}:3306)/kratos?max_conns=20&max_idle_conns=4
@@ -138,12 +138,24 @@ services:
       - REACT_APP_SENTRY_PII_ENABLED=false
       - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_FEEDBACK_URL=https://cherrytwist.org/feedback/
-      - REACT_APP_GRAPHQL_ENDPOINT=http://localhost:4455/graphql
+      - REACT_APP_GRAPHQL_ENDPOINT=/graphql
       - REACT_APP_BUILD_VERSION=dev
       - REACT_APP_VERSION=$npm_package_version
       - REACT_APP_NAME=$npm_package_name
     ports:
-      - 3000:80
+      - 3030:80
     restart: always
 
-
+  traefik:
+    container_name: ct_demo_traefik
+    image: traefik:v2.4.9
+    restart: always
+    ports:
+      - 8888:8080
+      - 3000:80
+    networks:
+      - ct_demo_net
+    volumes:
+      - type: bind
+        source: ./.build/traefik/
+        target: /etc/traefik/

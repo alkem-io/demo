@@ -1,0 +1,34 @@
+http:
+  services:
+    ct-web-service:
+      loadBalancer:
+        servers:
+          - url: "http://ct_client/"
+
+    oathkeeper:
+      loadBalancer:
+        servers:
+          - url: "http://oathkeeper:4455/"
+
+    kratos-public:
+      loadBalancer:
+        servers:
+          - url: "http://kratos:4433/"
+
+  routers:
+    graphql:
+      rule: "PathPrefix(`/graphql`)"
+      service: "oathkeeper"
+
+    self-service:
+      rule: "PathPrefix(`/self-service`)"
+      service: "kratos-public"
+
+    sessions:
+      rule: "PathPrefix(`/sessions`)"
+      service: "kratos-public"
+
+    ctwebroute:
+      # By default, routers listen to every entry points
+      rule: "PathPrefix(`/`)"
+      service: "ct-web-service"
