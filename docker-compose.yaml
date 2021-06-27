@@ -13,6 +13,22 @@ volumes:
   ct_demo_mysql_db:
 
 services:
+  traefik:
+    container_name: ct_demo_traefik
+    image: traefik:v2.4.9
+    restart: always
+    ports:
+      - 8888:8080
+      - 3000:80
+    networks:
+      - ct_demo_net
+    environment:
+      - TZ=Europe/Amsterdam
+    volumes:
+      - type: bind
+        source: ./.build/traefik/
+        target: /etc/traefik/
+
   mysql_db:
     container_name: ct_demo_mysql_db
     image: mysql:8.0.11
@@ -137,25 +153,8 @@ services:
       - REACT_APP_SENTRY_ENABLED=false
       - REACT_APP_SENTRY_PII_ENABLED=false
       - REACT_APP_SENTRY_ENDPOINT
-      - REACT_APP_FEEDBACK_URL=https://cherrytwist.org/feedback/
       - REACT_APP_GRAPHQL_ENDPOINT=/graphql
       - REACT_APP_BUILD_VERSION=dev
       - REACT_APP_VERSION=$npm_package_version
       - REACT_APP_NAME=$npm_package_name
-    ports:
-      - 3030:80
     restart: always
-
-  traefik:
-    container_name: ct_demo_traefik
-    image: traefik:v2.4.9
-    restart: always
-    ports:
-      - 8888:8080
-      - 3000:80
-    networks:
-      - ct_demo_net
-    volumes:
-      - type: bind
-        source: ./.build/traefik/
-        target: /etc/traefik/
