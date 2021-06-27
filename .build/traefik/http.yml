@@ -15,20 +15,39 @@ http:
         servers:
           - url: "http://kratos:4433/"
 
+    ipfs-http-adapter:
+      loadBalancer:
+        servers:
+          - url: "http://ipfs:8080/"
+
   routers:
     graphql:
       rule: "PathPrefix(`/graphql`)"
       service: "oathkeeper"
+      entryPoints:
+        - "web"
 
     self-service:
       rule: "PathPrefix(`/self-service`)"
       service: "kratos-public"
+      entryPoints:
+        - "web"
 
     sessions:
       rule: "PathPrefix(`/sessions`)"
       service: "kratos-public"
+      entryPoints:
+        - "web"
 
     ctwebroute:
-      # By default, routers listen to every entry points
       rule: "PathPrefix(`/`)"
       service: "ct-web-service"
+      entryPoints:
+        - "web"
+
+    ipfspublic:
+      rule: "PathPrefix(`/`)"
+      service: "ipfs-http-adapter"
+      entryPoints:
+        - "ipfs-http-adapter"
+

@@ -9,6 +9,10 @@ log:
 entryPoints:
   web:
     address: ":80"
+  ipfs-http-adapter:
+    address: ":80800" # not using for now
+  kratos-public:
+    address: ":44333" # not using for now
 
 providers:
   file:

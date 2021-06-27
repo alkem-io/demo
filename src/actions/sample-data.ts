@@ -15,7 +15,7 @@ export const sampleData = async () => {
 
   const server = process.env.CT_SERVER || 'http://localhost:4000/graphql';
   const dataTemplate =
-    process.env.CT_DATA_TEMPLATE || '../ct-sdgs.ods';
+    process.env.CT_DATA_TEMPLATE || '../ct-sample-data.ods';
   const authInfo = await getAuthInfo();
   const ctClient = new CherrytwistClient({
     graphqlEndpoint: server,
