@@ -45,9 +45,3 @@ http:
       entryPoints:
         - "web"
 
-    ipfspublic:
-      rule: "PathPrefix(`/`)"
-      service: "ipfs-http-adapter"
-      entryPoints:
-        - "ipfs-http-adapter"
-

@@ -155,6 +155,4 @@ services:
       - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_GRAPHQL_ENDPOINT=/graphql
       - REACT_APP_BUILD_VERSION=dev
-      - REACT_APP_VERSION=$npm_package_version
-      - REACT_APP_NAME=$npm_package_name
     restart: always
