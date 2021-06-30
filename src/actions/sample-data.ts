@@ -1,10 +1,10 @@
-import { AuthInfo, AlkemioClient } from '@alkemio/client-lib';
+import { AuthInfo, CherrytwistClient } from '@cherrytwist/client-lib';
 import {
   XLSXAdapter,
   Populator,
   createLogger,
   createProfiler,
-} from '@alkemio/populator';
+} from '@cherrytwist/populator';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
@@ -13,11 +13,11 @@ export const sampleData = async () => {
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const server = process.env.CT_SERVER || 'http://localhost:4000/graphql';
+  const server = process.env.ALKEMIO_SERVER || 'http://localhost:4000/graphql';
   const dataTemplate =
-    process.env.CT_DATA_TEMPLATE || '../ct-sample-data.ods';
+    process.env.ALKEMIO_DATA_TEMPLATE || '../alkemio-sample-data.ods';
   const authInfo = await getAuthInfo();
-  const ctClient = new AlkemioClient({
+  const ctClient = new CherrytwistClient({
     graphqlEndpoint: server,
     authInfo: authInfo
   });

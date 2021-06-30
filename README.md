@@ -84,11 +84,11 @@ Full details of the api can be found on the docs and schema tabs on the right ha
 
 
 ## Custom Data
-The sample data that is loaded is from the ```ct-sample-data.ods``` file in this repository. This is a spreadsheet, that can be opened in Excel or compatible tools.
+The sample data that is loaded is from the ```alkemio-sample-data.ods``` file in this repository. This is a spreadsheet, that can be opened in Excel or compatible tools.
 
 To modify the data and see how Alkemio could be used for hosting your Challenges, you can get a first impression by modifying this file.
 
-Note: the file to be loaded is specfied by the *CT_DATA_TEMPLATE* environment variable. This is set in the ```.env``` that you created above, so you can also specify a different file name by editing this environment variable.
+Note: the file to be loaded is specfied by the *ALKEMIO_DATA_TEMPLATE* environment variable. This is set in the ```.env``` that you created above, so you can also specify a different file name by editing this environment variable.
 
 For experimenting with custom data, it is usefult to be aware that it is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:4000/data-management).
 
