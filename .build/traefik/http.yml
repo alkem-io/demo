@@ -1,9 +1,9 @@
 http:
   services:
-    ct-web-service:
+    alkemio-web-service:
       loadBalancer:
         servers:
-          - url: "http://ct_client/"
+          - url: "http://alkemio_client/"
 
     oathkeeper:
       loadBalancer:
@@ -39,9 +39,9 @@ http:
       entryPoints:
         - "web"
 
-    ctwebroute:
+    alkemiowebroute:
       rule: "PathPrefix(`/`)"
-      service: "ct-web-service"
+      service: "alkemio-web-service"
       entryPoints:
         - "web"
 

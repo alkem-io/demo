@@ -1,16 +1,16 @@
 {
-  "name": "@cherrytwist/demo",
+  "name": "@alkemio/demo",
   "version": "0.2.0",
-  "description": "Demo of setting up and populating an instance of the Cherrytwist platform",
+  "description": "Demo of setting up and populating an instance of the Alkemio platform",
   "author": "Cherrytwist Foundation",
   "private": false,
   "license": "EUPL-1.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "cherrytwist-demo": "dist/index.js"
+    "alkemio-demo": "dist/index.js"
   },
-    "scripts": {
+  "scripts": {
     "build": "tsc --project tsconfig.prod.json",
     "prebuild": "npm run clean",
     "postbuild": "npm run gulp postBuild",
@@ -26,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cherrytwist/demo.git"
+    "url": "git+https://github.com/alkem-io/demo.git"
   },
   "bugs": {
-    "url": "https://github.com/Cherrytwist/Ddmo/issues"
+    "url": "https://github.com/alkem-io/Ddmo/issues"
   },
-  "homepage": "https://github.com/Cherrytwist/demo#readme",
+  "homepage": "https://github.com/alkem-io/demo#readme",
   "devDependencies": {
     "@types/node": "^14.6.0",
     "copyfiles": "^2.4.1",

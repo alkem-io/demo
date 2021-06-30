@@ -13,17 +13,17 @@ export const sampleData = async () => {
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const server = process.env.CT_SERVER || 'http://localhost:4000/graphql';
+  const server = process.env.ALKEMIO_SERVER || 'http://localhost:4000/graphql';
   const dataTemplate =
-    process.env.CT_DATA_TEMPLATE || '../ct-sample-data.ods';
+    process.env.ALKEMIO_DATA_TEMPLATE || '../alkemio-sample-data.ods';
   const authInfo = await getAuthInfo();
   const ctClient = new CherrytwistClient({
     graphqlEndpoint: server,
     authInfo: authInfo
   });
 
-  logger.info(`Cherrytwist server: ${server}`);
-  logger.info(`Cherrytwist data template: ${dataTemplate}`);
+  logger.info(`Alkemio server: ${server}`);
+  logger.info(`Alkemio data template: ${dataTemplate}`);
 
   await ctClient.validateConnection();
   const ecoverseID = 'Eco1';
@@ -50,7 +50,7 @@ export const sampleData = async () => {
 async function getAuthInfo(): Promise<AuthInfo | undefined> {
   return {
     credentials: {
-      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
       password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
     },
     apiEndpointFactory: () => {
