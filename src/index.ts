@@ -15,7 +15,7 @@ const main = async () => {
   program.on('--help', () => {
     console.log();
     console.log(
-      `For more information visit: https://github.com/cherrytwist/Demo/blob/develop/README.md`
+      `For more information visit: https://github.com/alkem-io/Demo/blob/develop/README.md`
     );
   });
 
@@ -33,14 +33,14 @@ const main = async () => {
     )
     .description('import data from ODS/XLSX file to cherry twist server')
     .action(opts => {
-      const file = opts.file ?? 'cherrytwist-data-template.ods';
+      const file = opts.file ?? 'alkemio-data-template.ods';
       const server = opts.server ?? DEFAULT_SERVER_URL;
       sampleData(file, server);
     })
     .on('--help', () => {
       console.log();
       console.log(
-        `For more information visit: https://github.com/cherrytwist/Demo/blob/develop/README.md`
+        `For more information visit: https://github.com/alkem-io/Demo/blob/develop/README.md`
       );
     });
 
@@ -60,7 +60,7 @@ const main = async () => {
     .on('--help', () => {
       console.log();
       console.log(
-        `For more information visit: https://github.com/cherrytwist/Demo/blob/develop/README.md`
+        `For more information visit: https://github.com/alkem-io/Demo/blob/develop/README.md`
       );
     });
 

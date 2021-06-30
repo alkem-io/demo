@@ -1,10 +1,10 @@
-import { AuthInfo, CherrytwistClient } from '@cherrytwist/client-lib';
+import { AuthInfo, AlkemioClient } from '@alkemio/client-lib';
 import {
   XLSXAdapter,
   Populator,
   createLogger,
   createProfiler,
-} from '@cherrytwist/populator';
+} from '@alkemio/populator';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
@@ -17,13 +17,13 @@ export const sampleData = async () => {
   const dataTemplate =
     process.env.CT_DATA_TEMPLATE || '../ct-sample-data.ods';
   const authInfo = await getAuthInfo();
-  const ctClient = new CherrytwistClient({
+  const ctClient = new AlkemioClient({
     graphqlEndpoint: server,
     authInfo: authInfo
   });
 
-  logger.info(`Cherrytwist server: ${server}`);
-  logger.info(`Cherrytwist data template: ${dataTemplate}`);
+  logger.info(`Alkemio server: ${server}`);
+  logger.info(`Alkemio data template: ${dataTemplate}`);
 
   await ctClient.validateConnection();
   const ecoverseID = 'Eco1';
@@ -50,7 +50,7 @@ export const sampleData = async () => {
 async function getAuthInfo(): Promise<AuthInfo | undefined> {
   return {
     credentials: {
-      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
       password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
     },
     apiEndpointFactory: () => {
