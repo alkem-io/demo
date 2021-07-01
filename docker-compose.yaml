@@ -113,7 +113,7 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: cherrytwist/server:v0.11.5-alpha2
+    image: alkemio/server:v0.11.5-alpha3p3
     depends_on:
       - mysql_db
       - ipfs
@@ -146,7 +146,7 @@ services:
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: cherrytwist/client-web:v0.8.1-alpha4p1
+    image: alkemio/client-web:v0.8.1-alpha5p2
     networks:
       - alkemio_demo_net
     environment:
