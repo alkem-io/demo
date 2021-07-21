@@ -44,8 +44,8 @@
     "ts-node-dev": "^1.1.7"
   },
   "dependencies": {
-    "@alkemio/client-lib": "^0.7.8",
-    "@alkemio/populator": "^0.3.0",
+    "@alkemio/client-lib": "^0.7.12",
+    "@alkemio/populator": "^0.3.1",
     "chalk": "^4.1.0",
     "commander": "^6.2.1",
     "dotenv": "^8.2.0",
@@ -53,5 +53,8 @@
     "rimraf": "^3.0.2",
     "typescript": "^4.1.2",
     "winston": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=14.17.3"
   }
 }
