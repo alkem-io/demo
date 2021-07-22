@@ -2,9 +2,9 @@
   upstream:
     preserve_host: true
     url: 'http://kratos:4433'
-    strip_path: /.ory/kratos/public
+    strip_path: /identity/ory/kratos/public
   match:
-    url: 'http://localhost:4455/.ory/kratos/public/<**>'
+    url: 'http://localhost:3000/identity/ory/kratos/public/<**>'
     methods:
       - GET
       - POST
@@ -37,7 +37,7 @@
   errors:
     - handler: redirect
       config:
-        to: http://localhost:4455/auth/login
+        to: http://localhost:3000/auth/login
 
 - id: 'alkemio:graphql:api:protected'
   upstream:
@@ -45,7 +45,7 @@
     url: 'http://alkemio_server:4000'
     strip_path: /admin
   match:
-    url: 'http://localhost:4455/admin/graphql'
+    url: 'http://localhost:3000/admin/graphql'
     methods:
       - POST
   authenticators:
@@ -57,5 +57,5 @@
   errors:
     - handler: redirect
       config:
-        to: http://localhost:4455/auth/login
+        to: http://localhost:3000/auth/login
 

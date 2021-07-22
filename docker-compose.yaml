@@ -1,13 +1,7 @@
-version: "3.7"
+version: '3.7'
 
 networks:
   alkemio_demo_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.20.0/24
-          gateway: 192.168.20.1
 
 volumes:
   alkemio_demo_mysql_db:
@@ -65,13 +59,13 @@ services:
     depends_on:
       - kratos_migrate
     ports:
-      - "4433:4433" # public
-      - "4434:4434" # admin
+      - 4433
+      - 4434
     restart: unless-stopped
     environment:
       - DSN=mysql://root:${MYSQL_ROOT_PASSWORD}@tcp(${DATABASE_HOST}:3306)/kratos?max_conns=20&max_idle_conns=4
       - LOG_LEVEL=trace
-      - SERVE_PUBLIC_BASE_URL=http://localhost:4433/
+      - SERVE_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
     networks:
       - alkemio_demo_net
     volumes:
@@ -86,8 +80,8 @@ services:
     depends_on:
       - kratos
     ports:
-      - 4455:4455
-      - 4456:4456
+      - 4455
+      - 4456
     environment:
       - LOG_LEVEL=debug
     restart: on-failure
@@ -104,16 +98,16 @@ services:
       - alkemio_demo_net
     restart: always
     ports:
-      - 4001:4001/tcp
-      - 4002:4002/udp
-      - 5001:5001
-      - 8080:8080
+      - 4001
+      - 4002
+      - 5001
+      - 8080
     volumes:
       - /tmp/ipfs-docker-data:/data/ipfs
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: alkemio/server:v0.11.5-alpha3p3
+    image: alkemio/server:v0.11.8
     depends_on:
       - mysql_db
       - ipfs
@@ -134,19 +128,19 @@ services:
       - IPFS_CLIENT_ENDPOINT=http://localhost:8080/ipfs
       - AUTH_ORY_KRATOS_ISSUER=http://alkemio-demo/
       - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
-      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:4433/
+      - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
       - AUTH_ORY_KRATOS_PUBLIC_BASE_URL_SERVER=http://kratos:4433/
       - CORS_ENABLED=false
       - LOGGING_LEVEL_CONSOLE=verbose
       - LOGGING_CONSOLE_ENABLED=true      -
     restart: always
     ports:
-      - 4000:4000
+      - 4000
     command: sh -c "/wait && /create_db.sh && npm run migration:run && npm start"
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.8.1-alpha5p2
+    image: alkemio/client-web:v0.8.4-alpha2
     networks:
       - alkemio_demo_net
     environment:

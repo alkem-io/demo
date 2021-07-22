@@ -5,15 +5,25 @@ http:
         servers:
           - url: "http://alkemio_client/"
 
-    oathkeeper:
-      loadBalancer:
-        servers:
-          - url: "http://oathkeeper:4455/"
-
     kratos-public:
       loadBalancer:
         servers:
           - url: "http://kratos:4433/"
+
+    kratos-admin:
+      loadBalancer:
+        servers:
+          - url: "http://kratos:4434/"
+
+    oathkeeper-proxy:
+      loadBalancer:
+        servers:
+          - url: "http://oathkeeper:4455/"
+
+    oathkeeper-admin:
+      loadBalancer:
+        servers:
+          - url: "http://oathkeeper:4456/"
 
     ipfs-http-adapter:
       loadBalancer:
@@ -23,19 +33,33 @@ http:
   routers:
     graphql:
       rule: "PathPrefix(`/graphql`)"
-      service: "oathkeeper"
+      service: "oathkeeper-proxy"
       entryPoints:
         - "web"
 
     self-service:
       rule: "PathPrefix(`/self-service`)"
+      # rule: "PathPrefix(`/identity/ory/kratos/self-service`)"
       service: "kratos-public"
       entryPoints:
         - "web"
 
     sessions:
       rule: "PathPrefix(`/sessions`)"
-      service: "kratos-public"
+      # rule: "PathPrefix(`/identity/ory/kratos/sessions`)"
+      service: "oathkeeper-proxy"
+      entryPoints:
+        - "web"
+
+    kratos-public:
+      rule: "PathPrefix(`/identity/ory/kratos/public`)"
+      service: "oathkeeper-proxy"
+      entryPoints:
+        - "web"
+
+    kratos-admin:
+      rule: "PathPrefix(`/identity/ory/kratos/admin`)"
+      service: "oathkeeper-admin"
       entryPoints:
         - "web"
 
