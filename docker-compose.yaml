@@ -14,6 +14,7 @@ services:
     ports:
       - 8888:8080
       - 3000:80
+      - 3306:3306
     networks:
       - alkemio_demo_net
     environment:
@@ -25,7 +26,7 @@ services:
 
   mysql_db:
     container_name: alkemio_demo_mysql_db
-    image: mysql:8.0.11
+    image: mariadb:latest
     networks:
       - alkemio_demo_net
     environment:
@@ -33,7 +34,7 @@ services:
       - MYSQL_DATABASE
     restart: always
     ports:
-      - 3306:3306
+      - 3306
     volumes:
       - alkemio_demo_mysql_db:/var/lib/mysql
       - ./.scripts/schema.sql:/bootstrap_scripts/1.sql

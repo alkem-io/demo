@@ -20,46 +20,65 @@ http:
         servers:
           - url: "http://oathkeeper:4455/"
 
-    oathkeeper-admin:
-      loadBalancer:
-        servers:
-          - url: "http://oathkeeper:4456/"
-
     ipfs-http-adapter:
       loadBalancer:
         servers:
           - url: "http://ipfs:8080/"
 
+      # - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
+      # - "traefik.tcp.services.db.loadbalancer.server.port=3306"
+      # - "traefik.tcp.routers.db.entrypoints=mysql"
+
+    mysql:
+      loadBalancer:
+        servers:
+          - url: "mysql:3306"
+
+  middlewares:
+    strip-kratos-admin-prefix:
+      stripPrefix:
+        prefixes:
+          - /identity/ory/kratos/admin
+        forceSlash: false
+
+    strip-kratos-public-prefix:
+      stripPrefix:
+        prefixes:
+          - /identity/ory/kratos/public
+        forceSlash: false
+
   routers:
+    mysql:
+      rule: "HostSNI(`*`)"
+      service: "mysql"
+      entryPoints:
+        - "mysql"
+
     graphql:
       rule: "PathPrefix(`/graphql`)"
       service: "oathkeeper-proxy"
       entryPoints:
         - "web"
 
-    self-service:
-      rule: "PathPrefix(`/self-service`)"
-      # rule: "PathPrefix(`/identity/ory/kratos/self-service`)"
-      service: "kratos-public"
-      entryPoints:
-        - "web"
-
-    sessions:
-      rule: "PathPrefix(`/sessions`)"
-      # rule: "PathPrefix(`/identity/ory/kratos/sessions`)"
+    graphql-admin:
+      rule: "PathPrefix(`/admin/graphql`)"
       service: "oathkeeper-proxy"
       entryPoints:
         - "web"
 
     kratos-public:
       rule: "PathPrefix(`/identity/ory/kratos/public`)"
-      service: "oathkeeper-proxy"
+      service: "kratos-public"
+      middlewares:
+        - name: strip-kratos-public-prefix
       entryPoints:
         - "web"
 
     kratos-admin:
       rule: "PathPrefix(`/identity/ory/kratos/admin`)"
-      service: "oathkeeper-admin"
+      service: "kratos-admin"
+      middlewares:
+        - name: strip-kratos-admin-prefix
       entryPoints:
         - "web"
 
