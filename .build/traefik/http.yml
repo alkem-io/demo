@@ -86,6 +86,12 @@ http:
       entryPoints:
         - "web"
 
+    ipfs:
+      rule: "PathPrefix(`/ipfs`)"
+      service: "ipfs-http-adapter"
+      entryPoints:
+        - "web"
+
     alkemiowebroute:
       rule: "PathPrefix(`/`)"
       service: "alkemio-web-service"
