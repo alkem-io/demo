@@ -1,5 +1,10 @@
 http:
   services:
+    alkemio-server:
+      loadBalancer:
+        servers:
+          - url: "http://alkemio_server:4000/"
+
     alkemio-web-service:
       loadBalancer:
         servers:
@@ -26,6 +31,12 @@ http:
           - url: "http://ipfs:8080/"
 
   middlewares:
+    strip-admin-prefix:
+      stripPrefix:
+        prefixes:
+          - /admin
+        forceSlash: false
+
     strip-kratos-admin-prefix:
       stripPrefix:
         prefixes:
@@ -53,7 +64,9 @@ http:
 
     graphql-admin:
       rule: "PathPrefix(`/admin/graphql`)"
-      service: "oathkeeper-proxy"
+      service: "alkemio-server"
+      middlewares:
+        - strip-admin-prefix
       entryPoints:
         - "web"
 
