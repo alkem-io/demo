@@ -38,13 +38,6 @@ http:
           - /identity/ory/kratos/public
         forceSlash: false
 
-tcp:
-  services:
-    mysql:
-      loadBalancer:
-        servers:
-          - address: "mysql_db:3306"
-
   routers:
     mysql:
       rule: "HostSNI(`*`)"
@@ -67,16 +60,16 @@ tcp:
     kratos-public:
       rule: "PathPrefix(`/identity/ory/kratos/public`)"
       service: "kratos-public"
-      # middlewares:
-      #   - name: strip-kratos-public-prefix
+      middlewares:
+        - strip-kratos-public-prefix
       entryPoints:
         - "web"
 
     kratos-admin:
       rule: "PathPrefix(`/identity/ory/kratos/admin`)"
       service: "kratos-admin"
-      # middlewares:
-      #   - name: strip-kratos-admin-prefix
+      middlewares:
+        - strip-kratos-admin-prefix
       entryPoints:
         - "web"
 
@@ -86,3 +79,9 @@ tcp:
       entryPoints:
         - "web"
 
+tcp:
+  services:
+    mysql:
+      loadBalancer:
+        servers:
+          - address: "mysql_db:3306"
