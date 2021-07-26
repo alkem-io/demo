@@ -26,7 +26,7 @@ services:
 
   mysql_db:
     container_name: alkemio_demo_mysql_db
-    image: mariadb:latest
+    image: mysql:8.0.11
     networks:
       - alkemio_demo_net
     environment:

@@ -25,15 +25,6 @@ http:
         servers:
           - url: "http://ipfs:8080/"
 
-      # - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
-      # - "traefik.tcp.services.db.loadbalancer.server.port=3306"
-      # - "traefik.tcp.routers.db.entrypoints=mysql"
-
-    mysql:
-      loadBalancer:
-        servers:
-          - url: "mysql:3306"
-
   middlewares:
     strip-kratos-admin-prefix:
       stripPrefix:
@@ -46,6 +37,13 @@ http:
         prefixes:
           - /identity/ory/kratos/public
         forceSlash: false
+
+tcp:
+  services:
+    mysql:
+      loadBalancer:
+        servers:
+          - address: "mysql_db:3306"
 
   routers:
     mysql:
@@ -69,16 +67,16 @@ http:
     kratos-public:
       rule: "PathPrefix(`/identity/ory/kratos/public`)"
       service: "kratos-public"
-      middlewares:
-        - name: strip-kratos-public-prefix
+      # middlewares:
+      #   - name: strip-kratos-public-prefix
       entryPoints:
         - "web"
 
     kratos-admin:
       rule: "PathPrefix(`/identity/ory/kratos/admin`)"
       service: "kratos-admin"
-      middlewares:
-        - name: strip-kratos-admin-prefix
+      # middlewares:
+      #   - name: strip-kratos-admin-prefix
       entryPoints:
         - "web"
 
