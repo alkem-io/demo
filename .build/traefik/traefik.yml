@@ -9,6 +9,8 @@ log:
 entryPoints:
   web:
     address: ":80"
+  mysql:
+    address: ":3306"
 
 providers:
   file:
