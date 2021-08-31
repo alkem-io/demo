@@ -107,7 +107,7 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: alkemio/server:v0.11.9
+    image: alkemio/server:v0.12.5p1
     depends_on:
       - mysql_db
       - ipfs
@@ -140,13 +140,10 @@ services:
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.8.5
+    image: alkemio/client-web:v0.8.8p1
     networks:
       - alkemio_demo_net
     environment:
-      - REACT_APP_SENTRY_ENABLED=false
-      - REACT_APP_SENTRY_PII_ENABLED=false
-      - REACT_APP_SENTRY_ENDPOINT
       - REACT_APP_GRAPHQL_ENDPOINT=/graphql
       - REACT_APP_BUILD_VERSION=dev
     restart: always
