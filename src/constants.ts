@@ -1,1 +1,1 @@
-export const DEFAULT_SERVER_URL = 'http://localhost:4000/graphql';
+export const DEFAULT_SERVER_URL = 'http://localhost:3000/graphql';
