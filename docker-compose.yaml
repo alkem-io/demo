@@ -5,6 +5,8 @@ networks:
 
 volumes:
   alkemio_demo_mysql_db:
+  rabbitmq_data:
+    driver: local
 
 services:
   traefik:
@@ -42,7 +44,7 @@ services:
 
   kratos_migrate:
     container_name: alkemio_demo_kratos_migrate
-    image: oryd/kratos:v0.6.1-alpha.1
+    image: oryd/kratos:v0.7.6-alpha.1
     environment:
       - DSN=mysql://root:${MYSQL_ROOT_PASSWORD}@tcp(${DATABASE_HOST}:3306)/kratos?max_conns=20&max_idle_conns=4
     restart: on-failure
@@ -56,7 +58,7 @@ services:
 
   kratos:
     container_name: alkemio_demo_kratos
-    image: oryd/kratos:v0.6.1-alpha.1
+    image: oryd/kratos:v0.7.6-alpha.1
     depends_on:
       - kratos_migrate
     ports:
@@ -93,7 +95,7 @@ services:
 
   ipfs:
     container_name: alkemio_demo_ipfs
-    image: ipfs/go-ipfs
+    image: ipfs/go-ipfs:v0.9.1
     networks:
       - alkemio_demo_net
     restart: always
@@ -107,7 +109,7 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: alkemio/server:v0.12.5p1
+    image: vyanakiev/alkemio-server:v0.14.0-p1
     depends_on:
       - mysql_db
       - ipfs
@@ -130,20 +132,59 @@ services:
       - AUTH_ORY_KRATOS_JWKS_URI=http://oathkeeper:4456/.well-known/jwks.json
       - AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
       - AUTH_ORY_KRATOS_PUBLIC_BASE_URL_SERVER=http://kratos:4433/
-      - CORS_ENABLED=false
-      - LOGGING_LEVEL_CONSOLE=verbose
-      - LOGGING_CONSOLE_ENABLED=true
+      - CORS_ENABLED=true
+      - LOGGING_LEVEL_CONSOLE
+      - LOGGING_CONSOLE_ENABLED
+      - RABBITMQ_HOST=rabbitmq
+      - COMMUNICATIONS_ENABLED
+      - SYNAPSE_SERVER_URL=http://synapse:8008
+      - SUBSCRIPTIONS_ENABLED
     restart: always
     ports:
       - 4000
     command: sh -c "/wait && /create_db.sh && npm run migration:run && npm start"
 
+  synapse:
+    container_name: alkemio_demo_synapse
+    image: matrixdotorg/synapse:v1.39.0
+    restart: always
+    environment:
+      - SYNAPSE_NO_TLS=true
+      - SYNAPSE_ENABLE_REGISTRATION=true
+      - SYNAPSE_SERVER_NAME=alkemio.matrix.host
+      - SYNAPSE_SERVER_URL
+      - SYNAPSE_SERVER_SHARED_SECRET
+    networks:
+      - alkemio_demo_net
+    ports:
+      - 8008
+    volumes:
+      - type: bind
+        source: ./.build/synapse
+        target: /data
+
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.8.8p1
+    image: alkemio/client-web:v0.9.1
     networks:
       - alkemio_demo_net
     environment:
       - REACT_APP_GRAPHQL_ENDPOINT=/graphql
       - REACT_APP_BUILD_VERSION=dev
     restart: always
+
+  rabbitmq:
+    container_name: alkemio_demo_rabbitmq
+    image: docker.io/bitnami/rabbitmq:3.9
+    restart: always
+    networks:
+      - alkemio_demo_net
+    ports:
+      - 4369
+      - 5672
+      - 25672
+      - 15672
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+    volumes:
+      - 'rabbitmq_data:/bitnami'
