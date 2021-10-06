@@ -33,7 +33,7 @@ export const sampleData = async () => {
   if (!ecoverseExists) {
     console.log(`Creating '${ecoverseID}' ecoverse and '${ecoverseHostID}' host organisaiton.`);
   // create host org
-    await ctClient.createOrganisation(ecoverseHostID, ecoverseHostID);
+    await ctClient.createOrganization(ecoverseHostID, ecoverseHostID);
     await ctClient.createEcoverse({
       nameID: ecoverseID,
       displayName: ecoverseID,
