@@ -29,7 +29,7 @@
     "url": "git+https://github.com/alkem-io/demo.git"
   },
   "bugs": {
-    "url": "https://github.com/alkem-io/Ddmo/issues"
+    "url": "https://github.com/alkem-io/demo/issues"
   },
   "homepage": "https://github.com/alkem-io/demo#readme",
   "devDependencies": {
