@@ -8,9 +8,13 @@ log:
 
 entryPoints:
   web:
-    address: ":80"
+    address: ':80'
   mysql:
-    address: ":3306"
+    address: ':3306'
+  mailslurper-client:
+    address: ':4436'
+  mailslurper-api:
+    address: ':4437'
 
 providers:
   file:
@@ -18,5 +22,4 @@ providers:
     watch: true
 
 accessLog:
-  filePath: "/etc/traefik/access.log"
-
+  filePath: '/etc/traefik/access.log'

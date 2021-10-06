@@ -17,6 +17,8 @@ services:
       - 8888:8080
       - 3000:80
       - 3306:3306
+      - 4436:4436
+      - 4437:4437
     networks:
       - alkemio_demo_net
     environment:
@@ -41,6 +43,15 @@ services:
       - alkemio_demo_mysql_db:/var/lib/mysql
       - ./.scripts/schema.sql:/bootstrap_scripts/1.sql
     command: --default-authentication-plugin=mysql_native_password --init-file /bootstrap_scripts/1.sql
+
+  mailslurper:
+    container_name: alkemio_demo_kratos_mailslurper
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - 4436
+      - 4437
+    networks:
+      - alkemio_demo_net
 
   kratos_migrate:
     container_name: alkemio_demo_kratos_migrate
@@ -74,6 +85,9 @@ services:
       - type: bind
         source: ./.build/ory/kratos/email-password
         target: /etc/config/kratos
+      - type: bind
+        source: ./.build/ory/kratos/courier-templates
+        target: /etc/config/kratos/courier-templates
     command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
 
   oathkeeper:
@@ -109,7 +123,7 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: vyanakiev/alkemio-server:v0.14.0-p1
+    image: alkemio/server:v0.14.1
     depends_on:
       - mysql_db
       - ipfs
@@ -165,7 +179,7 @@ services:
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.9.1
+    image: alkemio/client-web:v0.10.1
     networks:
       - alkemio_demo_net
     environment:

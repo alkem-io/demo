@@ -5,6 +5,16 @@ http:
         servers:
           - url: 'http://alkemio_server:4000/'
 
+    mailslurper-client:
+      loadBalancer:
+        servers:
+          - url: 'http://mailslurper:4436'
+
+    mailslurper-api:
+      loadBalancer:
+        servers:
+          - url: 'http://mailslurper:4437'
+
     alkemio-web-service:
       loadBalancer:
         servers:
@@ -91,6 +101,18 @@ http:
       service: 'alkemio-web-service'
       entryPoints:
         - 'web'
+
+    mailslurper-client:
+      rule: 'PathPrefix(`/`)'
+      service: 'mailslurper-client'
+      entryPoints:
+        - 'mailslurper-client'
+
+    mailslurper-api:
+      rule: 'PathPrefix(`/`)'
+      service: 'mailslurper-api'
+      entryPoints:
+        - 'mailslurper-api'
 
 tcp:
   services:
