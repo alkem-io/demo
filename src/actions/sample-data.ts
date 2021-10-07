@@ -13,14 +13,14 @@ export const sampleData = async () => {
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/graphql';
+  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/admin/graphql';
   const dataTemplate =
     process.env.ALKEMIO_DATA_TEMPLATE || '../alkemio-sample-sdgs.ods';
-  const authInfo = await getAuthInfo();
   const ctClient = new AlkemioClient({
     graphqlEndpoint: server,
-    authInfo: authInfo
   });
+  ctClient.config.authInfo = await getAuthInfo();
+  await ctClient.enableAuthentication();
 
   logger.info(`Alkemio server: ${server}`);
   logger.info(`Alkemio data template: ${dataTemplate}`);
@@ -51,10 +51,10 @@ async function getAuthInfo(): Promise<AuthInfo | undefined> {
   return {
     credentials: {
       email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
-      password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
+      password: process.env.AUTH_ADMIN_PASSWORD ?? '@lk3m10!',
     },
     apiEndpointFactory: () => {
-      return 'http://localhost:4433/';
+      return 'http://localhost:3000/identity/ory/kratos/public';
     },
   };
 }

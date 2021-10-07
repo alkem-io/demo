@@ -48,7 +48,9 @@ At this point you hopefully will have a running empty ecoverse! Both client and 
 Once the cluster is setup, the next step is to load data into the Alkemio Server:
 * **Setup environment variables**: Copy the `.env.docker` file to be `.env` file
 * **Install package dependencies**: From the command line execute the following command to install all required package dependencies: `npm install`
-* **Populate with sample data**: From the command line, execute the following commange to populate the server with data: `npm run sample-data`.
+* **Populate with sample data**:
+  * Register a user admin@alkem.io with password @lk3m10!. The user has global admin permissions and is required for the data population.
+  * From the command line, execute the following commange to populate the server with data: `npm run sample-data`.
   * Note: this can take a couple of minutes, you will see the progress in the window where you executed the command.
 
 At this point you hopefully have a populated Ecoverse, with Challenges / sample users visible.
