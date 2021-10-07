@@ -10,3 +10,6 @@ log
 # WebStorm's env generated folder
 .idea
 dist
+
+# Ignores homeserver.db file
+**/*.db
