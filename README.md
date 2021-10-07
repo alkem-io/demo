@@ -51,7 +51,8 @@ Once the cluster is setup, the next step is to load data into the Alkemio Server
 * **Populate with sample data**:
   * Register a user admin@alkem.io with password @lk3m10!. The user has global admin permissions and is required for the data population.
   * From the command line, execute the following commange to populate the server with data: `npm run sample-data`.
-  * Note: this can take a couple of minutes, you will see the progress in the window where you executed the command.
+  * Note 1: this can take a couple of minutes, you will see the progress in the window where you executed the command.
+  * Note 2: if you want to have another user / pass or user+password for the admin account, create .env file in the project root directory and add AUTH_ADMIN_EMAIL=[email] and / or AUTH_ADMIN_PASSWORD=[password]
 
 At this point you hopefully have a populated Ecoverse, with Challenges / sample users visible.
 
