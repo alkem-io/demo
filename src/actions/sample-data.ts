@@ -19,25 +19,30 @@ export const sampleData = async () => {
   const ctClient = new AlkemioClient({
     graphqlEndpoint: server,
   });
-  ctClient.config.authInfo = await getAuthInfo();
-  await ctClient.enableAuthentication();
-
   logger.info(`Alkemio server: ${server}`);
   logger.info(`Alkemio data template: ${dataTemplate}`);
+  ctClient.config.authInfo = await getAuthInfo();
+  try {
+    await ctClient.enableAuthentication();
+    logger.info('Authentication: successful');
+  } catch (e) {
+    logger.info(`Unable to authenticate to Alkemio: ${e}`);
+    return;
+  }
 
   await ctClient.validateConnection();
-  const ecoverseID = 'Eco1';
-  const ecoverseHostID = 'Eco1Host';
-  const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
-  console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
-  if (!ecoverseExists) {
-    console.log(`Creating '${ecoverseID}' ecoverse and '${ecoverseHostID}' host organisaiton.`);
+  const hubID = 'Eco1';
+  const hubHostID = 'Eco1Host';
+  const hubExists = await ctClient.hubExists(hubID);
+  console.log(`Hub '${hubID}' exists: ${hubExists}`);
+  if (!hubExists) {
+    console.log(`Creating '${hubID}' Hub and '${hubHostID}' host organisaiton.`);
   // create host org
-    await ctClient.createOrganization(ecoverseHostID, ecoverseHostID);
-    await ctClient.createEcoverse({
-      nameID: ecoverseID,
-      displayName: ecoverseID,
-      hostID: ecoverseHostID
+    await ctClient.createOrganization(hubHostID, hubHostID);
+    await ctClient.createHub({
+      nameID: hubID,
+      displayName: hubID,
+      hostID: hubHostID
     })
   }
 
