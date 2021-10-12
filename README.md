@@ -55,6 +55,10 @@ Once the cluster is setup, the next step is to load data into the Alkemio Server
 
 At this point you hopefully have a populated Hub, with Challenges / sample users visible.
 
+## Authentication
+
+The default administrator login is admin@alkem.io. If you register using that email address you will be able to explore the adminstration capabilities of the platform.
+
 ## Interacting with the Alkemio api
 If you are interested in seeing the data that is held within the Alkemio platform, then it is advisable to try out directly querying data from the GraphQL api.
 
