@@ -13,31 +13,36 @@ export const sampleData = async () => {
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/graphql';
+  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/admin/graphql';
   const dataTemplate =
     process.env.ALKEMIO_DATA_TEMPLATE || '../alkemio-sample-sdgs.ods';
-  const authInfo = await getAuthInfo();
   const ctClient = new AlkemioClient({
     graphqlEndpoint: server,
-    authInfo: authInfo
   });
-
   logger.info(`Alkemio server: ${server}`);
   logger.info(`Alkemio data template: ${dataTemplate}`);
+  ctClient.config.authInfo = await getAuthInfo();
+  try {
+    await ctClient.enableAuthentication();
+    logger.info('Authentication: successful');
+  } catch (e) {
+    logger.info(`Unable to authenticate to Alkemio: ${e}`);
+    return;
+  }
 
   await ctClient.validateConnection();
-  const ecoverseID = 'Eco1';
-  const ecoverseHostID = 'Eco1Host';
-  const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
-  console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
-  if (!ecoverseExists) {
-    console.log(`Creating '${ecoverseID}' ecoverse and '${ecoverseHostID}' host organisaiton.`);
+  const hubID = 'Eco1';
+  const hubHostID = 'Eco1Host';
+  const hubExists = await ctClient.hubExists(hubID);
+  console.log(`Hub '${hubID}' exists: ${hubExists}`);
+  if (!hubExists) {
+    console.log(`Creating '${hubID}' Hub and '${hubHostID}' host organisaiton.`);
   // create host org
-    await ctClient.createOrganisation(ecoverseHostID, ecoverseHostID);
-    await ctClient.createEcoverse({
-      nameID: ecoverseID,
-      displayName: ecoverseID,
-      hostID: ecoverseHostID
+    await ctClient.createOrganization(hubHostID, hubHostID);
+    await ctClient.createHub({
+      nameID: hubID,
+      displayName: hubID,
+      hostID: hubHostID
     })
   }
 
@@ -51,10 +56,10 @@ async function getAuthInfo(): Promise<AuthInfo | undefined> {
   return {
     credentials: {
       email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
-      password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
+      password: process.env.AUTH_ADMIN_PASSWORD ?? '@lk3m10!',
     },
     apiEndpointFactory: () => {
-      return 'http://localhost:4433/';
+      return 'http://localhost:3000/identity/ory/kratos/public';
     },
   };
 }
