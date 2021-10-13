@@ -29,10 +29,10 @@
             "type": "pwa-node"
         },
         {
-            "name": "Organisations Update",
+            "name": "Organizations Update",
             "request": "launch",
             "runtimeArgs": [
-                "run", "update-organisations"
+                "run", "update-organizations"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [

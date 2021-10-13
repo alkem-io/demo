@@ -10,7 +10,7 @@ This repository helps get a simple demonstrator instance of Alkemio running, and
 
 The core pieces of the demo are:
 
-- **[Server](http://github.com/alkem-io/server)**: The core Alkemio server that maintains the Ecoverse, and that exposes a GraphQL based api
+- **[Server](http://github.com/alkem-io/server)**: The core Alkemio server that hosts the Challenge Hubs, and that exposes a GraphQL based api
 - **[Client-Web](http://github.com/alkem-io/client-web)**: Web front end that interfaces with the Alkemio Server
 - **Oathkeeper, Kratos**: Provide authentication and identity management services that are used by the server
 - **Traefik**: Used to create a single overview of all routes into the cluster
@@ -35,27 +35,25 @@ Prerequisites:
 
 The following commands are used to run this project:
 
+
+* **Bootstrap configuration**: Execute `sudo .scripts/bootstrap.sh`.
 * **Create the cluster**: Execute `docker-compose --env-file .env.docker up --build --force-recreate`
   * This creates the docker cluster with the containers connected to each other.
 * **Verify the server is running**: Open a browser and navigate to [http://localhost:3000/graphql](http://localhost:3000/graphql)
 
 Note: the first time the cluster starts up it has some installations to make, so it may take up to 5 minutes before the Alkemio Server is running. To monitor how the containers are starting up either use a tool like Docker Desktop (windows) or Portainer (any operating system).
 
-At this point you hopefully will have a running empty ecoverse! Both client and server are exposed locally and can be accessed as [per description](#Interaction) above.
+At this point you hopefully will have a running platform with a default Challenge Hub! Both client and server are exposed locally and can be accessed as [per description](#Interaction) above.
 
 Once the cluster is setup, the next step is to load data into the Alkemio Server:
-* **Setup environment variables**: Copy the `.env.docker` file to be `.env` file
 * **Install package dependencies**: From the command line execute the following command to install all required package dependencies: `npm install`
-* **Populate with sample data**: From the command line, execute the following commange to populate the server with data: `npm run sample-data`.
-  * Note: this can take a couple of minutes, you will see the progress in the window where you executed the command.
+* **Populate with sample data**:
+  * Register a user admin@alkem.io with password ```@lk3m10!```. The user has global admin permissions and is required for the data population.
+  * From the command line, execute the following commange to populate the server with data: `npm run sample-data`.
+  * Note 1: this can take a couple of minutes, you will see the progress in the window where you executed the command.
+  * Note 2: if you want to have another user / pass or user+password for the admin account, create .env file in the project root directory (Copy the `.env.docker` file to be `.env` file) and add AUTH_ADMIN_EMAIL=[email] and / or AUTH_ADMIN_PASSWORD=[password]
 
-At this point you hopefully have a populated Ecoverse, with Challenges / sample users visible.
-
-## Authentication
-
-For ease of getting started, the demo is setup with authentication **disabled**. To enable authentication set the `AUTH_ENABLED` environment variable to true in `.env.docker` and re-create the docker compose cluster as described above.
-
-The default administrator login is admin@alkem.io. If you register using that email address you will be able to explore the adminstration capabilities of the platform.
+At this point you hopefully have a populated Hub, with Challenges / sample users visible.
 
 ## Interacting with the Alkemio api
 If you are interested in seeing the data that is held within the Alkemio platform, then it is advisable to try out directly querying data from the GraphQL api.
@@ -90,5 +88,5 @@ To modify the data and see how Alkemio could be used for hosting your Challenges
 
 Note: the file to be loaded is specfied by the *ALKEMIO_DATA_TEMPLATE* environment variable. This is set in the ```.env``` that you created above, so you can also specify a different file name by editing this environment variable.
 
-For experimenting with custom data, it is usefult to be aware that it is also possible to revert the server back to a default empty ecoverse using the [Data Management page](http://localhost:3000/data-management).
+For experimenting with custom data, it is usefult to be aware that it is also possible to revert the server back to a default empty platform using the [Data Management page](http://localhost:3000/data-management).
 

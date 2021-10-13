@@ -6,7 +6,11 @@ log
 *.log
 .DS_Store
 ~*
+.~*
 
 # WebStorm's env generated folder
 .idea
 dist
+
+# Ignores homeserver.db file
+**/*.db
