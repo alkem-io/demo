@@ -37,7 +37,7 @@ The following commands are used to run this project:
 
 
 * **Bootstrap configuration**: Execute `sudo .scripts/bootstrap.sh`.
-* **Create the cluster**: Execute `docker-compose --env-file .env.docker up --build --force-recreate`
+* **Create the cluster**: Execute `npm run start:demo`
   * This creates the docker cluster with the containers connected to each other.
 * **Verify the server is running**: Open a browser and navigate to [http://localhost:3000/graphql](http://localhost:3000/graphql)
 
