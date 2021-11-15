@@ -22,6 +22,7 @@
     "nodemon": "nodemon",
     "sample-data": "ts-node-dev  src/scripts/sample-data.ts",
     "start": "ts-node src/index.ts",
+    "start:demo": "docker-compose --env-file .env.docker up --build --force-recreate",
     "prepublishOnly": "npm run build"
   },
   "repository": {
