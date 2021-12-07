@@ -124,7 +124,7 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: alkemio/server:v0.15.0
+    image: alkemio/server:v0.15.5
     depends_on:
       - mysql_db
       - ipfs
@@ -180,7 +180,7 @@ services:
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.10.5
+    image: alkemio/client-web:v0.10.8
     networks:
       - alkemio_demo_net
     environment:
@@ -207,18 +207,20 @@ services:
   notification:
     container_name: alkemio_demo_notifications
     hostname: notifications
-    image: alkemio/notifications:v0.3.2
+    image: alkemio/notifications:v0.4.2
     environment:
       - RABBITMQ_HOST
       - LOGGING_CONSOLE_ENABLED
       - LOGGING_LEVEL_CONSOLE
       - EMAIL_SMTP_HOST
+      - EMAIL_MULTI_PROVIDER_STRATEGY
       - ENVIRONMENT=dev
       - ALKEMIO_SERVER_ENDPOINT
+      - ALKEMIO_WEBCLIENT_ENDPOINT
       - KRATOS_API_PUBLIC_ENDPOINT
       - SERVICE_ACCOUNT_USERNAME
       - SERVICE_ACCOUNT_PASSWORD
-      - WAIT_HOSTS=alkemio_server:4000
+      - WAIT_HOSTS=host.docker.internal:4000
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
