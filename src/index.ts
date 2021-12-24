@@ -28,10 +28,10 @@ const main = async () => {
     )
     .option(
       '-s, --server <url>',
-      'cherry twist graphql endpoint',
+      'alkemio graphql endpoint',
       DEFAULT_SERVER_URL
     )
-    .description('import data from ODS/XLSX file to cherry twist server')
+    .description('import data from ODS/XLSX file to alkemio server')
     .action(opts => {
       const file = opts.file ?? 'alkemio-data-template.ods';
       const server = opts.server ?? DEFAULT_SERVER_URL;
@@ -49,7 +49,7 @@ const main = async () => {
     .alias('a')
     .option(
       '-s, --server <url>',
-      'cherry twist graphql endpoint',
+      'alkemio graphql endpoint',
       DEFAULT_SERVER_URL
     )
     .description('populate avatars into destination server')

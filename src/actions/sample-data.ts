@@ -7,39 +7,32 @@ import {
 } from '@alkemio/populator';
 import * as dotenv from 'dotenv';
 import path from 'path';
+import { Logger } from 'winston';
+import winston from 'winston/lib/winston/config';
 
 export const sampleData = async () => {
   dotenv.config();
   const logger = createLogger();
   const profiler = createProfiler();
 
-  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/admin/graphql';
+  const alkemioClient = await createClientUsingEnvVars(logger)
+
   const dataTemplate =
     process.env.ALKEMIO_DATA_TEMPLATE || '../alkemio-sample-sdgs.ods';
-  const ctClient = new AlkemioClient({
-    graphqlEndpoint: server,
-  });
-  logger.info(`Alkemio server: ${server}`);
-  logger.info(`Alkemio data template: ${dataTemplate}`);
-  ctClient.config.authInfo = await getAuthInfo();
-  try {
-    await ctClient.enableAuthentication();
-    logger.info('Authentication: successful');
-  } catch (e) {
-    logger.info(`Unable to authenticate to Alkemio: ${e}`);
-    return;
-  }
+    logger.info(`Alkemio data template: ${dataTemplate}`);
 
-  await ctClient.validateConnection();
-  const hubID = 'Eco1';
-  const hubHostID = 'Eco1Host';
-  const hubExists = await ctClient.hubExists(hubID);
+
+
+  await alkemioClient.validateConnection();
+  const hubID = 'un-sdgs';
+  const hubHostID = 'united-nations';
+  const hubExists = await alkemioClient.hubExists(hubID);
   console.log(`Hub '${hubID}' exists: ${hubExists}`);
   if (!hubExists) {
     console.log(`Creating '${hubID}' Hub and '${hubHostID}' host organisaiton.`);
-  // create host org
-    await ctClient.createOrganization(hubHostID, hubHostID);
-    await ctClient.createHub({
+    // create host org
+    await alkemioClient.createOrganization(hubHostID, hubHostID);
+    await alkemioClient.createHub({
       nameID: hubID,
       displayName: hubID,
       hostID: hubHostID
@@ -48,19 +41,36 @@ export const sampleData = async () => {
 
   const data = new XLSXAdapter(path.join(__dirname, '..', dataTemplate));
   // Loading data from google sheets
-  const populator = new Populator(ctClient, data, logger, profiler);
+  const populator = new Populator(alkemioClient, data, logger, profiler);
   await populator.populate();
 };
 
-async function getAuthInfo(): Promise<AuthInfo | undefined> {
-  return {
+
+
+async function createClientUsingEnvVars(logger: Logger) {
+  dotenv.config();
+
+  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/admin/graphql';
+  const alkemioClient = new AlkemioClient({
+    graphqlEndpoint: server,
+  });
+
+  alkemioClient.config.authInfo = {
     credentials: {
       email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
       password: process.env.AUTH_ADMIN_PASSWORD ?? '@lk3m10!',
     },
-    apiEndpointFactory: () => {
-      return 'http://localhost:3000/identity/ory/kratos/public';
-    },
   };
-}
+
+  logger.info(`Alkemio server: ${(await alkemioClient).config.graphqlEndpoint}`);
+  try {
+    await alkemioClient.enableAuthentication();
+    logger.info('Authentication: successful');
+  } catch (e) {
+    logger.info(`Unable to authenticate to Alkemio: ${e}`);
+    throw e;
+  }
+
+  return alkemioClient;
+};
 
