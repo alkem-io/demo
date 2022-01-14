@@ -15,7 +15,7 @@ http:
         servers:
           - url: 'http://mailslurper:4437'
 
-    alkemio-web-service:
+    alkemio-web-client:
       loadBalancer:
         servers:
           - url: 'http://alkemio_client/'
@@ -41,10 +41,22 @@ http:
           - url: 'http://ipfs:8080/'
 
   middlewares:
-    strip-admin-prefix:
+    strip-api-private-non-interactive-prefix:
       stripPrefix:
         prefixes:
-          - /admin
+          - /api/private/non-interactive
+        forceSlash: false
+
+    strip-api-private-prefix:
+      stripPrefix:
+        prefixes:
+          - /api/private
+        forceSlash: false
+
+    strip-api-public-prefix:
+      stripPrefix:
+        prefixes:
+          - /api/public
         forceSlash: false
 
     strip-kratos-admin-prefix:
@@ -65,12 +77,27 @@ http:
       service: 'oathkeeper-proxy'
       entryPoints:
         - 'web'
-
-    graphql-admin:
-      rule: 'PathPrefix(`/admin/graphql`)'
+    api-private-non-interactive-graphql:
+      rule: 'PathPrefix(`/api/private/non-interactive/graphql`)'
       service: 'alkemio-server'
       middlewares:
-        - strip-admin-prefix
+        - strip-api-private-non-interactive-prefix
+      entryPoints:
+        - 'web'
+
+    api-private-graphql:
+      rule: 'PathPrefix(`/api/private/graphql`)'
+      service: 'oathkeeper-proxy'
+      middlewares:
+        - strip-api-private-prefix
+      entryPoints:
+        - 'web'
+
+    api-public-graphql:
+      rule: 'PathPrefix(`/api/public/graphql`)'
+      service: 'alkemio-server'
+      middlewares:
+        - strip-api-public-prefix
       entryPoints:
         - 'web'
 
@@ -90,15 +117,15 @@ http:
       entryPoints:
         - 'web'
 
-    ipfs:
-      rule: 'PathPrefix(`/ipfs`) || HostRegexp(`{^[a-zA-Z0-9_.-]*$}.ipfs.localhost`)'
-      service: 'ipfs-http-adapter'
+    alkemiowebroute:
+      rule: 'PathPrefix(`/`)'
+      service: 'alkemio-web-client'
       entryPoints:
         - 'web'
 
-    alkemiowebroute:
-      rule: 'PathPrefix(`/`)'
-      service: 'alkemio-web-service'
+    ipfs:
+      rule: 'PathPrefix(`/ipfs`) || HostRegexp(`{^[a-zA-Z0-9_.-]*$}.ipfs.localhost`)'
+      service: 'ipfs-http-adapter'
       entryPoints:
         - 'web'
 
