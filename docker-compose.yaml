@@ -206,6 +206,9 @@ services:
       - 'rabbitmq_data:/bitnami'
 
   notification:
+    depends_on:
+      - rabbitmq
+      - alkemio_server
     container_name: alkemio_demo_notifications
     hostname: notifications
     image: alkemio/notifications:v0.4.6
@@ -221,18 +224,15 @@ services:
       - KRATOS_API_PUBLIC_ENDPOINT
       - SERVICE_ACCOUNT_USERNAME
       - SERVICE_ACCOUNT_PASSWORD
-      - WAIT_HOSTS=host.docker.internal:4000
-      - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
-      - WAIT_HOST_CONNECT_TIMEOUT=30
     restart: always
     networks:
       - alkemio_demo_net
     command: sh -c "/wait && npm run start"
 
   wallet-manager:
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    depends_on:
+      - rabbitmq
+      - alkemio_server
     container_name: alkemio_demo_wallet_manager
     hostname: wallet-manager
     image: alkemio/wallet-manager:v0.2.0
@@ -243,10 +243,6 @@ services:
       - LOGGING_CONSOLE_ENABLED
       - LOGGING_LEVEL_CONSOLE
       - ENVIRONMENT=dev
-      - WAIT_HOSTS=host.docker.internal:4000
-      - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
-      - WAIT_HOST_CONNECT_TIMEOUT=30
     restart: always
     networks:
       - alkemio_demo_net
