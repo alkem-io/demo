@@ -32,6 +32,7 @@ Prerequisites:
 - Docker, docker-compose, [nodejs](https://nodejs.org/en/download/package-manager/) and git installed on x86 architecture (so not an ARM-based architecture like Raspberry pi)
 - Ports 3000, 3306 free on localhost
 - Demo repository cloned to local device (`git clone https://github.com/alkem-io/Demo.git`)
+- For testing notifications - register a profile notifications@alkem.io with password change-me-now and assign the profile global community admin permissions
 
 The following commands are used to run this project:
 
