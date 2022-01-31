@@ -50,9 +50,9 @@ export const sampleData = async () => {
 async function createClientUsingEnvVars(logger: Logger) {
   dotenv.config();
 
-  const server = process.env.ALKEMIO_SERVER || 'http://localhost:3000/admin/graphql';
+  const server = process.env.API_ENDPOINT_PRIVATE_GRAPHQL || 'http://localhost:3000/api/private/non-interactive/graphql';
   const alkemioClient = new AlkemioClient({
-    graphqlEndpoint: server,
+    apiEndpointPrivateGraphql: server,
   });
 
   alkemioClient.config.authInfo = {
@@ -62,7 +62,7 @@ async function createClientUsingEnvVars(logger: Logger) {
     },
   };
 
-  logger.info(`Alkemio server: ${(await alkemioClient).config.graphqlEndpoint}`);
+  logger.info(`Alkemio server: ${(await alkemioClient).config.apiEndpointPrivateGraphql}`);
   try {
     await alkemioClient.enableAuthentication();
     logger.info('Authentication: successful');
