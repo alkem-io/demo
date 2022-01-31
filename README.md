@@ -93,5 +93,3 @@ To modify the data and see how Alkemio could be used for hosting your Challenges
 
 Note: the file to be loaded is specfied by the *ALKEMIO_DATA_TEMPLATE* environment variable. This is set in the ```.env``` that you created above, so you can also specify a different file name by editing this environment variable.
 
-For experimenting with custom data, it is usefult to be aware that it is also possible to revert the server back to a default empty platform using the [Data Management page](http://localhost:3000/data-management).
-
