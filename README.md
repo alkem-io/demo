@@ -68,7 +68,7 @@ For this, open a local browser and navigate to [http://localhost:3000/graphql](h
 A simple graphql query to try out is:
 ```
 query {
-  ecoverses {
+  hubs {
     name,
     context {
      tagline
