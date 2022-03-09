@@ -4,7 +4,7 @@ networks:
   alkemio_demo_net:
 
 volumes:
-  alkemio_demo_mysql_db:
+  alkemio_demo_mariadb:
   rabbitmq_data:
     driver: local
 
@@ -27,6 +27,22 @@ services:
       - type: bind
         source: ./.build/traefik/
         target: /etc/traefik/
+
+  mariadb:
+    container_name: alkemio_demo_mariadb
+    image: mariadb:10.7.1
+    networks:
+      - alkemio_demo_net
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+    restart: always
+    ports:
+      - 3306
+    volumes:
+      - alkemio_demo_mariadb:/var/lib/mysql
+      - ./.scripts/schema.sql:/bootstrap_scripts/1.sql
+    command: --sql_mode="" --default-authentication-plugin=mysql_native_password --init-file /bootstrap_scripts/1.sql
 
   mailslurper:
     container_name: alkemio_demo_kratos_mailslurper
@@ -110,7 +126,7 @@ services:
     container_name: alkemio_demo_server
     image: alkemio/server:v0.23.0
     depends_on:
-      - mysql_db
+      - mariadb
       - ipfs
     networks:
       - alkemio_demo_net
@@ -119,7 +135,7 @@ services:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
-      - WAIT_HOSTS=mysql_db:3306
+      - WAIT_HOSTS=mariadb:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
