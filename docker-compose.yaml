@@ -4,7 +4,7 @@ networks:
   alkemio_demo_net:
 
 volumes:
-  alkemio_demo_mysql_db:
+  alkemio_demo_mariadb:
   rabbitmq_data:
     driver: local
 
@@ -28,9 +28,9 @@ services:
         source: ./.build/traefik/
         target: /etc/traefik/
 
-  mysql_db:
-    container_name: alkemio_demo_mysql_db
-    image: mysql:8.0.11
+  mariadb:
+    container_name: alkemio_demo_mariadb
+    image: mariadb:10.7.1
     networks:
       - alkemio_demo_net
     environment:
@@ -40,9 +40,9 @@ services:
     ports:
       - 3306
     volumes:
-      - alkemio_demo_mysql_db:/var/lib/mysql
+      - alkemio_demo_mariadb:/var/lib/mysql
       - ./.scripts/schema.sql:/bootstrap_scripts/1.sql
-    command: --default-authentication-plugin=mysql_native_password --init-file /bootstrap_scripts/1.sql
+    command: --sql_mode="" --default-authentication-plugin=mysql_native_password --init-file /bootstrap_scripts/1.sql
 
   mailslurper:
     container_name: alkemio_demo_kratos_mailslurper
@@ -124,9 +124,9 @@ services:
 
   alkemio_server:
     container_name: alkemio_demo_server
-    image: alkemio/server:v0.18.1
+    image: alkemio/server:v0.22.1
     depends_on:
-      - mysql_db
+      - mariadb
       - ipfs
     networks:
       - alkemio_demo_net
@@ -135,7 +135,7 @@ services:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE
-      - WAIT_HOSTS=mysql_db:3306
+      - WAIT_HOSTS=mariadb:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
@@ -181,7 +181,7 @@ services:
 
   alkemio_client:
     container_name: alkemio_demo_client
-    image: alkemio/client-web:v0.14.0
+    image: alkemio/client-web:v0.17.0
     networks:
       - alkemio_demo_net
     environment:
@@ -191,19 +191,26 @@ services:
 
   rabbitmq:
     container_name: alkemio_demo_rabbitmq
-    image: docker.io/bitnami/rabbitmq:3.9
+    image: rabbitmq:3.9.13-management
     restart: always
     networks:
       - alkemio_demo_net
     ports:
-      - 4369
       - 5672
-      - 25672
       - 15672
     environment:
       - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_DEFAULT_USER=alkemio-admin
+      - RABBITMQ_DEFAULT_PASS=alkemio!
     volumes:
-      - 'rabbitmq_data:/bitnami'
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/mnesia
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    command:
+      [
+        'bash',
+        '-c',
+        'chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server --hostname rmq',
+      ]
 
   notification:
     depends_on:
@@ -211,9 +218,11 @@ services:
       - alkemio_server
     container_name: alkemio_demo_notifications
     hostname: notifications
-    image: alkemio/notifications:v0.4.6
+    image: alkemio/notifications:v0.5.1
     environment:
       - RABBITMQ_HOST
+      - RABBITMQ_USER
+      - RABBITMQ_PASSWORD
       - LOGGING_CONSOLE_ENABLED
       - LOGGING_LEVEL_CONSOLE
       - EMAIL_SMTP_HOST
@@ -235,14 +244,20 @@ services:
       - alkemio_server
     container_name: alkemio_demo_wallet_manager
     hostname: wallet-manager
-    image: alkemio/wallet-manager:v0.2.0
+    image: alkemio/wallet-manager:v0.3.0
     environment:
       - DATABASE_HOST
       - MYSQL_ROOT_PASSWORD
       - RABBITMQ_HOST
+      - RABBITMQ_USER
+      - RABBITMQ_PASSWORD
       - LOGGING_CONSOLE_ENABLED
       - LOGGING_LEVEL_CONSOLE
       - ENVIRONMENT=dev
+      - WAIT_HOSTS=host.docker.internal:4000
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
     restart: always
     networks:
       - alkemio_demo_net
